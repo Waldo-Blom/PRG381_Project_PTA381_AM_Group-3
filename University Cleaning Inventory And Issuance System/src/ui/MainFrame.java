@@ -9,9 +9,13 @@ package ui;
  *
  * @author waldo
  */
-import ui.panels.MaterialsPanel;
-import ui.panels.DashboardPanel;
+import ui.panels.MaterialsPnl;
+import ui.panels.DashboardPnl;
 import java.awt.CardLayout;
+import ui.panels.CleanersPnl;
+import ui.panels.ReportsPnl;
+import ui.panels.StockIssuancePnl;
+import ui.panels.SuppliersPnl;
 public class MainFrame extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainFrame.class.getName());
@@ -22,8 +26,18 @@ public class MainFrame extends javax.swing.JFrame {
     public MainFrame() {
         initComponents();
         
-    contentPanel.add(new DashboardPanel(), "DASHBOARD");
-    contentPanel.add(new MaterialsPanel(), "MATERIALS");
+        setResizable(false);
+        setSize(1200, 700);           // fixed window size
+        setLocationRelativeTo(null);  // centers it on screen
+        
+        //Add all the created conent panel sections
+        
+        contentPanel.add(new CleanersPnl(), "Cleaners");
+        contentPanel.add(new DashboardPnl(), "Dashboard");
+        contentPanel.add(new MaterialsPnl(), "Materials");
+        contentPanel.add(new ReportsPnl(), "Reports");
+        contentPanel.add(new StockIssuancePnl(), "StockIssuance");
+        contentPanel.add(new SuppliersPnl(), "Suppliers");
  
     }
 
@@ -37,26 +51,115 @@ public class MainFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         sidebarPanel = new javax.swing.JPanel();
-        dashboardbtn = new javax.swing.JButton();
-        matterialsbtn = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        TopLogoPnl = new javax.swing.JPanel();
+        lblLogoName = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        NavPnl = new javax.swing.JPanel();
+        btnDashboard = new javax.swing.JButton();
+        btnMaterials = new javax.swing.JButton();
+        btnSuppliers = new javax.swing.JButton();
+        btnCleaners = new javax.swing.JButton();
+        btnStockIssuance = new javax.swing.JButton();
+        btnReports = new javax.swing.JButton();
+        jButton7 = new javax.swing.JButton();
+        jButton8 = new javax.swing.JButton();
+        UserInfoPnl = new javax.swing.JPanel();
+        lblUsername = new javax.swing.JLabel();
+        lblRole = new javax.swing.JLabel();
         contentPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         sidebarPanel.setPreferredSize(new java.awt.Dimension(200, 700));
-        sidebarPanel.setLayout(new javax.swing.BoxLayout(sidebarPanel, javax.swing.BoxLayout.Y_AXIS));
+        sidebarPanel.setLayout(new java.awt.BorderLayout());
 
-        dashboardbtn.setText("dashboard");
-        dashboardbtn.addActionListener(this::dashboardbtnActionPerformed);
-        sidebarPanel.add(dashboardbtn);
+        TopLogoPnl.setMaximumSize(new java.awt.Dimension(200, 80));
+        TopLogoPnl.setMinimumSize(new java.awt.Dimension(200, 80));
+        TopLogoPnl.setPreferredSize(new java.awt.Dimension(200, 80));
+        TopLogoPnl.setLayout(null);
 
-        matterialsbtn.setText("mats");
-        matterialsbtn.addActionListener(this::matterialsbtnActionPerformed);
-        sidebarPanel.add(matterialsbtn);
+        lblLogoName.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblLogoName.setText("CleanTrack");
+        TopLogoPnl.add(lblLogoName);
+        lblLogoName.setBounds(70, 10, 61, 16);
 
-        jButton3.setText("jButton3");
-        sidebarPanel.add(jButton3);
+        jLabel1.setText("Inventory Manger");
+        TopLogoPnl.add(jLabel1);
+        jLabel1.setBounds(50, 30, 110, 16);
+
+        sidebarPanel.add(TopLogoPnl, java.awt.BorderLayout.NORTH);
+
+        NavPnl.setLayout(new javax.swing.BoxLayout(NavPnl, javax.swing.BoxLayout.Y_AXIS));
+
+        btnDashboard.setText("Dashboard");
+        btnDashboard.setMaximumSize(new java.awt.Dimension(200, 40));
+        btnDashboard.setMinimumSize(new java.awt.Dimension(200, 40));
+        btnDashboard.setPreferredSize(new java.awt.Dimension(200, 40));
+        btnDashboard.addActionListener(this::btnDashboardActionPerformed);
+        NavPnl.add(btnDashboard);
+
+        btnMaterials.setText("Materials");
+        btnMaterials.setMaximumSize(new java.awt.Dimension(200, 40));
+        btnMaterials.setMinimumSize(new java.awt.Dimension(200, 40));
+        btnMaterials.setPreferredSize(new java.awt.Dimension(200, 40));
+        btnMaterials.addActionListener(this::btnMaterialsActionPerformed);
+        NavPnl.add(btnMaterials);
+
+        btnSuppliers.setText("Suppliers");
+        btnSuppliers.setMaximumSize(new java.awt.Dimension(200, 40));
+        btnSuppliers.setMinimumSize(new java.awt.Dimension(200, 40));
+        btnSuppliers.setPreferredSize(new java.awt.Dimension(200, 40));
+        btnSuppliers.addActionListener(this::btnSuppliersActionPerformed);
+        NavPnl.add(btnSuppliers);
+
+        btnCleaners.setText("Cleaners");
+        btnCleaners.setMaximumSize(new java.awt.Dimension(200, 40));
+        btnCleaners.setMinimumSize(new java.awt.Dimension(200, 40));
+        btnCleaners.setPreferredSize(new java.awt.Dimension(200, 40));
+        btnCleaners.addActionListener(this::btnCleanersActionPerformed);
+        NavPnl.add(btnCleaners);
+
+        btnStockIssuance.setText("Stock Issuance");
+        btnStockIssuance.setMaximumSize(new java.awt.Dimension(200, 40));
+        btnStockIssuance.setMinimumSize(new java.awt.Dimension(200, 40));
+        btnStockIssuance.setPreferredSize(new java.awt.Dimension(200, 40));
+        btnStockIssuance.addActionListener(this::btnStockIssuanceActionPerformed);
+        NavPnl.add(btnStockIssuance);
+
+        btnReports.setText("Reports");
+        btnReports.setMaximumSize(new java.awt.Dimension(200, 40));
+        btnReports.setMinimumSize(new java.awt.Dimension(200, 40));
+        btnReports.setPreferredSize(new java.awt.Dimension(200, 40));
+        btnReports.addActionListener(this::btnReportsActionPerformed);
+        NavPnl.add(btnReports);
+
+        jButton7.setText("???");
+        jButton7.setMaximumSize(new java.awt.Dimension(200, 40));
+        jButton7.setMinimumSize(new java.awt.Dimension(200, 40));
+        jButton7.setPreferredSize(new java.awt.Dimension(200, 40));
+        NavPnl.add(jButton7);
+
+        jButton8.setText("???");
+        jButton8.setMaximumSize(new java.awt.Dimension(200, 40));
+        jButton8.setMinimumSize(new java.awt.Dimension(200, 40));
+        jButton8.setPreferredSize(new java.awt.Dimension(200, 40));
+        NavPnl.add(jButton8);
+
+        sidebarPanel.add(NavPnl, java.awt.BorderLayout.CENTER);
+
+        UserInfoPnl.setPreferredSize(new java.awt.Dimension(70, 70));
+        UserInfoPnl.setLayout(null);
+
+        lblUsername.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblUsername.setText("Username");
+        UserInfoPnl.add(lblUsername);
+        lblUsername.setBounds(70, 20, 80, 20);
+
+        lblRole.setText("Role");
+        UserInfoPnl.add(lblRole);
+        lblRole.setBounds(70, 40, 37, 16);
+
+        sidebarPanel.add(UserInfoPnl, java.awt.BorderLayout.SOUTH);
 
         getContentPane().add(sidebarPanel, java.awt.BorderLayout.LINE_START);
 
@@ -66,15 +169,35 @@ public class MainFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void dashboardbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dashboardbtnActionPerformed
+    private void btnSuppliersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuppliersActionPerformed
        CardLayout cl = (CardLayout) contentPanel.getLayout();
-       cl.show(contentPanel, "DASHBOARD");       
-    }//GEN-LAST:event_dashboardbtnActionPerformed
+       cl.show(contentPanel, "Suppliers");   
+    }//GEN-LAST:event_btnSuppliersActionPerformed
 
-    private void matterialsbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_matterialsbtnActionPerformed
+    private void btnDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDashboardActionPerformed
        CardLayout cl = (CardLayout) contentPanel.getLayout();
-       cl.show(contentPanel, "MATERIALS"); 
-    }//GEN-LAST:event_matterialsbtnActionPerformed
+       cl.show(contentPanel, "Dashboard");    
+    }//GEN-LAST:event_btnDashboardActionPerformed
+
+    private void btnMaterialsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMaterialsActionPerformed
+       CardLayout cl = (CardLayout) contentPanel.getLayout();
+       cl.show(contentPanel, "Materials"); 
+    }//GEN-LAST:event_btnMaterialsActionPerformed
+
+    private void btnCleanersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCleanersActionPerformed
+        CardLayout cl = (CardLayout) contentPanel.getLayout();
+       cl.show(contentPanel, "Cleaners"); 
+    }//GEN-LAST:event_btnCleanersActionPerformed
+
+    private void btnStockIssuanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStockIssuanceActionPerformed
+         CardLayout cl = (CardLayout) contentPanel.getLayout();
+       cl.show(contentPanel, "StockIssuance"); 
+    }//GEN-LAST:event_btnStockIssuanceActionPerformed
+
+    private void btnReportsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReportsActionPerformed
+        CardLayout cl = (CardLayout) contentPanel.getLayout();
+       cl.show(contentPanel, "Reports"); 
+    }//GEN-LAST:event_btnReportsActionPerformed
 
     /**
      * @param args the command line arguments
@@ -102,10 +225,22 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel NavPnl;
+    private javax.swing.JPanel TopLogoPnl;
+    private javax.swing.JPanel UserInfoPnl;
+    private javax.swing.JButton btnCleaners;
+    private javax.swing.JButton btnDashboard;
+    private javax.swing.JButton btnMaterials;
+    private javax.swing.JButton btnReports;
+    private javax.swing.JButton btnStockIssuance;
+    private javax.swing.JButton btnSuppliers;
     private javax.swing.JPanel contentPanel;
-    private javax.swing.JButton dashboardbtn;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton matterialsbtn;
+    private javax.swing.JButton jButton7;
+    private javax.swing.JButton jButton8;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel lblLogoName;
+    private javax.swing.JLabel lblRole;
+    private javax.swing.JLabel lblUsername;
     private javax.swing.JPanel sidebarPanel;
     // End of variables declaration//GEN-END:variables
 }

@@ -8,12 +8,12 @@ package ui.panels;
  *
  * @author waldo
  */
-public class CleanersPanel extends javax.swing.JPanel {
+public class CleanersPnl extends javax.swing.JPanel {
 
     /**
      * Creates new form CleanersPanel
      */
-    public CleanersPanel() {
+    public CleanersPnl() {
         initComponents();
     }
 
@@ -26,15 +26,19 @@ public class CleanersPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        setMaximumSize(new java.awt.Dimension(1000, 700));
+        setMinimumSize(new java.awt.Dimension(1000, 700));
+        setPreferredSize(new java.awt.Dimension(1000, 700));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGap(0, 1000, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGap(0, 700, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 

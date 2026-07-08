@@ -9,12 +9,12 @@ package ui.panels;
  *
  * @author waldo
  */
-public class DashboardPanel extends javax.swing.JPanel {
+public class DashboardPnl extends javax.swing.JPanel {
 
     /**
      * Creates new form DashboardPanel
      */
-    public DashboardPanel() {
+    public DashboardPnl() {
         initComponents();
     }
 
@@ -29,6 +29,9 @@ public class DashboardPanel extends javax.swing.JPanel {
 
         jLabel1 = new javax.swing.JLabel();
 
+        setMaximumSize(new java.awt.Dimension(1000, 700));
+        setMinimumSize(new java.awt.Dimension(1000, 700));
+
         jLabel1.setText("Dashboard");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -38,14 +41,14 @@ public class DashboardPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(162, 162, 162)
                 .addComponent(jLabel1)
-                .addContainerGap(181, Short.MAX_VALUE))
+                .addContainerGap(781, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(93, 93, 93)
                 .addComponent(jLabel1)
-                .addContainerGap(191, Short.MAX_VALUE))
+                .addContainerGap(591, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 

@@ -9,12 +9,12 @@ package ui.panels;
  *
  * @author waldo
  */
-public class MaterialsPanel extends javax.swing.JPanel {
+public class MaterialsPnl extends javax.swing.JPanel {
 
     /**
      * Creates new form MaterialsPanel
      */
-    public MaterialsPanel() {
+    public MaterialsPnl() {
         initComponents();
     }
 
@@ -29,6 +29,9 @@ public class MaterialsPanel extends javax.swing.JPanel {
 
         jLabel1 = new javax.swing.JLabel();
 
+        setMaximumSize(new java.awt.Dimension(1000, 700));
+        setMinimumSize(new java.awt.Dimension(1000, 700));
+
         jLabel1.setText("Materials");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -38,14 +41,14 @@ public class MaterialsPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(141, 141, 141)
                 .addComponent(jLabel1)
-                .addContainerGap(211, Short.MAX_VALUE))
+                .addContainerGap(811, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(119, 119, 119)
                 .addComponent(jLabel1)
-                .addContainerGap(165, Short.MAX_VALUE))
+                .addContainerGap(565, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
