@@ -82,13 +82,13 @@ public class MainFrame extends javax.swing.JFrame {
         TopLogoPnl.setLayout(null);
 
         lblLogoName.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        lblLogoName.setText("CleanTrack");
+        lblLogoName.setText("Sparkling Clean");
         TopLogoPnl.add(lblLogoName);
-        lblLogoName.setBounds(70, 10, 61, 16);
+        lblLogoName.setBounds(60, 10, 110, 16);
 
-        jLabel1.setText("Inventory Manger");
+        jLabel1.setText("Inventory Manger of your dreams");
         TopLogoPnl.add(jLabel1);
-        jLabel1.setBounds(50, 30, 110, 16);
+        jLabel1.setBounds(10, 30, 190, 20);
 
         sidebarPanel.add(TopLogoPnl, java.awt.BorderLayout.NORTH);
 
