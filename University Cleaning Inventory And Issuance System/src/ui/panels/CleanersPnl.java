@@ -9,12 +9,12 @@ package ui.panels;
  *
  * @author waldo
  */
-public class MaterialsPnl extends javax.swing.JPanel {
+public class CleanersPnl extends javax.swing.JPanel {
 
     /**
      * Creates new form MaterialsPanel
      */
-    public MaterialsPnl() {
+    public CleanersPnl() {
         initComponents();
     }
 
@@ -27,33 +27,41 @@ public class MaterialsPnl extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        contentPnl = new javax.swing.JPanel();
+        headerPnl = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
 
         setMaximumSize(new java.awt.Dimension(1000, 700));
         setMinimumSize(new java.awt.Dimension(1000, 700));
+        setLayout(new java.awt.BorderLayout());
 
-        jLabel1.setText("Materials");
+        contentPnl.setMaximumSize(new java.awt.Dimension(1000, 70));
+        contentPnl.setMinimumSize(new java.awt.Dimension(1000, 70));
+        contentPnl.setPreferredSize(new java.awt.Dimension(1000, 70));
+        contentPnl.setLayout(new javax.swing.BoxLayout(contentPnl, javax.swing.BoxLayout.LINE_AXIS));
+        add(contentPnl, java.awt.BorderLayout.CENTER);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(141, 141, 141)
-                .addComponent(jLabel1)
-                .addContainerGap(811, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(119, 119, 119)
-                .addComponent(jLabel1)
-                .addContainerGap(565, Short.MAX_VALUE))
-        );
+        headerPnl.setMaximumSize(new java.awt.Dimension(1000, 70));
+        headerPnl.setMinimumSize(new java.awt.Dimension(1000, 70));
+        headerPnl.setPreferredSize(new java.awt.Dimension(1000, 70));
+        headerPnl.setLayout(new javax.swing.BoxLayout(headerPnl, javax.swing.BoxLayout.Y_AXIS));
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel1.setText("Cleaners");
+        headerPnl.add(jLabel1);
+
+        jLabel2.setText("Overview of your clieaning supplies inventory");
+        headerPnl.add(jLabel2);
+
+        add(headerPnl, java.awt.BorderLayout.NORTH);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel contentPnl;
+    private javax.swing.JPanel headerPnl;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     // End of variables declaration//GEN-END:variables
 }
