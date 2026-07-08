@@ -66,6 +66,7 @@ public class MainFrame extends javax.swing.JFrame {
         UserInfoPnl = new javax.swing.JPanel();
         lblUsername = new javax.swing.JLabel();
         lblRole = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
         contentPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -156,11 +157,15 @@ public class MainFrame extends javax.swing.JFrame {
         lblUsername.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lblUsername.setText("Username");
         UserInfoPnl.add(lblUsername);
-        lblUsername.setBounds(70, 20, 80, 20);
+        lblUsername.setBounds(10, 0, 80, 20);
 
         lblRole.setText("Role");
         UserInfoPnl.add(lblRole);
-        lblRole.setBounds(70, 40, 37, 16);
+        lblRole.setBounds(10, 20, 37, 16);
+
+        jButton1.setText("Log out");
+        UserInfoPnl.add(jButton1);
+        jButton1.setBounds(50, 40, 140, 23);
 
         sidebarPanel.add(UserInfoPnl, java.awt.BorderLayout.SOUTH);
 
@@ -239,6 +244,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JButton btnStockIssuance;
     private javax.swing.JButton btnSuppliers;
     private javax.swing.JPanel contentPanel;
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
     private javax.swing.JLabel jLabel1;
