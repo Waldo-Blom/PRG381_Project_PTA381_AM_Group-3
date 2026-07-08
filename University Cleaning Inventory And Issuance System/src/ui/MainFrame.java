@@ -69,6 +69,9 @@ public class MainFrame extends javax.swing.JFrame {
         contentPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMaximumSize(new java.awt.Dimension(1200, 700));
+        setMinimumSize(new java.awt.Dimension(1200, 700));
+        setPreferredSize(new java.awt.Dimension(1200, 700));
 
         sidebarPanel.setPreferredSize(new java.awt.Dimension(200, 700));
         sidebarPanel.setLayout(new java.awt.BorderLayout());
@@ -182,6 +185,7 @@ public class MainFrame extends javax.swing.JFrame {
     private void btnMaterialsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMaterialsActionPerformed
        CardLayout cl = (CardLayout) contentPanel.getLayout();
        cl.show(contentPanel, "Materials"); 
+       
     }//GEN-LAST:event_btnMaterialsActionPerformed
 
     private void btnCleanersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCleanersActionPerformed
