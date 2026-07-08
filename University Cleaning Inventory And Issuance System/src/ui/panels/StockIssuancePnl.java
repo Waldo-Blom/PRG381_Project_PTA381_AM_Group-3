@@ -51,7 +51,7 @@ public class StockIssuancePnl extends javax.swing.JPanel {
         jLabel1.setText("Stock Issuance");
         headerPnl.add(jLabel1);
 
-        jLabel2.setText("Overview of your clieaning supplies inventory");
+        jLabel2.setText("Check out the needed cleaning materials");
         headerPnl.add(jLabel2);
 
         add(headerPnl, java.awt.BorderLayout.NORTH);

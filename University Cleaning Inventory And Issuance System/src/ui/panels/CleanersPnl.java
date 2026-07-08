@@ -51,7 +51,7 @@ public class CleanersPnl extends javax.swing.JPanel {
         jLabel1.setText("Cleaners");
         headerPnl.add(jLabel1);
 
-        jLabel2.setText("Overview of your clieaning supplies inventory");
+        jLabel2.setText("Manage cleaning staff records");
         headerPnl.add(jLabel2);
 
         add(headerPnl, java.awt.BorderLayout.NORTH);
