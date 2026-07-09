@@ -1,5 +1,8 @@
 package ui.panels;
 
+import ui.MainFrame;
+import ui.popDiaglogs.AddCleanersDialog;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
@@ -307,7 +310,17 @@ public class CleanersPnl extends javax.swing.JPanel {
     }//GEN-LAST:event_jTextField1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+     // Make the AddMaterialsDialog pop up appear, dim the background
+    java.awt.Frame parentFrame = (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this);
+    MainFrame mainFrame = (MainFrame) parentFrame;
+    
+    mainFrame.showDimOverlay(true);   // dim the background BEFORE showing dialog
+    
+    AddCleanersDialog dialog = new AddCleanersDialog(parentFrame, true);
+    dialog.setLocationRelativeTo(parentFrame);
+    dialog.setVisible(true);           // this line BLOCKS here until dialog closes (since it's modal)
+    
+    mainFrame.showDimOverlay(false);  // runs AFTER dialog is closed/disposed
     }//GEN-LAST:event_jButton2ActionPerformed
 
 

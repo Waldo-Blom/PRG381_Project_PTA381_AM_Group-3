@@ -20,6 +20,23 @@ public class MainFrame extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainFrame.class.getName());
 
+ //This method is used to get a dim overly effect for the pop ups
+public void showDimOverlay(boolean show) {
+    if (show) {
+        javax.swing.JPanel glass = new javax.swing.JPanel() {
+            @Override
+            protected void paintComponent(java.awt.Graphics g) {
+                g.setColor(new java.awt.Color(0, 0, 0, 100)); // black, semi-transparent
+                g.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
+        glass.setOpaque(false);
+        setGlassPane(glass);
+        glass.setVisible(true);
+    } else {
+        getGlassPane().setVisible(false);
+    }
+}
     /**
      * Creates new form MainFrame
      */

@@ -1,4 +1,6 @@
 package ui.panels;
+import ui.popDiaglogs.AddMaterialDialog;
+import ui.MainFrame;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -268,7 +270,17 @@ public class MaterialsPnl extends javax.swing.JPanel {
     }//GEN-LAST:event_jTextField1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+   // Make the AddMaterialsDialog pop up appear, dim the background
+    java.awt.Frame parentFrame = (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this);
+    MainFrame mainFrame = (MainFrame) parentFrame;
+    
+    mainFrame.showDimOverlay(true);   // dim the background BEFORE showing dialog
+    
+    AddMaterialDialog dialog = new AddMaterialDialog(parentFrame, true);
+    dialog.setLocationRelativeTo(parentFrame);
+    dialog.setVisible(true);           // this line BLOCKS here until dialog closes (since it's modal)
+    
+    mainFrame.showDimOverlay(false);  // runs AFTER dialog is closed/disposed
     }//GEN-LAST:event_jButton2ActionPerformed
 
 
