@@ -78,8 +78,6 @@ public void showDimOverlay(boolean show) {
         btnCleaners = new javax.swing.JButton();
         btnStockIssuance = new javax.swing.JButton();
         btnReports = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
-        jButton8 = new javax.swing.JButton();
         UserInfoPnl = new javax.swing.JPanel();
         lblUsername = new javax.swing.JLabel();
         lblRole = new javax.swing.JLabel();
@@ -153,18 +151,6 @@ public void showDimOverlay(boolean show) {
         btnReports.setPreferredSize(new java.awt.Dimension(200, 40));
         btnReports.addActionListener(this::btnReportsActionPerformed);
         NavPnl.add(btnReports);
-
-        jButton7.setText("???");
-        jButton7.setMaximumSize(new java.awt.Dimension(200, 40));
-        jButton7.setMinimumSize(new java.awt.Dimension(200, 40));
-        jButton7.setPreferredSize(new java.awt.Dimension(200, 40));
-        NavPnl.add(jButton7);
-
-        jButton8.setText("???");
-        jButton8.setMaximumSize(new java.awt.Dimension(200, 40));
-        jButton8.setMinimumSize(new java.awt.Dimension(200, 40));
-        jButton8.setPreferredSize(new java.awt.Dimension(200, 40));
-        NavPnl.add(jButton8);
 
         sidebarPanel.add(NavPnl, java.awt.BorderLayout.CENTER);
 
@@ -262,8 +248,6 @@ public void showDimOverlay(boolean show) {
     private javax.swing.JButton btnSuppliers;
     private javax.swing.JPanel contentPanel;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel lblLogoName;
     private javax.swing.JLabel lblRole;
