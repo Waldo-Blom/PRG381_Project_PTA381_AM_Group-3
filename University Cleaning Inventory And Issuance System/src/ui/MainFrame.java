@@ -20,23 +20,37 @@ public class MainFrame extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainFrame.class.getName());
 
- //This method is used to get a dim overly effect for the pop ups
-public void showDimOverlay(boolean show) {
-    if (show) {
-        javax.swing.JPanel glass = new javax.swing.JPanel() {
-            @Override
-            protected void paintComponent(java.awt.Graphics g) {
-                g.setColor(new java.awt.Color(0, 0, 0, 100)); // black, semi-transparent
-                g.fillRect(0, 0, getWidth(), getHeight());
-            }
-        };
-        glass.setOpaque(false);
-        setGlassPane(glass);
-        glass.setVisible(true);
-    } else {
-        getGlassPane().setVisible(false);
+        //This method is used to get a dim overly effect for the pop ups
+       public void showDimOverlay(boolean show) {
+           if (show) {
+               javax.swing.JPanel glass = new javax.swing.JPanel() {
+                   @Override
+                   protected void paintComponent(java.awt.Graphics g) {
+                       g.setColor(new java.awt.Color(0, 0, 0, 100)); // black, semi-transparent
+                       g.fillRect(0, 0, getWidth(), getHeight());
+                   }
+               };
+               glass.setOpaque(false);
+               setGlassPane(glass);
+               glass.setVisible(true);
+           } else {
+               getGlassPane().setVisible(false);
+           }
+       }
+    
+    //This method is used to get the active highlighted effect of when a page is selected
+    private void highlightSelected(javax.swing.JButton selected) {
+        javax.swing.JButton[] all = {btnDashboard,btnMaterials,btnSuppliers,btnCleaners,btnStockIssuance,btnReports}; 
+        for (javax.swing.JButton b : all) {
+            b.setContentAreaFilled(false);
+            b.setForeground(java.awt.Color.decode("#4B5563"));
+            b.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 14));
+        }
+        selected.setContentAreaFilled(true);
+        selected.setBackground(java.awt.Color.decode("#E8EFFE"));
+        selected.setForeground(java.awt.Color.decode("#3B5BDB"));
+        selected.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
     }
-}
     /**
      * Creates new form MainFrame
      */
@@ -92,60 +106,99 @@ public void showDimOverlay(boolean show) {
         sidebarPanel.setPreferredSize(new java.awt.Dimension(200, 700));
         sidebarPanel.setLayout(new java.awt.BorderLayout());
 
+        TopLogoPnl.setBackground(new java.awt.Color(255, 255, 255));
         TopLogoPnl.setMaximumSize(new java.awt.Dimension(200, 80));
         TopLogoPnl.setMinimumSize(new java.awt.Dimension(200, 80));
         TopLogoPnl.setPreferredSize(new java.awt.Dimension(200, 80));
         TopLogoPnl.setLayout(null);
 
-        lblLogoName.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblLogoName.setFont(new java.awt.Font("Sitka Text", 1, 18)); // NOI18N
         lblLogoName.setText("Sparkling Clean");
         TopLogoPnl.add(lblLogoName);
-        lblLogoName.setBounds(60, 10, 110, 16);
+        lblLogoName.setBounds(20, 10, 150, 23);
 
+        jLabel1.setForeground(new java.awt.Color(107, 114, 128));
         jLabel1.setText("Inventory Manger of your dreams");
         TopLogoPnl.add(jLabel1);
         jLabel1.setBounds(10, 30, 190, 20);
 
         sidebarPanel.add(TopLogoPnl, java.awt.BorderLayout.NORTH);
 
+        NavPnl.setBackground(new java.awt.Color(255, 255, 255));
         NavPnl.setLayout(new javax.swing.BoxLayout(NavPnl, javax.swing.BoxLayout.Y_AXIS));
 
+        btnDashboard.setBackground(new java.awt.Color(59, 91, 219));
+        btnDashboard.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnDashboard.setForeground(new java.awt.Color(75, 85, 99));
         btnDashboard.setText("Dashboard");
+        btnDashboard.setBorderPainted(false);
+        btnDashboard.setContentAreaFilled(false);
+        btnDashboard.setFocusPainted(false);
         btnDashboard.setMaximumSize(new java.awt.Dimension(200, 40));
         btnDashboard.setMinimumSize(new java.awt.Dimension(200, 40));
         btnDashboard.setPreferredSize(new java.awt.Dimension(200, 40));
         btnDashboard.addActionListener(this::btnDashboardActionPerformed);
         NavPnl.add(btnDashboard);
 
+        btnMaterials.setBackground(new java.awt.Color(59, 91, 219));
+        btnMaterials.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnMaterials.setForeground(new java.awt.Color(75, 85, 99));
         btnMaterials.setText("Materials");
+        btnMaterials.setBorderPainted(false);
+        btnMaterials.setContentAreaFilled(false);
+        btnMaterials.setFocusPainted(false);
         btnMaterials.setMaximumSize(new java.awt.Dimension(200, 40));
         btnMaterials.setMinimumSize(new java.awt.Dimension(200, 40));
         btnMaterials.setPreferredSize(new java.awt.Dimension(200, 40));
         btnMaterials.addActionListener(this::btnMaterialsActionPerformed);
         NavPnl.add(btnMaterials);
 
+        btnSuppliers.setBackground(new java.awt.Color(59, 91, 219));
+        btnSuppliers.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnSuppliers.setForeground(new java.awt.Color(75, 85, 99));
         btnSuppliers.setText("Suppliers");
+        btnSuppliers.setBorderPainted(false);
+        btnSuppliers.setContentAreaFilled(false);
+        btnSuppliers.setFocusPainted(false);
         btnSuppliers.setMaximumSize(new java.awt.Dimension(200, 40));
         btnSuppliers.setMinimumSize(new java.awt.Dimension(200, 40));
         btnSuppliers.setPreferredSize(new java.awt.Dimension(200, 40));
         btnSuppliers.addActionListener(this::btnSuppliersActionPerformed);
         NavPnl.add(btnSuppliers);
 
+        btnCleaners.setBackground(new java.awt.Color(59, 91, 219));
+        btnCleaners.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnCleaners.setForeground(new java.awt.Color(75, 85, 99));
         btnCleaners.setText("Cleaners");
+        btnCleaners.setBorderPainted(false);
+        btnCleaners.setContentAreaFilled(false);
+        btnCleaners.setFocusPainted(false);
         btnCleaners.setMaximumSize(new java.awt.Dimension(200, 40));
         btnCleaners.setMinimumSize(new java.awt.Dimension(200, 40));
         btnCleaners.setPreferredSize(new java.awt.Dimension(200, 40));
         btnCleaners.addActionListener(this::btnCleanersActionPerformed);
         NavPnl.add(btnCleaners);
 
+        btnStockIssuance.setBackground(new java.awt.Color(59, 91, 219));
+        btnStockIssuance.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnStockIssuance.setForeground(new java.awt.Color(75, 85, 99));
         btnStockIssuance.setText("Stock Issuance");
+        btnStockIssuance.setBorderPainted(false);
+        btnStockIssuance.setContentAreaFilled(false);
+        btnStockIssuance.setFocusPainted(false);
         btnStockIssuance.setMaximumSize(new java.awt.Dimension(200, 40));
         btnStockIssuance.setMinimumSize(new java.awt.Dimension(200, 40));
         btnStockIssuance.setPreferredSize(new java.awt.Dimension(200, 40));
         btnStockIssuance.addActionListener(this::btnStockIssuanceActionPerformed);
         NavPnl.add(btnStockIssuance);
 
+        btnReports.setBackground(new java.awt.Color(59, 91, 219));
+        btnReports.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnReports.setForeground(new java.awt.Color(75, 85, 99));
         btnReports.setText("Reports");
+        btnReports.setBorderPainted(false);
+        btnReports.setContentAreaFilled(false);
+        btnReports.setFocusPainted(false);
         btnReports.setMaximumSize(new java.awt.Dimension(200, 40));
         btnReports.setMinimumSize(new java.awt.Dimension(200, 40));
         btnReports.setPreferredSize(new java.awt.Dimension(200, 40));
@@ -154,6 +207,7 @@ public void showDimOverlay(boolean show) {
 
         sidebarPanel.add(NavPnl, java.awt.BorderLayout.CENTER);
 
+        UserInfoPnl.setBackground(new java.awt.Color(255, 255, 255));
         UserInfoPnl.setPreferredSize(new java.awt.Dimension(70, 70));
         UserInfoPnl.setLayout(null);
 
@@ -162,10 +216,13 @@ public void showDimOverlay(boolean show) {
         UserInfoPnl.add(lblUsername);
         lblUsername.setBounds(10, 0, 80, 20);
 
+        lblRole.setForeground(new java.awt.Color(107, 114, 128));
         lblRole.setText("Role");
         UserInfoPnl.add(lblRole);
         lblRole.setBounds(10, 20, 37, 16);
 
+        jButton1.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
+        jButton1.setForeground(new java.awt.Color(107, 114, 128));
         jButton1.setText("Log out");
         UserInfoPnl.add(jButton1);
         jButton1.setBounds(50, 40, 140, 23);
@@ -174,6 +231,7 @@ public void showDimOverlay(boolean show) {
 
         getContentPane().add(sidebarPanel, java.awt.BorderLayout.LINE_START);
 
+        contentPanel.setBackground(new java.awt.Color(245, 246, 250));
         contentPanel.setLayout(new java.awt.CardLayout());
         getContentPane().add(contentPanel, java.awt.BorderLayout.CENTER);
 
@@ -183,32 +241,46 @@ public void showDimOverlay(boolean show) {
     private void btnSuppliersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuppliersActionPerformed
        CardLayout cl = (CardLayout) contentPanel.getLayout();
        cl.show(contentPanel, "Suppliers");   
+       
+        highlightSelected(btnSuppliers); // Make the button have a active effect
+       
+       
     }//GEN-LAST:event_btnSuppliersActionPerformed
 
     private void btnDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDashboardActionPerformed
        CardLayout cl = (CardLayout) contentPanel.getLayout();
-       cl.show(contentPanel, "Dashboard");    
+       cl.show(contentPanel, "Dashboard");  
+       
+       highlightSelected(btnDashboard); // Make the button have a active effect
     }//GEN-LAST:event_btnDashboardActionPerformed
 
     private void btnMaterialsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMaterialsActionPerformed
        CardLayout cl = (CardLayout) contentPanel.getLayout();
        cl.show(contentPanel, "Materials"); 
        
+      highlightSelected(btnMaterials); // Make the button have a active effect
+       
     }//GEN-LAST:event_btnMaterialsActionPerformed
 
     private void btnCleanersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCleanersActionPerformed
         CardLayout cl = (CardLayout) contentPanel.getLayout();
        cl.show(contentPanel, "Cleaners"); 
+       
+        highlightSelected(btnCleaners); // Make the button have a active effect
     }//GEN-LAST:event_btnCleanersActionPerformed
 
     private void btnStockIssuanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStockIssuanceActionPerformed
          CardLayout cl = (CardLayout) contentPanel.getLayout();
        cl.show(contentPanel, "StockIssuance"); 
+       
+        highlightSelected(btnStockIssuance); // Make the button have a active effect
     }//GEN-LAST:event_btnStockIssuanceActionPerformed
 
     private void btnReportsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReportsActionPerformed
         CardLayout cl = (CardLayout) contentPanel.getLayout();
        cl.show(contentPanel, "Reports"); 
+       
+        highlightSelected(btnReports); // Make the button have a active effect
     }//GEN-LAST:event_btnReportsActionPerformed
 
     /**

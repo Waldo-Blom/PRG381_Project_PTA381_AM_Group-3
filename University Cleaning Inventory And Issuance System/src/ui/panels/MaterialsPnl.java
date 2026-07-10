@@ -53,15 +53,18 @@ public class MaterialsPnl extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
 
+        setBackground(new java.awt.Color(245, 246, 250));
         setMaximumSize(new java.awt.Dimension(1000, 700));
         setMinimumSize(new java.awt.Dimension(1000, 700));
         setLayout(new java.awt.BorderLayout());
 
+        contentPnl.setBackground(new java.awt.Color(245, 246, 250));
         contentPnl.setMaximumSize(new java.awt.Dimension(1000, 70));
         contentPnl.setMinimumSize(new java.awt.Dimension(1000, 70));
         contentPnl.setPreferredSize(new java.awt.Dimension(1000, 70));
         contentPnl.setLayout(new javax.swing.BoxLayout(contentPnl, javax.swing.BoxLayout.Y_AXIS));
 
+        searchPnl.setBackground(new java.awt.Color(245, 246, 250));
         searchPnl.setMaximumSize(new java.awt.Dimension(1000, 70));
         searchPnl.setMinimumSize(new java.awt.Dimension(1000, 70));
         searchPnl.setPreferredSize(new java.awt.Dimension(1000, 70));
@@ -111,8 +114,10 @@ public class MaterialsPnl extends javax.swing.JPanel {
         summaryPnl.setPreferredSize(new java.awt.Dimension(1000, 90));
         summaryPnl.setLayout(new java.awt.GridLayout(1, 3, 1, 2));
 
+        jPanel1.setBackground(new java.awt.Color(245, 246, 250));
         jPanel1.setLayout(new java.awt.GridLayout(1, 3, 100, 0));
 
+        jPanel3.setBackground(new java.awt.Color(255, 255, 255));
         jPanel3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -146,6 +151,7 @@ public class MaterialsPnl extends javax.swing.JPanel {
 
         jPanel1.add(jPanel3);
 
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -180,6 +186,7 @@ public class MaterialsPnl extends javax.swing.JPanel {
 
         jPanel1.add(jPanel2);
 
+        jPanel4.setBackground(new java.awt.Color(255, 255, 255));
         jPanel4.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -217,6 +224,11 @@ public class MaterialsPnl extends javax.swing.JPanel {
 
         contentPnl.add(summaryPnl);
 
+        jPanel5.setBackground(new java.awt.Color(245, 246, 250));
+
+        jScrollPane1.setBackground(new java.awt.Color(245, 246, 250));
+
+        jTable1.setBackground(new java.awt.Color(245, 246, 250));
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null},
@@ -250,6 +262,7 @@ public class MaterialsPnl extends javax.swing.JPanel {
 
         add(contentPnl, java.awt.BorderLayout.CENTER);
 
+        headerPnl.setBackground(new java.awt.Color(245, 246, 250));
         headerPnl.setMaximumSize(new java.awt.Dimension(1000, 70));
         headerPnl.setMinimumSize(new java.awt.Dimension(1000, 70));
         headerPnl.setPreferredSize(new java.awt.Dimension(1000, 70));

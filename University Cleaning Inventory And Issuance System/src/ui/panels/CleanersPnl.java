@@ -58,15 +58,18 @@ public class CleanersPnl extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
 
+        setBackground(new java.awt.Color(245, 246, 250));
         setMaximumSize(new java.awt.Dimension(1000, 700));
         setMinimumSize(new java.awt.Dimension(1000, 700));
         setLayout(new java.awt.BorderLayout());
 
+        contentPnl.setBackground(new java.awt.Color(245, 246, 250));
         contentPnl.setMaximumSize(new java.awt.Dimension(1000, 70));
         contentPnl.setMinimumSize(new java.awt.Dimension(1000, 70));
         contentPnl.setPreferredSize(new java.awt.Dimension(1000, 70));
         contentPnl.setLayout(new javax.swing.BoxLayout(contentPnl, javax.swing.BoxLayout.Y_AXIS));
 
+        searchPnl.setBackground(new java.awt.Color(245, 246, 250));
         searchPnl.setMaximumSize(new java.awt.Dimension(1000, 70));
         searchPnl.setMinimumSize(new java.awt.Dimension(1000, 70));
 
@@ -74,10 +77,14 @@ public class CleanersPnl extends javax.swing.JPanel {
         jTextField1.setToolTipText("Search materials ...");
         jTextField1.addActionListener(this::jTextField1ActionPerformed);
 
+        jButton1.setBackground(new java.awt.Color(59, 91, 219));
+        jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Search");
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All Departments", "Item 2", "Item 3", "Item 4" }));
 
+        jButton2.setBackground(new java.awt.Color(59, 91, 219));
+        jButton2.setForeground(new java.awt.Color(255, 255, 255));
         jButton2.setText("Add new Cleaner");
         jButton2.addActionListener(this::jButton2ActionPerformed);
 
@@ -115,6 +122,7 @@ public class CleanersPnl extends javax.swing.JPanel {
 
         contentPnl.add(searchPnl);
 
+        summaryPnl.setBackground(new java.awt.Color(245, 246, 250));
         summaryPnl.setMaximumSize(new java.awt.Dimension(1000, 100));
         summaryPnl.setMinimumSize(new java.awt.Dimension(1000, 100));
         summaryPnl.setPreferredSize(new java.awt.Dimension(1000, 100));
@@ -124,6 +132,7 @@ public class CleanersPnl extends javax.swing.JPanel {
         statsPnl.setPreferredSize(new java.awt.Dimension(1000, 140));
         statsPnl.setLayout(new java.awt.GridLayout(1, 4, 3, 0));
 
+        invValuePnl.setBackground(new java.awt.Color(255, 255, 255));
         invValuePnl.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -155,6 +164,7 @@ public class CleanersPnl extends javax.swing.JPanel {
 
         statsPnl.add(invValuePnl);
 
+        totalMatsPnl.setBackground(new java.awt.Color(255, 255, 255));
         totalMatsPnl.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -188,6 +198,7 @@ public class CleanersPnl extends javax.swing.JPanel {
 
         statsPnl.add(totalMatsPnl);
 
+        lowStockItemsPnl.setBackground(new java.awt.Color(255, 255, 255));
         lowStockItemsPnl.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -221,6 +232,7 @@ public class CleanersPnl extends javax.swing.JPanel {
 
         statsPnl.add(lowStockItemsPnl);
 
+        activeCleanersPnl.setBackground(new java.awt.Color(255, 255, 255));
         activeCleanersPnl.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -258,6 +270,9 @@ public class CleanersPnl extends javax.swing.JPanel {
 
         contentPnl.add(summaryPnl);
 
+        jScrollPane1.setBackground(new java.awt.Color(245, 246, 250));
+
+        jTable1.setBackground(new java.awt.Color(245, 246, 250));
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null, null},
@@ -290,6 +305,7 @@ public class CleanersPnl extends javax.swing.JPanel {
 
         add(contentPnl, java.awt.BorderLayout.CENTER);
 
+        headerPnl.setBackground(new java.awt.Color(245, 246, 250));
         headerPnl.setMaximumSize(new java.awt.Dimension(1000, 70));
         headerPnl.setMinimumSize(new java.awt.Dimension(1000, 70));
         headerPnl.setPreferredSize(new java.awt.Dimension(1000, 70));

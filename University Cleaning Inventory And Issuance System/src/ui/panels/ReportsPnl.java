@@ -95,15 +95,20 @@ public class ReportsPnl extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
 
+        setBackground(new java.awt.Color(245, 246, 250));
         setMaximumSize(new java.awt.Dimension(1000, 700));
         setMinimumSize(new java.awt.Dimension(1000, 700));
         setLayout(new java.awt.BorderLayout());
 
+        contentPnl.setBackground(new java.awt.Color(245, 246, 250));
         contentPnl.setMaximumSize(new java.awt.Dimension(1000, 70));
         contentPnl.setMinimumSize(new java.awt.Dimension(1000, 70));
         contentPnl.setPreferredSize(new java.awt.Dimension(1000, 70));
         contentPnl.setLayout(new javax.swing.BoxLayout(contentPnl, javax.swing.BoxLayout.LINE_AXIS));
 
+        jTabbedPane1.setBackground(new java.awt.Color(245, 246, 250));
+
+        inventoryReportPnl.setBackground(new java.awt.Color(245, 246, 250));
         inventoryReportPnl.setLayout(new javax.swing.BoxLayout(inventoryReportPnl, javax.swing.BoxLayout.Y_AXIS));
 
         statsPnl.setMaximumSize(new java.awt.Dimension(1000, 100));
@@ -111,6 +116,7 @@ public class ReportsPnl extends javax.swing.JPanel {
         statsPnl.setPreferredSize(new java.awt.Dimension(1000, 100));
         statsPnl.setLayout(new java.awt.GridLayout(1, 4, 3, 0));
 
+        invValuePnl.setBackground(new java.awt.Color(255, 255, 255));
         invValuePnl.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -142,6 +148,7 @@ public class ReportsPnl extends javax.swing.JPanel {
 
         statsPnl.add(invValuePnl);
 
+        totalMatsPnl.setBackground(new java.awt.Color(255, 255, 255));
         totalMatsPnl.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -175,6 +182,7 @@ public class ReportsPnl extends javax.swing.JPanel {
 
         statsPnl.add(totalMatsPnl);
 
+        lowStockItemsPnl.setBackground(new java.awt.Color(255, 255, 255));
         lowStockItemsPnl.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -208,6 +216,7 @@ public class ReportsPnl extends javax.swing.JPanel {
 
         statsPnl.add(lowStockItemsPnl);
 
+        activeCleanersPnl.setBackground(new java.awt.Color(255, 255, 255));
         activeCleanersPnl.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -243,6 +252,7 @@ public class ReportsPnl extends javax.swing.JPanel {
 
         inventoryReportPnl.add(statsPnl);
 
+        searchPnl.setBackground(new java.awt.Color(245, 246, 250));
         searchPnl.setMaximumSize(new java.awt.Dimension(1000, 70));
         searchPnl.setMinimumSize(new java.awt.Dimension(1000, 70));
 
@@ -285,6 +295,8 @@ public class ReportsPnl extends javax.swing.JPanel {
 
         inventoryReportPnl.add(searchPnl);
 
+        jScrollPane1.setBackground(new java.awt.Color(245, 246, 250));
+
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null},
@@ -302,8 +314,10 @@ public class ReportsPnl extends javax.swing.JPanel {
 
         jTabbedPane1.addTab("Inventory Report", inventoryReportPnl);
 
+        lowStockReportPnl.setBackground(new java.awt.Color(245, 246, 250));
         lowStockReportPnl.setLayout(new javax.swing.BoxLayout(lowStockReportPnl, javax.swing.BoxLayout.Y_AXIS));
 
+        searchPnl3.setBackground(new java.awt.Color(255, 255, 255));
         searchPnl3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         searchPnl3.setMaximumSize(new java.awt.Dimension(1000, 100));
         searchPnl3.setMinimumSize(new java.awt.Dimension(1000, 100));
@@ -336,6 +350,8 @@ public class ReportsPnl extends javax.swing.JPanel {
 
         lowStockReportPnl.add(searchPnl3);
 
+        jScrollPane2.setBackground(new java.awt.Color(245, 246, 250));
+
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null},
@@ -353,8 +369,10 @@ public class ReportsPnl extends javax.swing.JPanel {
 
         jTabbedPane1.addTab("Low Stock Report", lowStockReportPnl);
 
+        issuanceHistoryPnl.setBackground(new java.awt.Color(245, 246, 250));
         issuanceHistoryPnl.setLayout(new javax.swing.BoxLayout(issuanceHistoryPnl, javax.swing.BoxLayout.Y_AXIS));
 
+        searchPnl6.setBackground(new java.awt.Color(245, 246, 250));
         searchPnl6.setMaximumSize(new java.awt.Dimension(1000, 70));
         searchPnl6.setMinimumSize(new java.awt.Dimension(1000, 70));
 
@@ -407,6 +425,7 @@ public class ReportsPnl extends javax.swing.JPanel {
 
         issuanceHistoryPnl.add(searchPnl6);
 
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setMaximumSize(new java.awt.Dimension(1000, 80));
         jPanel1.setMinimumSize(new java.awt.Dimension(1000, 80));
         jPanel1.setPreferredSize(new java.awt.Dimension(1000, 80));
@@ -456,6 +475,8 @@ public class ReportsPnl extends javax.swing.JPanel {
 
         issuanceHistoryPnl.add(jPanel1);
 
+        jScrollPane3.setBackground(new java.awt.Color(245, 246, 250));
+
         jTable3.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null},
@@ -473,8 +494,10 @@ public class ReportsPnl extends javax.swing.JPanel {
 
         jTabbedPane1.addTab("Issuance History", issuanceHistoryPnl);
 
+        materialUsagePnl.setBackground(new java.awt.Color(245, 246, 250));
         materialUsagePnl.setLayout(new javax.swing.BoxLayout(materialUsagePnl, javax.swing.BoxLayout.Y_AXIS));
 
+        searchPnl7.setBackground(new java.awt.Color(245, 246, 250));
         searchPnl7.setMaximumSize(new java.awt.Dimension(1000, 70));
         searchPnl7.setMinimumSize(new java.awt.Dimension(1000, 70));
 
@@ -532,6 +555,7 @@ public class ReportsPnl extends javax.swing.JPanel {
         statsPnl1.setPreferredSize(new java.awt.Dimension(1000, 100));
         statsPnl1.setLayout(new java.awt.GridLayout(1, 4, 3, 0));
 
+        invValuePnl1.setBackground(new java.awt.Color(255, 255, 255));
         invValuePnl1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel21.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -563,6 +587,7 @@ public class ReportsPnl extends javax.swing.JPanel {
 
         statsPnl1.add(invValuePnl1);
 
+        totalMatsPnl1.setBackground(new java.awt.Color(255, 255, 255));
         totalMatsPnl1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel23.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -596,6 +621,7 @@ public class ReportsPnl extends javax.swing.JPanel {
 
         statsPnl1.add(totalMatsPnl1);
 
+        lowStockItemsPnl1.setBackground(new java.awt.Color(255, 255, 255));
         lowStockItemsPnl1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel25.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -631,6 +657,9 @@ public class ReportsPnl extends javax.swing.JPanel {
 
         materialUsagePnl.add(statsPnl1);
 
+        jScrollPane4.setBackground(new java.awt.Color(245, 246, 250));
+
+        jTable4.setBackground(new java.awt.Color(245, 246, 250));
         jTable4.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null},
@@ -652,6 +681,7 @@ public class ReportsPnl extends javax.swing.JPanel {
 
         add(contentPnl, java.awt.BorderLayout.CENTER);
 
+        headerPnl.setBackground(new java.awt.Color(245, 246, 250));
         headerPnl.setMaximumSize(new java.awt.Dimension(1000, 70));
         headerPnl.setMinimumSize(new java.awt.Dimension(1000, 70));
         headerPnl.setPreferredSize(new java.awt.Dimension(1000, 70));
@@ -728,20 +758,12 @@ public class ReportsPnl extends javax.swing.JPanel {
     private javax.swing.JTable jTable3;
     private javax.swing.JTable jTable4;
     private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
     private javax.swing.JPanel lowStockItemsPnl;
     private javax.swing.JPanel lowStockItemsPnl1;
     private javax.swing.JPanel lowStockReportPnl;
     private javax.swing.JPanel materialUsagePnl;
     private javax.swing.JPanel searchPnl;
-    private javax.swing.JPanel searchPnl1;
-    private javax.swing.JPanel searchPnl2;
     private javax.swing.JPanel searchPnl3;
-    private javax.swing.JPanel searchPnl4;
-    private javax.swing.JPanel searchPnl5;
     private javax.swing.JPanel searchPnl6;
     private javax.swing.JPanel searchPnl7;
     private javax.swing.JPanel statsPnl;
