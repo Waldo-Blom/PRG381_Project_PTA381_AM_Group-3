@@ -106,18 +106,19 @@ public class MainFrame extends javax.swing.JFrame {
         sidebarPanel.setPreferredSize(new java.awt.Dimension(200, 700));
         sidebarPanel.setLayout(new java.awt.BorderLayout());
 
-        TopLogoPnl.setBackground(new java.awt.Color(255, 255, 255));
+        TopLogoPnl.setBackground(new java.awt.Color(59, 91, 219));
         TopLogoPnl.setMaximumSize(new java.awt.Dimension(200, 80));
         TopLogoPnl.setMinimumSize(new java.awt.Dimension(200, 80));
         TopLogoPnl.setPreferredSize(new java.awt.Dimension(200, 80));
         TopLogoPnl.setLayout(null);
 
         lblLogoName.setFont(new java.awt.Font("Sitka Text", 1, 18)); // NOI18N
+        lblLogoName.setForeground(new java.awt.Color(255, 255, 255));
         lblLogoName.setText("Sparkling Clean");
         TopLogoPnl.add(lblLogoName);
         lblLogoName.setBounds(20, 10, 150, 23);
 
-        jLabel1.setForeground(new java.awt.Color(107, 114, 128));
+        jLabel1.setForeground(new java.awt.Color(204, 204, 204));
         jLabel1.setText("Inventory Manger of your dreams");
         TopLogoPnl.add(jLabel1);
         jLabel1.setBounds(10, 30, 190, 20);
@@ -207,16 +208,17 @@ public class MainFrame extends javax.swing.JFrame {
 
         sidebarPanel.add(NavPnl, java.awt.BorderLayout.CENTER);
 
-        UserInfoPnl.setBackground(new java.awt.Color(255, 255, 255));
+        UserInfoPnl.setBackground(new java.awt.Color(59, 91, 219));
         UserInfoPnl.setPreferredSize(new java.awt.Dimension(70, 70));
         UserInfoPnl.setLayout(null);
 
         lblUsername.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblUsername.setForeground(new java.awt.Color(255, 255, 255));
         lblUsername.setText("Username");
         UserInfoPnl.add(lblUsername);
         lblUsername.setBounds(10, 0, 80, 20);
 
-        lblRole.setForeground(new java.awt.Color(107, 114, 128));
+        lblRole.setForeground(new java.awt.Color(204, 204, 204));
         lblRole.setText("Role");
         UserInfoPnl.add(lblRole);
         lblRole.setBounds(10, 20, 37, 16);
@@ -225,13 +227,14 @@ public class MainFrame extends javax.swing.JFrame {
         jButton1.setForeground(new java.awt.Color(107, 114, 128));
         jButton1.setText("Log out");
         UserInfoPnl.add(jButton1);
-        jButton1.setBounds(50, 40, 140, 23);
+        jButton1.setBounds(80, 40, 110, 23);
 
         sidebarPanel.add(UserInfoPnl, java.awt.BorderLayout.SOUTH);
 
         getContentPane().add(sidebarPanel, java.awt.BorderLayout.LINE_START);
 
         contentPanel.setBackground(new java.awt.Color(245, 246, 250));
+        contentPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 15, 0, 0));
         contentPanel.setLayout(new java.awt.CardLayout());
         getContentPane().add(contentPanel, java.awt.BorderLayout.CENTER);
 

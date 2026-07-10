@@ -19,6 +19,8 @@ public class SuppliersPnl extends javax.swing.JPanel {
      */
     public SuppliersPnl() {
         initComponents();
+        
+        utils.uiUtilities.applyTableStyleProperties(jTable1, jScrollPane1);
     }
 
     /**

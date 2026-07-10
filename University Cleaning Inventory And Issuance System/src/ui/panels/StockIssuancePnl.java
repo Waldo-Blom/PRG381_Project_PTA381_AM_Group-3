@@ -19,6 +19,8 @@ public class StockIssuancePnl extends javax.swing.JPanel {
      */
     public StockIssuancePnl() {
         initComponents();
+        
+        utils.uiUtilities.applyTableStyleProperties(jTable1, jScrollPane1);
     }
 
     /**

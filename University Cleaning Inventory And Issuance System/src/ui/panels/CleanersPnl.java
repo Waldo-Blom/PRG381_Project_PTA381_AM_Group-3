@@ -19,6 +19,8 @@ public class CleanersPnl extends javax.swing.JPanel {
      */
     public CleanersPnl() {
         initComponents();
+        
+        utils.uiUtilities.applyTableStyleProperties(jTable1, jScrollPane1);
     }
 
     /**
@@ -284,6 +286,7 @@ public class CleanersPnl extends javax.swing.JPanel {
                 "Cleaner", "Email", "Phone number", "Department", "Issuances", "Hire Date", "Status", "Edit", "Delete"
             }
         ));
+        jTable1.setRowHeight(45);
         jScrollPane1.setViewportView(jTable1);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);

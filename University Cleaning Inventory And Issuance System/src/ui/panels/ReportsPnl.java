@@ -16,6 +16,13 @@ public class ReportsPnl extends javax.swing.JPanel {
      */
     public ReportsPnl() {
         initComponents();
+        
+        utils.uiUtilities.applyTableStyleProperties(jTable1, jScrollPane1);
+        utils.uiUtilities.applyTableStyleProperties(jTable2, jScrollPane2);
+        utils.uiUtilities.applyTableStyleProperties(jTable3, jScrollPane3);
+        utils.uiUtilities.applyTableStyleProperties(jTable4, jScrollPane4);
+       
+       
     }
 
     /**

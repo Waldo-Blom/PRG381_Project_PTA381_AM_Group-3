@@ -18,6 +18,8 @@ public class MaterialsPnl extends javax.swing.JPanel {
      */
     public MaterialsPnl() {
         initComponents();
+        
+        utils.uiUtilities.applyTableStyleProperties(jTable1, jScrollPane1);
     }
 
     /**
