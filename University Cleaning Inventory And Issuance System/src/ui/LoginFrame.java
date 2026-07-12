@@ -182,7 +182,7 @@ public class LoginFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        String email = jTextField1.getText().trim();
+        String email = jTextField1.getText();
         String password = new String(jPasswordField1.getPassword());
         loginView.handleSignIn(this, email, password);
     }//GEN-LAST:event_jButton1ActionPerformed
