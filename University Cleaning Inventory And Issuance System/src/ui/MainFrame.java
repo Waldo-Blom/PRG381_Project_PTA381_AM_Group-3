@@ -16,27 +16,31 @@ import ui.panels.CleanersPnl;
 import ui.panels.ReportsPnl;
 import ui.panels.StockIssuancePnl;
 import ui.panels.SuppliersPnl;
+
+import utils.CurrentUser;
+import model.User;
+
 public class MainFrame extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainFrame.class.getName());
 
-        //This method is used to get a dim overly effect for the pop ups
-       public void showDimOverlay(boolean show) {
-           if (show) {
-               javax.swing.JPanel glass = new javax.swing.JPanel() {
-                   @Override
-                   protected void paintComponent(java.awt.Graphics g) {
-                       g.setColor(new java.awt.Color(0, 0, 0, 100)); // black, semi-transparent
-                       g.fillRect(0, 0, getWidth(), getHeight());
-                   }
-               };
-               glass.setOpaque(false);
-               setGlassPane(glass);
-               glass.setVisible(true);
-           } else {
-               getGlassPane().setVisible(false);
-           }
+    //This method is used to get a dim overly effect for the pop ups
+    public void showDimOverlay(boolean show) {
+       if (show) {
+           javax.swing.JPanel glass = new javax.swing.JPanel() {
+               @Override
+               protected void paintComponent(java.awt.Graphics g) {
+                   g.setColor(new java.awt.Color(0, 0, 0, 100)); // black, semi-transparent
+                   g.fillRect(0, 0, getWidth(), getHeight());
+               }
+           };
+           glass.setOpaque(false);
+           setGlassPane(glass);
+           glass.setVisible(true);
+       } else {
+           getGlassPane().setVisible(false);
        }
+    }
     
     //This method is used to get the active highlighted effect of when a page is selected
     private void highlightSelected(javax.swing.JButton selected) {
@@ -62,15 +66,51 @@ public class MainFrame extends javax.swing.JFrame {
         setLocationRelativeTo(null);  // centers it on screen
         
         //Add all the created conent panel sections
-        
+        contentPanel.add(new javax.swing.JPanel(), "Blank"); // A blank place holder will show first. As not all the users have access to all the same pages.
         contentPanel.add(new CleanersPnl(), "Cleaners");
         contentPanel.add(new DashboardPnl(), "Dashboard");
         contentPanel.add(new MaterialsPnl(), "Materials");
         contentPanel.add(new ReportsPnl(), "Reports");
         contentPanel.add(new StockIssuancePnl(), "StockIssuance");
         contentPanel.add(new SuppliersPnl(), "Suppliers");
+        
+        // Username and Role lables info retrieved from current logged in user info
+        User currentUser = CurrentUser.get();
+        if (currentUser != null) {
+            lblUsername.setText(currentUser.getUsername());
+            lblRole.setText(currentUser.getRole());
+        }
+        
+        // Based on the logged in user Role some navigation buttons will not appear
+        applyRoleBasedNavigation();
+        
+         CardLayout cl = (CardLayout) contentPanel.getLayout();
+         cl.show(contentPanel, "Blank"); // shows nothing until a sidebar button is clicked
  
     }
+    
+    /**
+    * Hides sidebar navigation buttons the current user's role
+    * has no access to at all, based on the access matrix.
+    */
+   private void applyRoleBasedNavigation() {
+       if (CurrentUser.isCleaner()) {
+           // Cleaner only has access to MaterialsPnl and StockIssuancePnl, so the rest of the options are disabled.
+           btnSuppliers.setVisible(false);
+           btnCleaners.setVisible(false);
+           btnReports.setVisible(false);
+           btnDashboard.setVisible(false);
+           
+           btnSuppliers.setEnabled(false);
+           btnCleaners.setEnabled(false);
+           btnReports.setEnabled(false);
+           btnDashboard.setEnabled(false);
+       }
+       
+       // Both Owner and Storekeeper has access to page but it changes based on sepsific CRUD operations and this is changed on each page
+       // See each spererate PNL for this info
+       
+   }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -216,12 +256,12 @@ public class MainFrame extends javax.swing.JFrame {
         lblUsername.setForeground(new java.awt.Color(255, 255, 255));
         lblUsername.setText("Username");
         UserInfoPnl.add(lblUsername);
-        lblUsername.setBounds(10, 0, 80, 20);
+        lblUsername.setBounds(10, 0, 180, 20);
 
         lblRole.setForeground(new java.awt.Color(204, 204, 204));
         lblRole.setText("Role");
         UserInfoPnl.add(lblRole);
-        lblRole.setBounds(10, 20, 37, 16);
+        lblRole.setBounds(10, 20, 170, 16);
 
         jButton1.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
         jButton1.setForeground(new java.awt.Color(107, 114, 128));

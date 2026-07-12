@@ -19,7 +19,7 @@ public class AuthController {
     String username = "admin";
     String email = "admin@sparklingclean.com";
     String password = "admin";
-    String role = "Owner";
+    String role = "Storekeeper";
 
     public User login(String emailEntred, String passwordEntered) {
         if (emailEntred.equalsIgnoreCase(email) && passwordEntered.equals(password)) {

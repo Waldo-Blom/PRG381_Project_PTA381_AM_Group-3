@@ -2,6 +2,8 @@ package ui.panels;
 import ui.popDiaglogs.AddMaterialDialog;
 import ui.MainFrame;
 
+import utils.CurrentUser;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
@@ -20,6 +22,28 @@ public class MaterialsPnl extends javax.swing.JPanel {
         initComponents();
         
         utils.uiUtilities.applyTableStyleProperties(jTable1, jScrollPane1);
+        applyRoleRestrictions();
+        
+    }
+    
+    private void applyRoleRestrictions() {
+        // Only Storekeeper can Create/Update/Delete Materials
+        // Owner can only view
+        boolean canEdit = CurrentUser.isStorekeeper();
+        
+        // Only storekeeper will see and be able to add Materials
+        btnAdd.setEnabled(canEdit);
+        btnAdd.setVisible(canEdit);
+        
+        //The colums for edit and delete are hidden for everyone except the storekeeper
+        if (!canEdit) {
+        // Remove Edit and Delete columns entirely for roles that can't use them
+        javax.swing.table.TableColumnModel columnModel = jTable1.getColumnModel();
+        
+        columnModel.removeColumn(jTable1.getColumn("Edit"));
+        columnModel.removeColumn(jTable1.getColumn("Delete"));
+         }
+        
     }
 
     /**
@@ -36,7 +60,7 @@ public class MaterialsPnl extends javax.swing.JPanel {
         jTextField1 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jComboBox1 = new javax.swing.JComboBox<>();
-        jButton2 = new javax.swing.JButton();
+        btnAdd = new javax.swing.JButton();
         summaryPnl = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
@@ -79,8 +103,8 @@ public class MaterialsPnl extends javax.swing.JPanel {
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All Catergories", "Item 2", "Item 3", "Item 4" }));
 
-        jButton2.setText("Add new Material");
-        jButton2.addActionListener(this::jButton2ActionPerformed);
+        btnAdd.setText("Add new Material");
+        btnAdd.addActionListener(this::btnAddActionPerformed);
 
         javax.swing.GroupLayout searchPnlLayout = new javax.swing.GroupLayout(searchPnl);
         searchPnl.setLayout(searchPnlLayout);
@@ -94,7 +118,7 @@ public class MaterialsPnl extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(26, Short.MAX_VALUE))
         );
         searchPnlLayout.setVerticalGroup(
@@ -105,7 +129,7 @@ public class MaterialsPnl extends javax.swing.JPanel {
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(9, Short.MAX_VALUE))
         );
 
@@ -284,7 +308,7 @@ public class MaterialsPnl extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
    // Make the AddMaterialsDialog pop up appear, dim the background
     java.awt.Frame parentFrame = (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this);
     MainFrame mainFrame = (MainFrame) parentFrame;
@@ -296,14 +320,14 @@ public class MaterialsPnl extends javax.swing.JPanel {
     dialog.setVisible(true);           // this line BLOCKS here until dialog closes (since it's modal)
     
     mainFrame.showDimOverlay(false);  // runs AFTER dialog is closed/disposed
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_btnAddActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAdd;
     private javax.swing.JPanel contentPnl;
     private javax.swing.JPanel headerPnl;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

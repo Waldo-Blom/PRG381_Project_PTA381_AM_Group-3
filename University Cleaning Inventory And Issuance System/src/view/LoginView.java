@@ -5,6 +5,7 @@
 package view;
 
 import controller.AuthController;
+import utils.CurrentUser;
 import model.User;
 import javax.swing.JOptionPane;
 import ui.LoginFrame;
@@ -43,7 +44,9 @@ public class LoginView {
             return;
         }
 
-        //To do: Show and hide the needed pages based on the user role detected
+        CurrentUser.set(user);
+        JOptionPane.showMessageDialog(frame, "Welcome, " + user.getFullName() + "!",
+                "Success", JOptionPane.INFORMATION_MESSAGE);
 
         frame.dispose();
         new MainFrame().setVisible(true);
