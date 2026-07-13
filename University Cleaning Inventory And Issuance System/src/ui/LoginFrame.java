@@ -73,7 +73,6 @@ public class LoginFrame extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel2.setText("Email");
 
-        jTextField1.setText("admin@sparklingclean.com");
         jTextField1.setToolTipText("username");
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
