@@ -3,6 +3,8 @@ package ui.panels;
 import ui.MainFrame;
 import ui.popDiaglogs.AddCleanersDialog;
 
+import utils.CurrentUser;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
@@ -19,6 +21,29 @@ public class CleanersPnl extends javax.swing.JPanel {
      */
     public CleanersPnl() {
         initComponents();
+        
+        utils.uiUtilities.applyTableStyleProperties(jTable1, jScrollPane1);
+        applyRoleRestrictions();
+    }
+    
+       private void applyRoleRestrictions() {
+        // Only Storekeeper can Create/Update/Delete Cleaners
+        // The Owner can only view
+        boolean canEdit = CurrentUser.isStorekeeper();
+        
+        // Only storekeeper will see and be able to add Materials
+        btnAddCleaner.setEnabled(canEdit);
+        btnAddCleaner.setVisible(canEdit);
+        
+        //The colums for edit and delete are hidden for everyone except the storekeeper
+        if (!canEdit) {
+        // Remove Edit and Delete columns entirely for roles that can't use them
+        javax.swing.table.TableColumnModel columnModel = jTable1.getColumnModel();
+        
+        columnModel.removeColumn(jTable1.getColumn("Edit"));
+        columnModel.removeColumn(jTable1.getColumn("Delete"));
+         }
+        
     }
 
     /**
@@ -35,7 +60,7 @@ public class CleanersPnl extends javax.swing.JPanel {
         jTextField1 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jComboBox1 = new javax.swing.JComboBox<>();
-        jButton2 = new javax.swing.JButton();
+        btnAddCleaner = new javax.swing.JButton();
         jComboBox2 = new javax.swing.JComboBox<>();
         summaryPnl = new javax.swing.JPanel();
         statsPnl = new javax.swing.JPanel();
@@ -58,15 +83,18 @@ public class CleanersPnl extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
 
+        setBackground(new java.awt.Color(245, 246, 250));
         setMaximumSize(new java.awt.Dimension(1000, 700));
         setMinimumSize(new java.awt.Dimension(1000, 700));
         setLayout(new java.awt.BorderLayout());
 
+        contentPnl.setBackground(new java.awt.Color(245, 246, 250));
         contentPnl.setMaximumSize(new java.awt.Dimension(1000, 70));
         contentPnl.setMinimumSize(new java.awt.Dimension(1000, 70));
         contentPnl.setPreferredSize(new java.awt.Dimension(1000, 70));
         contentPnl.setLayout(new javax.swing.BoxLayout(contentPnl, javax.swing.BoxLayout.Y_AXIS));
 
+        searchPnl.setBackground(new java.awt.Color(245, 246, 250));
         searchPnl.setMaximumSize(new java.awt.Dimension(1000, 70));
         searchPnl.setMinimumSize(new java.awt.Dimension(1000, 70));
 
@@ -74,12 +102,16 @@ public class CleanersPnl extends javax.swing.JPanel {
         jTextField1.setToolTipText("Search materials ...");
         jTextField1.addActionListener(this::jTextField1ActionPerformed);
 
+        jButton1.setBackground(new java.awt.Color(59, 91, 219));
+        jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Search");
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All Departments", "Item 2", "Item 3", "Item 4" }));
 
-        jButton2.setText("Add new Cleaner");
-        jButton2.addActionListener(this::jButton2ActionPerformed);
+        btnAddCleaner.setBackground(new java.awt.Color(59, 91, 219));
+        btnAddCleaner.setForeground(new java.awt.Color(255, 255, 255));
+        btnAddCleaner.setText("Add new Cleaner");
+        btnAddCleaner.addActionListener(this::btnAddCleanerActionPerformed);
 
         jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All Status", "Item 2", "Item 3", "Item 4" }));
 
@@ -97,7 +129,7 @@ public class CleanersPnl extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnAddCleaner, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(36, Short.MAX_VALUE))
         );
         searchPnlLayout.setVerticalGroup(
@@ -107,7 +139,7 @@ public class CleanersPnl extends javax.swing.JPanel {
                 .addGroup(searchPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAddCleaner, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(9, Short.MAX_VALUE))
@@ -115,6 +147,7 @@ public class CleanersPnl extends javax.swing.JPanel {
 
         contentPnl.add(searchPnl);
 
+        summaryPnl.setBackground(new java.awt.Color(245, 246, 250));
         summaryPnl.setMaximumSize(new java.awt.Dimension(1000, 100));
         summaryPnl.setMinimumSize(new java.awt.Dimension(1000, 100));
         summaryPnl.setPreferredSize(new java.awt.Dimension(1000, 100));
@@ -124,6 +157,7 @@ public class CleanersPnl extends javax.swing.JPanel {
         statsPnl.setPreferredSize(new java.awt.Dimension(1000, 140));
         statsPnl.setLayout(new java.awt.GridLayout(1, 4, 3, 0));
 
+        invValuePnl.setBackground(new java.awt.Color(255, 255, 255));
         invValuePnl.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -155,6 +189,7 @@ public class CleanersPnl extends javax.swing.JPanel {
 
         statsPnl.add(invValuePnl);
 
+        totalMatsPnl.setBackground(new java.awt.Color(255, 255, 255));
         totalMatsPnl.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -188,6 +223,7 @@ public class CleanersPnl extends javax.swing.JPanel {
 
         statsPnl.add(totalMatsPnl);
 
+        lowStockItemsPnl.setBackground(new java.awt.Color(255, 255, 255));
         lowStockItemsPnl.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -221,6 +257,7 @@ public class CleanersPnl extends javax.swing.JPanel {
 
         statsPnl.add(lowStockItemsPnl);
 
+        activeCleanersPnl.setBackground(new java.awt.Color(255, 255, 255));
         activeCleanersPnl.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -258,6 +295,9 @@ public class CleanersPnl extends javax.swing.JPanel {
 
         contentPnl.add(summaryPnl);
 
+        jScrollPane1.setBackground(new java.awt.Color(245, 246, 250));
+
+        jTable1.setBackground(new java.awt.Color(245, 246, 250));
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null, null},
@@ -269,6 +309,7 @@ public class CleanersPnl extends javax.swing.JPanel {
                 "Cleaner", "Email", "Phone number", "Department", "Issuances", "Hire Date", "Status", "Edit", "Delete"
             }
         ));
+        jTable1.setRowHeight(45);
         jScrollPane1.setViewportView(jTable1);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -290,6 +331,7 @@ public class CleanersPnl extends javax.swing.JPanel {
 
         add(contentPnl, java.awt.BorderLayout.CENTER);
 
+        headerPnl.setBackground(new java.awt.Color(245, 246, 250));
         headerPnl.setMaximumSize(new java.awt.Dimension(1000, 70));
         headerPnl.setMinimumSize(new java.awt.Dimension(1000, 70));
         headerPnl.setPreferredSize(new java.awt.Dimension(1000, 70));
@@ -309,7 +351,7 @@ public class CleanersPnl extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btnAddCleanerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddCleanerActionPerformed
      // Make the AddMaterialsDialog pop up appear, dim the background
     java.awt.Frame parentFrame = (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this);
     MainFrame mainFrame = (MainFrame) parentFrame;
@@ -321,16 +363,16 @@ public class CleanersPnl extends javax.swing.JPanel {
     dialog.setVisible(true);           // this line BLOCKS here until dialog closes (since it's modal)
     
     mainFrame.showDimOverlay(false);  // runs AFTER dialog is closed/disposed
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_btnAddCleanerActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel activeCleanersPnl;
+    private javax.swing.JButton btnAddCleaner;
     private javax.swing.JPanel contentPnl;
     private javax.swing.JPanel headerPnl;
     private javax.swing.JPanel invValuePnl;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;

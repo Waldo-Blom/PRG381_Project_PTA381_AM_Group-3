@@ -3,6 +3,8 @@ package ui.panels;
 import ui.popDiaglogs.AddSuppliersDialog;
 import ui.MainFrame;
 
+import utils.CurrentUser;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
@@ -19,6 +21,27 @@ public class SuppliersPnl extends javax.swing.JPanel {
      */
     public SuppliersPnl() {
         initComponents();
+        
+        utils.uiUtilities.applyTableStyleProperties(jTable1, jScrollPane1);
+        applyRoleRestrictions();
+    }
+    
+    private void applyRoleRestrictions() {
+        //Only the owner can edit supplier details 
+        // Storeowner can only view
+        boolean canEdit = CurrentUser.isOwner();
+        // Only storekeeper will see and be able to add Materials
+        btnAddSupplier.setEnabled(canEdit);
+        btnAddSupplier.setVisible(canEdit);
+        
+        //The colums for edit and delete are hidden for everyone except the storekeeper
+        if (!canEdit) {
+        // Remove Edit and Delete columns entirely for roles that can't use them
+        javax.swing.table.TableColumnModel columnModel = jTable1.getColumnModel();
+        
+        columnModel.removeColumn(jTable1.getColumn("Edit"));
+        columnModel.removeColumn(jTable1.getColumn("Delete"));
+         }
     }
 
     /**
@@ -34,7 +57,7 @@ public class SuppliersPnl extends javax.swing.JPanel {
         searchPnl = new javax.swing.JPanel();
         jTextField1 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btnAddSupplier = new javax.swing.JButton();
         summaryPnl = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
@@ -52,15 +75,18 @@ public class SuppliersPnl extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
 
+        setBackground(new java.awt.Color(245, 246, 250));
         setMaximumSize(new java.awt.Dimension(1000, 700));
         setMinimumSize(new java.awt.Dimension(1000, 700));
         setLayout(new java.awt.BorderLayout());
 
+        contentPnl.setBackground(new java.awt.Color(245, 246, 250));
         contentPnl.setMaximumSize(new java.awt.Dimension(1000, 70));
         contentPnl.setMinimumSize(new java.awt.Dimension(1000, 70));
         contentPnl.setPreferredSize(new java.awt.Dimension(1000, 70));
         contentPnl.setLayout(new javax.swing.BoxLayout(contentPnl, javax.swing.BoxLayout.Y_AXIS));
 
+        searchPnl.setBackground(new java.awt.Color(245, 246, 250));
         searchPnl.setMaximumSize(new java.awt.Dimension(1000, 70));
         searchPnl.setMinimumSize(new java.awt.Dimension(1000, 70));
 
@@ -70,8 +96,8 @@ public class SuppliersPnl extends javax.swing.JPanel {
 
         jButton1.setText("Search");
 
-        jButton2.setText("Add new supplier");
-        jButton2.addActionListener(this::jButton2ActionPerformed);
+        btnAddSupplier.setText("Add new supplier");
+        btnAddSupplier.addActionListener(this::btnAddSupplierActionPerformed);
 
         javax.swing.GroupLayout searchPnlLayout = new javax.swing.GroupLayout(searchPnl);
         searchPnl.setLayout(searchPnlLayout);
@@ -83,7 +109,7 @@ public class SuppliersPnl extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
                 .addGap(38, 38, 38)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnAddSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(50, Short.MAX_VALUE))
         );
         searchPnlLayout.setVerticalGroup(
@@ -93,17 +119,19 @@ public class SuppliersPnl extends javax.swing.JPanel {
                 .addGroup(searchPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnAddSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(9, Short.MAX_VALUE))
         );
 
         contentPnl.add(searchPnl);
 
+        summaryPnl.setBackground(new java.awt.Color(245, 246, 250));
         summaryPnl.setMaximumSize(new java.awt.Dimension(1000, 90));
         summaryPnl.setMinimumSize(new java.awt.Dimension(1000, 90));
         summaryPnl.setPreferredSize(new java.awt.Dimension(1000, 90));
         summaryPnl.setLayout(new java.awt.GridLayout(1, 3, 100, 0));
 
+        jPanel3.setBackground(new java.awt.Color(255, 255, 255));
         jPanel3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -137,6 +165,7 @@ public class SuppliersPnl extends javax.swing.JPanel {
 
         summaryPnl.add(jPanel3);
 
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -170,6 +199,7 @@ public class SuppliersPnl extends javax.swing.JPanel {
 
         summaryPnl.add(jPanel2);
 
+        jPanel4.setBackground(new java.awt.Color(255, 255, 255));
         jPanel4.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -205,6 +235,11 @@ public class SuppliersPnl extends javax.swing.JPanel {
 
         contentPnl.add(summaryPnl);
 
+        jPanel5.setBackground(new java.awt.Color(245, 246, 250));
+
+        jScrollPane1.setBackground(new java.awt.Color(245, 246, 250));
+
+        jTable1.setBackground(new java.awt.Color(245, 246, 250));
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null},
@@ -239,6 +274,7 @@ public class SuppliersPnl extends javax.swing.JPanel {
 
         add(contentPnl, java.awt.BorderLayout.CENTER);
 
+        headerPnl.setBackground(new java.awt.Color(245, 246, 250));
         headerPnl.setMaximumSize(new java.awt.Dimension(1000, 70));
         headerPnl.setMinimumSize(new java.awt.Dimension(1000, 70));
         headerPnl.setPreferredSize(new java.awt.Dimension(1000, 70));
@@ -258,7 +294,7 @@ public class SuppliersPnl extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btnAddSupplierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddSupplierActionPerformed
     // Make the AddMaterialsDialog pop up appear, dim the background
     java.awt.Frame parentFrame = (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this);
     MainFrame mainFrame = (MainFrame) parentFrame;
@@ -270,14 +306,14 @@ public class SuppliersPnl extends javax.swing.JPanel {
     dialog.setVisible(true);           // this line BLOCKS here until dialog closes (since it's modal)
     
     mainFrame.showDimOverlay(false);  // runs AFTER dialog is closed/disposed
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_btnAddSupplierActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAddSupplier;
     private javax.swing.JPanel contentPnl;
     private javax.swing.JPanel headerPnl;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

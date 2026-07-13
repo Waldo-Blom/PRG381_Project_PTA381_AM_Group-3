@@ -16,6 +16,9 @@ public class DashboardPnl extends javax.swing.JPanel {
      */
     public DashboardPnl() {
         initComponents();
+        
+        utils.uiUtilities.applyTableStyleProperties(jTable1, jScrollPane1);
+        utils.uiUtilities.applyTableStyleProperties(jTable3, jScrollPane3);
     }
 
     /**
@@ -61,7 +64,6 @@ public class DashboardPnl extends javax.swing.JPanel {
         jTable1 = new javax.swing.JTable();
         lowstockPnl1 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
         issuancesPnl = new javax.swing.JPanel();
         issuancesPnl2 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
@@ -84,10 +86,12 @@ public class DashboardPnl extends javax.swing.JPanel {
 
         jMenuItem1.setText("jMenuItem1");
 
+        setBackground(new java.awt.Color(245, 246, 250));
         setMaximumSize(new java.awt.Dimension(1000, 700));
         setMinimumSize(new java.awt.Dimension(1000, 700));
         setLayout(new java.awt.BorderLayout());
 
+        headerPnl.setBackground(new java.awt.Color(245, 246, 250));
         headerPnl.setMaximumSize(new java.awt.Dimension(1000, 70));
         headerPnl.setMinimumSize(new java.awt.Dimension(1000, 70));
         headerPnl.setPreferredSize(new java.awt.Dimension(1000, 70));
@@ -102,19 +106,23 @@ public class DashboardPnl extends javax.swing.JPanel {
 
         add(headerPnl, java.awt.BorderLayout.NORTH);
 
+        centerWrapperPnl.setBackground(new java.awt.Color(245, 246, 250));
         centerWrapperPnl.setLayout(new javax.swing.BoxLayout(centerWrapperPnl, javax.swing.BoxLayout.Y_AXIS));
 
-        statsPnl.setMaximumSize(new java.awt.Dimension(1000, 140));
-        statsPnl.setMinimumSize(new java.awt.Dimension(1000, 140));
-        statsPnl.setPreferredSize(new java.awt.Dimension(1000, 140));
+        statsPnl.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        statsPnl.setMaximumSize(new java.awt.Dimension(1000, 90));
+        statsPnl.setMinimumSize(new java.awt.Dimension(1000, 90));
+        statsPnl.setPreferredSize(new java.awt.Dimension(1000, 90));
         statsPnl.setLayout(new java.awt.GridLayout(1, 5, 3, 0));
 
+        invValuePnl.setBackground(new java.awt.Color(255, 255, 255));
         invValuePnl.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel6.setText("Inventory Value");
 
-        jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel11.setForeground(new java.awt.Color(27, 38, 59));
         jLabel11.setText("R100,000");
 
         jLabel18.setText("Accross 8 material types");
@@ -124,33 +132,38 @@ public class DashboardPnl extends javax.swing.JPanel {
         invValuePnlLayout.setHorizontalGroup(
             invValuePnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(invValuePnlLayout.createSequentialGroup()
-                .addGap(16, 16, 16)
+                .addGap(21, 21, 21)
                 .addGroup(invValuePnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel18)
-                    .addComponent(jLabel11)
-                    .addComponent(jLabel6))
-                .addContainerGap(50, Short.MAX_VALUE))
+                    .addComponent(jLabel6)
+                    .addGroup(invValuePnlLayout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addGroup(invValuePnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel11)
+                            .addComponent(jLabel18))))
+                .addGap(39, 39, 39))
         );
         invValuePnlLayout.setVerticalGroup(
             invValuePnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(invValuePnlLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel6)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel11)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel18)
-                .addContainerGap(38, Short.MAX_VALUE))
+                .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         statsPnl.add(invValuePnl);
 
+        totalMatsPnl.setBackground(new java.awt.Color(255, 255, 255));
         totalMatsPnl.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel7.setText("Total Materials");
 
-        jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel12.setForeground(new java.awt.Color(13, 110, 253));
         jLabel12.setText("8");
 
         jLabel16.setText("of 190 units total");
@@ -160,7 +173,7 @@ public class DashboardPnl extends javax.swing.JPanel {
         totalMatsPnlLayout.setHorizontalGroup(
             totalMatsPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(totalMatsPnlLayout.createSequentialGroup()
-                .addGap(16, 16, 16)
+                .addGap(51, 51, 51)
                 .addGroup(totalMatsPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7)
                     .addGroup(totalMatsPnlLayout.createSequentialGroup()
@@ -168,7 +181,7 @@ public class DashboardPnl extends javax.swing.JPanel {
                         .addGroup(totalMatsPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel16)
                             .addComponent(jLabel12))))
-                .addContainerGap(83, Short.MAX_VALUE))
+                .addContainerGap(48, Short.MAX_VALUE))
         );
         totalMatsPnlLayout.setVerticalGroup(
             totalMatsPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -179,17 +192,19 @@ public class DashboardPnl extends javax.swing.JPanel {
                 .addComponent(jLabel12)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel16)
-                .addContainerGap(34, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         statsPnl.add(totalMatsPnl);
 
+        lowStockItemsPnl.setBackground(new java.awt.Color(255, 255, 255));
         lowStockItemsPnl.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel8.setText("Low Stock Items");
 
-        jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel13.setForeground(new java.awt.Color(220, 53, 69));
         jLabel13.setText("4");
 
         jLabel17.setText("Needs attention");
@@ -218,17 +233,19 @@ public class DashboardPnl extends javax.swing.JPanel {
                 .addComponent(jLabel13)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel17)
-                .addContainerGap(34, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         statsPnl.add(lowStockItemsPnl);
 
+        activeCleanersPnl.setBackground(new java.awt.Color(255, 255, 255));
         activeCleanersPnl.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel9.setText("Active Cleaners");
 
-        jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel14.setForeground(new java.awt.Color(25, 135, 84));
         jLabel14.setText("5");
 
         jLabel19.setText("1 inactive");
@@ -257,17 +274,19 @@ public class DashboardPnl extends javax.swing.JPanel {
                 .addComponent(jLabel14)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel19)
-                .addContainerGap(34, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         statsPnl.add(activeCleanersPnl);
 
+        recentIssuancesPnl.setBackground(new java.awt.Color(255, 255, 255));
         recentIssuancesPnl.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel10.setText("Recent Issuances");
 
-        jLabel15.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        jLabel15.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel15.setForeground(new java.awt.Color(108, 117, 125));
         jLabel15.setText("0");
 
         jLabel20.setText("in the Last 7 days");
@@ -294,23 +313,30 @@ public class DashboardPnl extends javax.swing.JPanel {
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel15)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel20)
-                .addContainerGap(28, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         statsPnl.add(recentIssuancesPnl);
 
         centerWrapperPnl.add(statsPnl);
 
-        lowStockAlertPnl.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         lowStockAlertPnl.setMaximumSize(new java.awt.Dimension(1000, 270));
         lowStockAlertPnl.setMinimumSize(new java.awt.Dimension(1000, 270));
         lowStockAlertPnl.setPreferredSize(new java.awt.Dimension(1000, 270));
         lowStockAlertPnl.setLayout(new java.awt.BorderLayout());
 
+        lowstockPnl2.setBackground(new java.awt.Color(245, 246, 250));
+
+        jScrollPane1.setBackground(new java.awt.Color(245, 246, 250));
+
+        jTable1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jTable1.setForeground(new java.awt.Color(27, 38, 59));
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
                 {null, null, null, null},
                 {null, null, null, null},
                 {null, null, null, null},
@@ -320,23 +346,34 @@ public class DashboardPnl extends javax.swing.JPanel {
                 "Material", "Current", "Min", "Supplier"
             }
         ));
+        jTable1.setFocusable(false);
+        jTable1.setGridColor(new java.awt.Color(240, 242, 245));
+        jTable1.setRowHeight(30);
+        jTable1.setShowHorizontalLines(true);
         jScrollPane1.setViewportView(jTable1);
+        if (jTable1.getColumnModel().getColumnCount() > 0) {
+            jTable1.getColumnModel().getColumn(0).setHeaderValue("Material");
+            jTable1.getColumnModel().getColumn(1).setHeaderValue("Current");
+            jTable1.getColumnModel().getColumn(2).setHeaderValue("Min");
+            jTable1.getColumnModel().getColumn(3).setHeaderValue("Supplier");
+        }
 
         javax.swing.GroupLayout lowstockPnl2Layout = new javax.swing.GroupLayout(lowstockPnl2);
         lowstockPnl2.setLayout(lowstockPnl2Layout);
         lowstockPnl2Layout.setHorizontalGroup(
             lowstockPnl2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 998, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1000, Short.MAX_VALUE)
         );
         lowstockPnl2Layout.setVerticalGroup(
             lowstockPnl2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, lowstockPnl2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE))
         );
 
         lowStockAlertPnl.add(lowstockPnl2, java.awt.BorderLayout.CENTER);
 
+        lowstockPnl1.setBackground(new java.awt.Color(245, 246, 250));
         lowstockPnl1.setMaximumSize(new java.awt.Dimension(998, 40));
         lowstockPnl1.setMinimumSize(new java.awt.Dimension(998, 40));
         lowstockPnl1.setPreferredSize(new java.awt.Dimension(998, 40));
@@ -345,25 +382,20 @@ public class DashboardPnl extends javax.swing.JPanel {
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel3.setText("Low stock items");
 
-        jLabel4.setText("4 items below reorder level");
-
         javax.swing.GroupLayout lowstockPnl1Layout = new javax.swing.GroupLayout(lowstockPnl1);
         lowstockPnl1.setLayout(lowstockPnl1Layout);
         lowstockPnl1Layout.setHorizontalGroup(
             lowstockPnl1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(lowstockPnl1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(lowstockPnl1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4))
-                .addContainerGap(851, Short.MAX_VALUE))
+                .addComponent(jLabel3)
+                .addContainerGap(888, Short.MAX_VALUE))
         );
         lowstockPnl1Layout.setVerticalGroup(
             lowstockPnl1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(lowstockPnl1Layout.createSequentialGroup()
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel4)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, lowstockPnl1Layout.createSequentialGroup()
+                .addContainerGap(14, Short.MAX_VALUE)
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -373,6 +405,7 @@ public class DashboardPnl extends javax.swing.JPanel {
 
         issuancesPnl.setLayout(new java.awt.BorderLayout());
 
+        jTable3.setBackground(new java.awt.Color(245, 246, 250));
         jTable3.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -394,11 +427,12 @@ public class DashboardPnl extends javax.swing.JPanel {
         );
         issuancesPnl2Layout.setVerticalGroup(
             issuancesPnl2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE)
         );
 
         issuancesPnl.add(issuancesPnl2, java.awt.BorderLayout.CENTER);
 
+        issuancesPnl1.setBackground(new java.awt.Color(245, 246, 250));
         issuancesPnl1.setMaximumSize(new java.awt.Dimension(1000, 30));
         issuancesPnl1.setMinimumSize(new java.awt.Dimension(1000, 30));
         issuancesPnl1.setPreferredSize(new java.awt.Dimension(1000, 30));
@@ -453,7 +487,6 @@ public class DashboardPnl extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
