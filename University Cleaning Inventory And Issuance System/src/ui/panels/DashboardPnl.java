@@ -1,21 +1,20 @@
 package ui.panels;
 
-import controller.MockMaterialDAO;
-import model.Material;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import javax.swing.table.DefaultTableModel;
-import java.util.List;
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
+import utils.DBConnection;
 
 /**
- *
- * @author waldo
+ * Dashboard Panel providing live metrics and real-time inventory tracking.
+ * 
+ * @author waldo, Tobie
  */
 public class DashboardPnl extends javax.swing.JPanel {
-
-    private MockMaterialDAO materialService;
 
     /**
      * Creates new form DashboardPanel
@@ -23,41 +22,157 @@ public class DashboardPnl extends javax.swing.JPanel {
     public DashboardPnl() {
         initComponents(); 
         
-        this.materialService = new MockMaterialDAO();
+        // Apply your custom table UI visual styles
+        utils.uiUtilities.applyTableStyleProperties(tblLowStockItems, jScrollPane1);
+        utils.uiUtilities.applyTableStyleProperties(tblRecentStockIssuances, jScrollPane3);
         
-        utils.uiUtilities.applyTableStyleProperties(jTable1, jScrollPane1); //[cite: 2]
-        utils.uiUtilities.applyTableStyleProperties(jTable3, jScrollPane3); //[cite: 2]
-        
-        initDashboardData(); // This triggers our new loading method below
+        // Load live system data immediately on launch
+        refreshDashboard();
     }
 
-    private void initDashboardData() {
-        double totalValue = materialService.getTotalInventoryValue();
-        int distinctItems = materialService.getTotalDistinctMaterials();
-        int lowStockCount = materialService.getLowStockMaterials().size();
-        int totalUnits = materialService.getTotalUnitCount();
-        
-        jLabel11.setText(String.format("R%.2f", totalValue)); 
-        jLabel18.setText("Across " + distinctItems + " material types");
-        
-        jLabel12.setText(String.valueOf(distinctItems));       
-        jLabel16.setText("of " + totalUnits + " units total");
-        
-        jLabel13.setText(String.valueOf(lowStockCount));       
-        
-        List<Material> lowStockList = materialService.getLowStockMaterials();
-        DefaultTableModel lowStockModel = (DefaultTableModel) jTable1.getModel();
-        
-        lowStockModel.setRowCount(0); 
-        
-        for (Material m : lowStockList) {
-            lowStockModel.addRow(new Object[]{
-                m.getMaterialName(),
-                m.getQuantity() + " " + m.getUnit(),
-                m.getReorderLevel(),
-                m.getSupplierId() == null ? "None Assigned" : "Supplier ID: " + m.getSupplierId()
-            });
+    /**
+     * Loads live numbers for all the overview statistics metrics cards using an optimized single query.
+     */
+    private void loadOverviewMetrics() {
+        String queryMetrics = 
+            "SELECT " +
+            "  COALESCE(SUM(quantity * unit_cost), 0) as total_val, " +
+            "  COUNT(*) as total_mats, " +
+            "  COALESCE(SUM(quantity), 0) as total_qty, " +
+            "  (SELECT COUNT(*) FROM materials WHERE quantity <= reorder_level) as low_stock_count, " +
+            "  (SELECT COUNT(*) FROM cleaners WHERE status = 'active') as active_cleaners, " +
+            "  (SELECT COUNT(*) FROM cleaners WHERE status = 'inactive') as inactive_cleaners, " +
+            "  (SELECT COUNT(*) FROM stock_issuances WHERE issuance_date >= NOW() - INTERVAL '7 days') as recent_issuances " +
+            "FROM materials";
+
+        try (Connection conn = DBConnection.getConnection()) {
+            if (conn == null) return;
+            
+            try (PreparedStatement pstmt = conn.prepareStatement(queryMetrics);
+                 ResultSet rs = pstmt.executeQuery()) {
+
+                if (rs.next()) {
+                    double totalValue = rs.getDouble("total_val");
+                    int totalMaterials = rs.getInt("total_mats");
+                    int totalUnits = rs.getInt("total_qty");
+                    int lowStockCount = rs.getInt("low_stock_count");
+                    int activeCleaners = rs.getInt("active_cleaners");
+                    int inactiveCleaners = rs.getInt("inactive_cleaners");
+                    int recentIssuances = rs.getInt("recent_issuances");
+
+                    // 1. Update Inventory Value Card
+                    pnlInventoryValue.setText("R " + String.format("%,.2f", totalValue));
+                    jLabel18.setText("Across " + totalMaterials + " material types");
+
+                    // 2. Update Total Materials Card
+                    pnlTotalMaterials.setText(String.valueOf(totalMaterials));
+                    jLabel16.setText("of " + totalUnits + " units total");
+
+                    // 3. Update Low Stock Card
+                    lblLowStockItems.setText(String.valueOf(lowStockCount));
+
+                    // 4. Update Active Cleaners Card
+                    lblActiveCleaners.setText(String.valueOf(activeCleaners));
+                    jLabel19.setText(inactiveCleaners + " inactive");
+
+                    // 5. Update Recent Issuances Card
+                    lblRecentIssuances.setText(String.valueOf(recentIssuances));
+                }
+            }
+        } catch (ClassNotFoundException | SQLException ex) {
+            System.out.println("[DEBUG] Failed to load dashboard metrics: " + ex.getMessage());
         }
+    }
+
+    /**
+     * Loads the Low Stock Table using a LEFT JOIN to fetch corresponding Supplier Names instead of IDs.
+     */
+    private void loadLowStockTable() {
+        DefaultTableModel model = (DefaultTableModel) tblLowStockItems.getModel();
+        model.setRowCount(0); // Clear designer placeholder rows
+
+        String query = 
+            "SELECT m.material_name, m.quantity, m.reorder_level, s.supplier_name " +
+            "FROM materials m " +
+            "LEFT JOIN suppliers s ON m.supplier_id = s.supplier_id " +
+            "WHERE m.quantity <= m.reorder_level " +
+            "ORDER BY m.quantity ASC";
+
+        try (Connection conn = DBConnection.getConnection()) {
+            if (conn == null) return;
+            
+            try (PreparedStatement pstmt = conn.prepareStatement(query);
+                 ResultSet rs = pstmt.executeQuery()) {
+
+                while (rs.next()) {
+                    String name = rs.getString("material_name");
+                    int qty = rs.getInt("quantity");
+                    int min = rs.getInt("reorder_level");
+                    String supplier = rs.getString("supplier_name");
+                    
+                    if (supplier == null) {
+                        supplier = "No Supplier Assigned";
+                    }
+
+                    model.addRow(new Object[]{name, qty, min, supplier});
+                }
+            }
+        } catch (ClassNotFoundException | SQLException ex) {
+            System.out.println("[DEBUG] Failed to load low stock table: " + ex.getMessage());
+        }
+    }
+
+    /**
+     * Loads the Recent Issuances Table joining materials and cleaners to display actual names.
+     */
+    private void loadRecentIssuancesTable() {
+        DefaultTableModel model = (DefaultTableModel) tblRecentStockIssuances.getModel();
+        model.setRowCount(0); // Clear placeholder rows
+
+        String query = 
+            "SELECT m.material_name, c.full_name, i.quantity_issued, i.issuance_date " +
+            "FROM stock_issuances i " +
+            "LEFT JOIN materials m ON i.material_id = m.material_id " +
+            "LEFT JOIN cleaners c ON i.cleaner_id = c.cleaner_id " +
+            "ORDER BY i.issuance_date DESC " +
+            "LIMIT 10"; 
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+        try (Connection conn = DBConnection.getConnection()) {
+            if (conn == null) return;
+            
+            try (PreparedStatement pstmt = conn.prepareStatement(query);
+                 ResultSet rs = pstmt.executeQuery()) {
+
+                while (rs.next()) {
+                    String material = rs.getString("material_name");
+                    String cleanerName = rs.getString("full_name");
+                    int qty = rs.getInt("quantity_issued");
+                    Timestamp date = rs.getTimestamp("issuance_date");
+                    
+                    String formattedDate = (date != null) ? dateFormat.format(date) : "N/A";
+
+                    model.addRow(new Object[]{
+                        material, 
+                        cleanerName != null ? cleanerName : "Unknown", 
+                        qty, 
+                        formattedDate
+                    });
+                }
+            }
+        } catch (ClassNotFoundException | SQLException ex) {
+            System.out.println("[DEBUG] Failed to load issuances table: " + ex.getMessage());
+        }
+    }
+
+    /**
+     * Public wrapper to invoke data loading sweeps across all components.
+     */
+    public void refreshDashboard() {
+        loadOverviewMetrics();
+        loadLowStockTable();
+        loadRecentIssuancesTable();
     }
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -72,34 +187,34 @@ public class DashboardPnl extends javax.swing.JPanel {
         statsPnl = new javax.swing.JPanel();
         invValuePnl = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
+        pnlInventoryValue = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
         totalMatsPnl = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
+        pnlTotalMaterials = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
         lowStockItemsPnl = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
-        jLabel13 = new javax.swing.JLabel();
+        lblLowStockItems = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
         activeCleanersPnl = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
-        jLabel14 = new javax.swing.JLabel();
+        lblActiveCleaners = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
         recentIssuancesPnl = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
-        jLabel15 = new javax.swing.JLabel();
+        lblRecentIssuances = new javax.swing.JLabel();
         jLabel20 = new javax.swing.JLabel();
         lowStockAlertPnl = new javax.swing.JPanel();
         lowstockPnl2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblLowStockItems = new javax.swing.JTable();
         lowstockPnl1 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         issuancesPnl = new javax.swing.JPanel();
         issuancesPnl2 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTable3 = new javax.swing.JTable();
+        tblRecentStockIssuances = new javax.swing.JTable();
         issuancesPnl1 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
 
@@ -153,9 +268,9 @@ public class DashboardPnl extends javax.swing.JPanel {
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel6.setText("Inventory Value");
 
-        jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel11.setForeground(new java.awt.Color(27, 38, 59));
-        jLabel11.setText("R100,000");
+        pnlInventoryValue.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        pnlInventoryValue.setForeground(new java.awt.Color(27, 38, 59));
+        pnlInventoryValue.setText("R100,000");
 
         jLabel18.setText("Accross 8 material types");
 
@@ -170,7 +285,7 @@ public class DashboardPnl extends javax.swing.JPanel {
                     .addGroup(invValuePnlLayout.createSequentialGroup()
                         .addGap(6, 6, 6)
                         .addGroup(invValuePnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel11)
+                            .addComponent(pnlInventoryValue)
                             .addComponent(jLabel18))))
                 .addGap(39, 39, 39))
         );
@@ -180,7 +295,7 @@ public class DashboardPnl extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel11)
+                .addComponent(pnlInventoryValue)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -194,9 +309,9 @@ public class DashboardPnl extends javax.swing.JPanel {
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel7.setText("Total Materials");
 
-        jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel12.setForeground(new java.awt.Color(13, 110, 253));
-        jLabel12.setText("8");
+        pnlTotalMaterials.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        pnlTotalMaterials.setForeground(new java.awt.Color(13, 110, 253));
+        pnlTotalMaterials.setText("8");
 
         jLabel16.setText("of 190 units total");
 
@@ -212,7 +327,7 @@ public class DashboardPnl extends javax.swing.JPanel {
                         .addGap(6, 6, 6)
                         .addGroup(totalMatsPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel16)
-                            .addComponent(jLabel12))))
+                            .addComponent(pnlTotalMaterials))))
                 .addContainerGap(48, Short.MAX_VALUE))
         );
         totalMatsPnlLayout.setVerticalGroup(
@@ -221,7 +336,7 @@ public class DashboardPnl extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel7)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel12)
+                .addComponent(pnlTotalMaterials)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel16)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -235,9 +350,9 @@ public class DashboardPnl extends javax.swing.JPanel {
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel8.setText("Low Stock Items");
 
-        jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel13.setForeground(new java.awt.Color(220, 53, 69));
-        jLabel13.setText("4");
+        lblLowStockItems.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lblLowStockItems.setForeground(new java.awt.Color(220, 53, 69));
+        lblLowStockItems.setText("4");
 
         jLabel17.setText("Needs attention");
 
@@ -253,7 +368,7 @@ public class DashboardPnl extends javax.swing.JPanel {
                         .addGap(6, 6, 6)
                         .addGroup(lowStockItemsPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel17)
-                            .addComponent(jLabel13))))
+                            .addComponent(lblLowStockItems))))
                 .addContainerGap(77, Short.MAX_VALUE))
         );
         lowStockItemsPnlLayout.setVerticalGroup(
@@ -262,7 +377,7 @@ public class DashboardPnl extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel8)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel13)
+                .addComponent(lblLowStockItems)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel17)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -276,9 +391,9 @@ public class DashboardPnl extends javax.swing.JPanel {
         jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel9.setText("Active Cleaners");
 
-        jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel14.setForeground(new java.awt.Color(25, 135, 84));
-        jLabel14.setText("5");
+        lblActiveCleaners.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lblActiveCleaners.setForeground(new java.awt.Color(25, 135, 84));
+        lblActiveCleaners.setText("5");
 
         jLabel19.setText("1 inactive");
 
@@ -294,7 +409,7 @@ public class DashboardPnl extends javax.swing.JPanel {
                         .addGap(6, 6, 6)
                         .addGroup(activeCleanersPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel19)
-                            .addComponent(jLabel14))))
+                            .addComponent(lblActiveCleaners))))
                 .addContainerGap(84, Short.MAX_VALUE))
         );
         activeCleanersPnlLayout.setVerticalGroup(
@@ -303,7 +418,7 @@ public class DashboardPnl extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel14)
+                .addComponent(lblActiveCleaners)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel19)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -317,9 +432,9 @@ public class DashboardPnl extends javax.swing.JPanel {
         jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel10.setText("Recent Issuances");
 
-        jLabel15.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel15.setForeground(new java.awt.Color(108, 117, 125));
-        jLabel15.setText("0");
+        lblRecentIssuances.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lblRecentIssuances.setForeground(new java.awt.Color(108, 117, 125));
+        lblRecentIssuances.setText("0");
 
         jLabel20.setText("in the Last 7 days");
 
@@ -335,7 +450,7 @@ public class DashboardPnl extends javax.swing.JPanel {
                         .addGap(6, 6, 6)
                         .addGroup(recentIssuancesPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel20)
-                            .addComponent(jLabel15))))
+                            .addComponent(lblRecentIssuances))))
                 .addContainerGap(74, Short.MAX_VALUE))
         );
         recentIssuancesPnlLayout.setVerticalGroup(
@@ -344,7 +459,7 @@ public class DashboardPnl extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel15)
+                .addComponent(lblRecentIssuances)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel20)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -363,9 +478,9 @@ public class DashboardPnl extends javax.swing.JPanel {
 
         jScrollPane1.setBackground(new java.awt.Color(245, 246, 250));
 
-        jTable1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jTable1.setForeground(new java.awt.Color(27, 38, 59));
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblLowStockItems.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        tblLowStockItems.setForeground(new java.awt.Color(27, 38, 59));
+        tblLowStockItems.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -378,16 +493,16 @@ public class DashboardPnl extends javax.swing.JPanel {
                 "Material", "Current", "Min", "Supplier"
             }
         ));
-        jTable1.setFocusable(false);
-        jTable1.setGridColor(new java.awt.Color(240, 242, 245));
-        jTable1.setRowHeight(30);
-        jTable1.setShowHorizontalLines(true);
-        jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setHeaderValue("Material");
-            jTable1.getColumnModel().getColumn(1).setHeaderValue("Current");
-            jTable1.getColumnModel().getColumn(2).setHeaderValue("Min");
-            jTable1.getColumnModel().getColumn(3).setHeaderValue("Supplier");
+        tblLowStockItems.setFocusable(false);
+        tblLowStockItems.setGridColor(new java.awt.Color(240, 242, 245));
+        tblLowStockItems.setRowHeight(30);
+        tblLowStockItems.setShowHorizontalLines(true);
+        jScrollPane1.setViewportView(tblLowStockItems);
+        if (tblLowStockItems.getColumnModel().getColumnCount() > 0) {
+            tblLowStockItems.getColumnModel().getColumn(0).setHeaderValue("Material");
+            tblLowStockItems.getColumnModel().getColumn(1).setHeaderValue("Current");
+            tblLowStockItems.getColumnModel().getColumn(2).setHeaderValue("Min");
+            tblLowStockItems.getColumnModel().getColumn(3).setHeaderValue("Supplier");
         }
 
         javax.swing.GroupLayout lowstockPnl2Layout = new javax.swing.GroupLayout(lowstockPnl2);
@@ -437,8 +552,8 @@ public class DashboardPnl extends javax.swing.JPanel {
 
         issuancesPnl.setLayout(new java.awt.BorderLayout());
 
-        jTable3.setBackground(new java.awt.Color(245, 246, 250));
-        jTable3.setModel(new javax.swing.table.DefaultTableModel(
+        tblRecentStockIssuances.setBackground(new java.awt.Color(245, 246, 250));
+        tblRecentStockIssuances.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -449,7 +564,7 @@ public class DashboardPnl extends javax.swing.JPanel {
                 "Material", "Issued To", "Quantity", "Date"
             }
         ));
-        jScrollPane3.setViewportView(jTable3);
+        jScrollPane3.setViewportView(tblRecentStockIssuances);
 
         javax.swing.GroupLayout issuancesPnl2Layout = new javax.swing.GroupLayout(issuancesPnl2);
         issuancesPnl2.setLayout(issuancesPnl2Layout);
@@ -507,11 +622,6 @@ public class DashboardPnl extends javax.swing.JPanel {
     private javax.swing.JPanel issuancesPnl2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
@@ -528,15 +638,20 @@ public class DashboardPnl extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
-    private javax.swing.JTable jTable3;
+    private javax.swing.JLabel lblActiveCleaners;
+    private javax.swing.JLabel lblLowStockItems;
+    private javax.swing.JLabel lblRecentIssuances;
     private javax.swing.JPanel lowStockAlertPnl;
     private javax.swing.JPanel lowStockItemsPnl;
     private javax.swing.JPanel lowstockPnl1;
     private javax.swing.JPanel lowstockPnl2;
+    private javax.swing.JLabel pnlInventoryValue;
+    private javax.swing.JLabel pnlTotalMaterials;
     private javax.swing.JPanel recentIssuancesPnl;
     private javax.swing.JPanel statsPnl;
+    private javax.swing.JTable tblLowStockItems;
+    private javax.swing.JTable tblRecentStockIssuances;
     private javax.swing.JPanel totalMatsPnl;
     // End of variables declaration//GEN-END:variables
 }

@@ -1,51 +1,258 @@
 package ui.panels;
+
 import ui.popDiaglogs.AddMaterialDialog;
 import ui.MainFrame;
-
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Vector;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import utils.DBConnection;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import utils.CurrentUser;
-
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 
 /**
  *
- * @author waldo
+ * @author waldo, Tobie
  */
 public class MaterialsPnl extends javax.swing.JPanel {
 
-    /**
-     * Creates new form MaterialsPanel
-     */
+    // Constructor
     public MaterialsPnl() {
         initComponents();
+
+        // Apply custom visual table styles
+        utils.uiUtilities.applyTableStyleProperties(tblDisplayMaterials, jScrollPane1);
         
-        utils.uiUtilities.applyTableStyleProperties(jTable1, jScrollPane1);
+        // Handle user role limitations
         applyRoleRestrictions();
-        
+
+        // Load materials from database on startup
+        refreshMaterialsData("", "All Categories");
+
+        // Set up action click listeners for Edit and Delete columns
+        setupTableActionListeners();
     }
     
+    // Hide or disable features depending on user role
     private void applyRoleRestrictions() {
-        // Only Storekeeper can Create/Update/Delete Materials
-        // Owner can only view
         boolean canEdit = CurrentUser.isStorekeeper();
         
-        // Only storekeeper will see and be able to add Materials
         btnAdd.setEnabled(canEdit);
         btnAdd.setVisible(canEdit);
         
-        //The colums for edit and delete are hidden for everyone except the storekeeper
         if (!canEdit) {
-        // Remove Edit and Delete columns entirely for roles that can't use them
-        javax.swing.table.TableColumnModel columnModel = jTable1.getColumnModel();
-        
-        columnModel.removeColumn(jTable1.getColumn("Edit"));
-        columnModel.removeColumn(jTable1.getColumn("Delete"));
-         }
-        
+            // Remove Edit and Delete columns entirely if user is not a storekeeper
+            javax.swing.table.TableColumnModel columnModel = tblDisplayMaterials.getColumnModel();
+            columnModel.removeColumn(tblDisplayMaterials.getColumn("Edit"));
+            columnModel.removeColumn(tblDisplayMaterials.getColumn("Delete"));
+        }
     }
 
+    // Load and filter materials from the database (Active Filter Version)
+    public void refreshMaterialsData(String searchTerm, String selectedCategory) {
+        DefaultTableModel model = (DefaultTableModel) tblDisplayMaterials.getModel();
+        model.setRowCount(0); // Clear the table before loading new rows
+
+        int totalItemsCount = 0;
+        int totalUnitsSum = 0;
+        int lowStockCount = 0;
+
+        // Base query to select materials
+        StringBuilder queryBuilder = new StringBuilder(
+            "SELECT m.material_name, m.category, m.quantity, m.reorder_level, m.unit_cost, s.supplier_name " +
+            "FROM materials m " +
+            "LEFT JOIN suppliers s ON m.supplier_id = s.supplier_id " +
+            "WHERE 1=1"
+        );
+
+        // Add filter for search term
+        if (searchTerm != null && !searchTerm.trim().isEmpty() && !searchTerm.equals("Search materials ...")) {
+            queryBuilder.append(" AND LOWER(material_name) LIKE ?");
+        }
+        
+        // Add filter for selected category
+        if (selectedCategory != null && !selectedCategory.equals("All Categories") && !selectedCategory.isEmpty()) {
+            queryBuilder.append(" AND category = ?");
+        }
+
+        try (Connection conn = DBConnection.getConnection()) {
+            if (conn == null) {
+                throw new SQLException("Database connection configuration failed.");
+            }
+            
+            try (PreparedStatement pstmt = conn.prepareStatement(queryBuilder.toString())) {
+                int paramIndex = 1;
+
+                // Bind search term parameter
+                if (searchTerm != null && !searchTerm.trim().isEmpty() && !searchTerm.equals("Search materials ...")) {
+                    pstmt.setString(paramIndex++, "%" + searchTerm.trim().toLowerCase() + "%");
+                }
+                
+                // Bind selected category parameter
+                if (selectedCategory != null && !selectedCategory.equals("All Categories") && !selectedCategory.isEmpty()) {
+                    pstmt.setString(paramIndex++, selectedCategory);
+                }
+
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    while (rs.next()) {
+                        String name = rs.getString("material_name");
+                        String category = rs.getString("category");
+                        int quantity = rs.getInt("quantity");
+                        int reorderLevel = rs.getInt("reorder_level");
+                        //  ADD THESE LINES INSTEAD
+                        String supplierName = rs.getString("supplier_name");
+                        if (supplierName == null) {
+                            supplierName = "No Supplier Assigned";
+                        }
+                        double unitCost = rs.getDouble("unit_cost");
+
+                        // Update metric variables
+                        totalItemsCount++;
+                        totalUnitsSum += quantity;
+                        if (quantity <= reorderLevel) {
+                            lowStockCount++;
+                        }
+
+                        // Add the row to our table model
+                        Vector<Object> row = new Vector<>();
+                        row.add(name);
+                        row.add(category);
+                        row.add(quantity);
+                        row.add(reorderLevel);
+                        row.add(supplierName); 
+                        row.add("R " + String.format("%.2f", unitCost));
+                        row.add("Edit");   
+                        row.add("Delete"); 
+
+                        model.addRow(row);
+                    }
+                }
+            }
+            
+            // Set metric values to the summary cards
+            lblTotalItems.setText(String.valueOf(totalItemsCount));
+            lblLowStock.setText(String.valueOf(lowStockCount));
+            lblTotalUnits.setText(String.valueOf(totalUnitsSum));
+
+            // Redraw table cells
+            tblDisplayMaterials.revalidate();
+            tblDisplayMaterials.repaint();
+
+        } catch (ClassNotFoundException ex) {
+            JOptionPane.showMessageDialog(this, "PostgreSQL Driver could not be initialized: " + ex.getMessage(), "System Exception", JOptionPane.ERROR_MESSAGE);
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Failed to pull inventory data: " + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    // Default load method with no filters (Required by components and initialization classes)
+    public void refreshMaterialsData() {
+        refreshMaterialsData("", "All Categories");
+    }
+
+    // Set up table mouse click listeners for Edit and Delete
+    private void setupTableActionListeners() {
+        tblDisplayMaterials.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = tblDisplayMaterials.rowAtPoint(e.getPoint());
+                int col = tblDisplayMaterials.columnAtPoint(e.getPoint());
+
+                if (row < 0) return;
+
+                String materialName = tblDisplayMaterials.getValueAt(row, 0).toString();
+                String colName = tblDisplayMaterials.getColumnName(col);
+
+                // Delete click action
+                if (colName.equals("Delete")) {
+                    int confirm = JOptionPane.showConfirmDialog(
+                        MaterialsPnl.this, 
+                        "Are you sure you want to delete '" + materialName + "'?", 
+                        "Confirm Deletion", 
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE
+                    );
+
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        deleteMaterialFromDatabase(materialName);
+                    }
+                }
+
+                // Edit click action
+                if (colName.equals("Edit")) {
+                    String inputQty = JOptionPane.showInputDialog(
+                        MaterialsPnl.this, 
+                        "Enter new quantity for '" + materialName + "':", 
+                        "Edit Material Stock", 
+                        JOptionPane.QUESTION_MESSAGE
+                    );
+
+                    if (inputQty != null && !inputQty.trim().isEmpty()) {
+                        try {
+                            int newQty = Integer.parseInt(inputQty.trim());
+                            if (newQty < 0) {
+                                JOptionPane.showMessageDialog(MaterialsPnl.this, "Quantity cannot be negative.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                                return;
+                            }
+                            updateMaterialQuantityInDatabase(materialName, newQty);
+                        } catch (NumberFormatException ex) {
+                            JOptionPane.showMessageDialog(MaterialsPnl.this, "Please enter a valid integer.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Run query to delete a material from the database
+    private void deleteMaterialFromDatabase(String name) {
+        String sql = "DELETE FROM materials WHERE material_name = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, name);
+            int affectedRows = pstmt.executeUpdate();
+
+            if (affectedRows > 0) {
+                JOptionPane.showMessageDialog(this, "Successfully removed from database.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                refreshMaterialsData(); 
+            } else {
+                JOptionPane.showMessageDialog(this, "Material could not be found in the system.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (ClassNotFoundException ex) {
+            JOptionPane.showMessageDialog(this, "JDBC Driver error: " + ex.getMessage(), "System Error", JOptionPane.ERROR_MESSAGE);
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Database error during deletion: " + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    // Run query to update a material's stock level in the database
+    private void updateMaterialQuantityInDatabase(String name, int newQty) {
+        String sql = "UPDATE materials SET quantity = ? WHERE material_name = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, newQty);
+            pstmt.setString(2, name);
+            int affectedRows = pstmt.executeUpdate();
+
+            if (affectedRows > 0) {
+                JOptionPane.showMessageDialog(this, "Quantity updated successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                refreshMaterialsData(); 
+            }
+        } catch (ClassNotFoundException ex) {
+            JOptionPane.showMessageDialog(this, "JDBC Driver error: " + ex.getMessage(), "System Error", JOptionPane.ERROR_MESSAGE);
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Database error during update: " + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -57,24 +264,24 @@ public class MaterialsPnl extends javax.swing.JPanel {
 
         contentPnl = new javax.swing.JPanel();
         searchPnl = new javax.swing.JPanel();
-        jTextField1 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        txtSearch = new javax.swing.JTextField();
+        btnSearch = new javax.swing.JButton();
+        cmbCategories = new javax.swing.JComboBox<>();
         btnAdd = new javax.swing.JButton();
         summaryPnl = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
+        lblTotalItems = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
+        lblLowStock = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
+        lblTotalUnits = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblDisplayMaterials = new javax.swing.JTable();
         headerPnl = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -95,13 +302,14 @@ public class MaterialsPnl extends javax.swing.JPanel {
         searchPnl.setMinimumSize(new java.awt.Dimension(1000, 70));
         searchPnl.setPreferredSize(new java.awt.Dimension(1000, 70));
 
-        jTextField1.setText("Search materials ...");
-        jTextField1.setToolTipText("Search materials ...");
-        jTextField1.addActionListener(this::jTextField1ActionPerformed);
+        txtSearch.setText("Search materials ...");
+        txtSearch.setToolTipText("Search materials ...");
+        txtSearch.addActionListener(this::txtSearchActionPerformed);
 
-        jButton1.setText("Search");
+        btnSearch.setText("Search");
+        btnSearch.addActionListener(this::btnSearchActionPerformed);
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All Catergories", "Item 2", "Item 3", "Item 4" }));
+        cmbCategories.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All Categories", "Cleaners", "Disinfectants", "Tools", "Safety", "Consumables", "Hygiene" }));
 
         btnAdd.setText("Add new Material");
         btnAdd.addActionListener(this::btnAddActionPerformed);
@@ -112,11 +320,11 @@ public class MaterialsPnl extends javax.swing.JPanel {
             searchPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(searchPnlLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 581, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 581, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
+                .addComponent(btnSearch)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cmbCategories, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(26, Short.MAX_VALUE))
@@ -126,9 +334,9 @@ public class MaterialsPnl extends javax.swing.JPanel {
             .addGroup(searchPnlLayout.createSequentialGroup()
                 .addGap(17, 17, 17)
                 .addGroup(searchPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSearch)
+                    .addComponent(cmbCategories, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(9, Short.MAX_VALUE))
         );
@@ -149,8 +357,8 @@ public class MaterialsPnl extends javax.swing.JPanel {
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel3.setText("Total Items");
 
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel6.setText("8");
+        lblTotalItems.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lblTotalItems.setText("8");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -162,7 +370,7 @@ public class MaterialsPnl extends javax.swing.JPanel {
                     .addComponent(jLabel3)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(15, 15, 15)
-                        .addComponent(jLabel6)))
+                        .addComponent(lblTotalItems)))
                 .addGap(180, 180, 180))
         );
         jPanel3Layout.setVerticalGroup(
@@ -171,7 +379,7 @@ public class MaterialsPnl extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel6)
+                .addComponent(lblTotalItems)
                 .addContainerGap())
         );
 
@@ -183,8 +391,8 @@ public class MaterialsPnl extends javax.swing.JPanel {
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel4.setText("Low Stock");
 
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel7.setText("4");
+        lblLowStock.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lblLowStock.setText("4");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -194,7 +402,7 @@ public class MaterialsPnl extends javax.swing.JPanel {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(51, 51, 51)
-                        .addComponent(jLabel7))
+                        .addComponent(lblLowStock))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(31, 31, 31)
                         .addComponent(jLabel4)))
@@ -206,7 +414,7 @@ public class MaterialsPnl extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel7)
+                .addComponent(lblLowStock)
                 .addContainerGap())
         );
 
@@ -218,8 +426,8 @@ public class MaterialsPnl extends javax.swing.JPanel {
         jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel5.setText("Total Units");
 
-        jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel8.setText("190");
+        lblTotalUnits.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lblTotalUnits.setText("190");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -231,7 +439,7 @@ public class MaterialsPnl extends javax.swing.JPanel {
                     .addComponent(jLabel5)
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGap(6, 6, 6)
-                        .addComponent(jLabel8)))
+                        .addComponent(lblTotalUnits)))
                 .addGap(178, 178, 178))
         );
         jPanel4Layout.setVerticalGroup(
@@ -240,7 +448,7 @@ public class MaterialsPnl extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel8)
+                .addComponent(lblTotalUnits)
                 .addContainerGap())
         );
 
@@ -254,8 +462,8 @@ public class MaterialsPnl extends javax.swing.JPanel {
 
         jScrollPane1.setBackground(new java.awt.Color(245, 246, 250));
 
-        jTable1.setBackground(new java.awt.Color(245, 246, 250));
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblDisplayMaterials.setBackground(new java.awt.Color(245, 246, 250));
+        tblDisplayMaterials.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null},
@@ -266,7 +474,7 @@ public class MaterialsPnl extends javax.swing.JPanel {
                 "Material", "Catergory", "Quantity", "Reorder Level", "Supplier", "Unit Cost", "Edit", "Delete"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblDisplayMaterials);
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -304,48 +512,57 @@ public class MaterialsPnl extends javax.swing.JPanel {
         add(headerPnl, java.awt.BorderLayout.NORTH);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
+
+    }//GEN-LAST:event_txtSearchActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
    // Make the AddMaterialsDialog pop up appear, dim the background
     java.awt.Frame parentFrame = (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this);
     MainFrame mainFrame = (MainFrame) parentFrame;
     
-    mainFrame.showDimOverlay(true);   // dim the background BEFORE showing dialog
+    mainFrame.showDimOverlay(true);   // dim the background before showing dialog
     
     AddMaterialDialog dialog = new AddMaterialDialog(parentFrame, true);
     dialog.setLocationRelativeTo(parentFrame);
-    dialog.setVisible(true);           // this line BLOCKS here until dialog closes (since it's modal)
+    dialog.setVisible(true);           // this line blocs here until dialog closes
     
-    mainFrame.showDimOverlay(false);  // runs AFTER dialog is closed/disposed
+    // runs AFTER dialog is closed/disposed
+    mainFrame.showDimOverlay(false);  
+    
+    // Refresh list after window is closed
+    refreshMaterialsData("", "All Categories");
     }//GEN-LAST:event_btnAddActionPerformed
 
+    private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
+        String keyword = txtSearch.getText().trim();
+        String selectedCategory = cmbCategories.getSelectedItem() != null ? cmbCategories.getSelectedItem().toString() : "All Categories";
+        refreshMaterialsData(keyword, selectedCategory);// TODO add your handling code here:
+    }//GEN-LAST:event_btnSearchActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
+    private javax.swing.JButton btnSearch;
+    private javax.swing.JComboBox<String> cmbCategories;
     private javax.swing.JPanel contentPnl;
     private javax.swing.JPanel headerPnl;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JLabel lblLowStock;
+    private javax.swing.JLabel lblTotalItems;
+    private javax.swing.JLabel lblTotalUnits;
     private javax.swing.JPanel searchPnl;
     private javax.swing.JPanel summaryPnl;
+    private javax.swing.JTable tblDisplayMaterials;
+    private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
 }
