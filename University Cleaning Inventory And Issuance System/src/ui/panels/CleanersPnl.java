@@ -2,6 +2,10 @@ package ui.panels;
 
 import ui.MainFrame;
 import ui.popDiaglogs.AddCleanersDialog;
+import ui.popDiaglogs.EditCleanersDialog;
+import ui.utils.AlertUtils;
+import javax.swing.event.MouseListener;
+import java.awt.event.MouseEvent;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -19,6 +23,7 @@ public class CleanersPnl extends javax.swing.JPanel {
      */
     public CleanersPnl() {
         initComponents();
+        setupTableListeners();
     }
 
     /**
@@ -322,6 +327,59 @@ public class CleanersPnl extends javax.swing.JPanel {
     
     mainFrame.showDimOverlay(false);  // runs AFTER dialog is closed/disposed
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void setupTableListeners() {
+        jTable1.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = jTable1.rowAtPoint(e.getPoint());
+                int col = jTable1.columnAtPoint(e.getPoint());
+                
+                if (row >= 0 && col >= 0) {
+                    String cleanerName = jTable1.getValueAt(row, 0).toString();
+                    
+                    if (col == 7) { // Edit column
+                        handleEditCleaner(row, cleanerName);
+                    } else if (col == 8) { // Delete column
+                        handleDeleteCleaner(row, cleanerName);
+                    }
+                }
+            }
+            
+            @Override
+            public void mousePressed(MouseEvent e) {}
+            
+            @Override
+            public void mouseReleased(MouseEvent e) {}
+            
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+            
+            @Override
+            public void mouseExited(MouseEvent e) {}
+        });
+    }
+
+    private void handleEditCleaner(int row, String cleanerName) {
+        java.awt.Frame parentFrame = (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this);
+        MainFrame mainFrame = (MainFrame) parentFrame;
+        
+        mainFrame.showDimOverlay(true);
+        
+        EditCleanersDialog dialog = new EditCleanersDialog(parentFrame, true);
+        dialog.setLocationRelativeTo(parentFrame);
+        dialog.setVisible(true);
+        
+        mainFrame.showDimOverlay(false);
+    }
+
+    private void handleDeleteCleaner(int row, String cleanerName) {
+        int response = AlertUtils.showDeleteConfirmation("Cleaner", cleanerName);
+        
+        if (response == javax.swing.JOptionPane.YES_OPTION) {
+            AlertUtils.showDeletedAlert("Cleaner");
+        }
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

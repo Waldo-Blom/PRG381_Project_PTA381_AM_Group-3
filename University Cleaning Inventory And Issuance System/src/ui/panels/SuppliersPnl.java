@@ -1,7 +1,11 @@
 package ui.panels;
 
 import ui.popDiaglogs.AddSuppliersDialog;
+import ui.popDiaglogs.EditSuppliersDialog;
 import ui.MainFrame;
+import ui.utils.AlertUtils;
+import javax.swing.event.MouseListener;
+import java.awt.event.MouseEvent;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -19,6 +23,7 @@ public class SuppliersPnl extends javax.swing.JPanel {
      */
     public SuppliersPnl() {
         initComponents();
+        setupTableListeners();
     }
 
     /**
@@ -271,6 +276,59 @@ public class SuppliersPnl extends javax.swing.JPanel {
     
     mainFrame.showDimOverlay(false);  // runs AFTER dialog is closed/disposed
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void setupTableListeners() {
+        jTable1.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = jTable1.rowAtPoint(e.getPoint());
+                int col = jTable1.columnAtPoint(e.getPoint());
+                
+                if (row >= 0 && col >= 0) {
+                    String supplierName = jTable1.getValueAt(row, 0).toString();
+                    
+                    if (col == 6) { // Edit column
+                        handleEditSupplier(row, supplierName);
+                    } else if (col == 7) { // Delete column
+                        handleDeleteSupplier(row, supplierName);
+                    }
+                }
+            }
+            
+            @Override
+            public void mousePressed(MouseEvent e) {}
+            
+            @Override
+            public void mouseReleased(MouseEvent e) {}
+            
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+            
+            @Override
+            public void mouseExited(MouseEvent e) {}
+        });
+    }
+
+    private void handleEditSupplier(int row, String supplierName) {
+        java.awt.Frame parentFrame = (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this);
+        MainFrame mainFrame = (MainFrame) parentFrame;
+        
+        mainFrame.showDimOverlay(true);
+        
+        EditSuppliersDialog dialog = new EditSuppliersDialog(parentFrame, true);
+        dialog.setLocationRelativeTo(parentFrame);
+        dialog.setVisible(true);
+        
+        mainFrame.showDimOverlay(false);
+    }
+
+    private void handleDeleteSupplier(int row, String supplierName) {
+        int response = AlertUtils.showDeleteConfirmation("Supplier", supplierName);
+        
+        if (response == javax.swing.JOptionPane.YES_OPTION) {
+            AlertUtils.showDeletedAlert("Supplier");
+        }
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

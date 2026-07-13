@@ -4,6 +4,8 @@
  */
 package ui.popDiaglogs;
 
+import ui.utils.AlertUtils;
+
 /**
  *
  * @author waldo
@@ -52,6 +54,7 @@ public class AddCleanersDialog extends javax.swing.JDialog {
         jButton2.addActionListener(this::jButton2ActionPerformed);
 
         jButton3.setText("Add Cleaner");
+        jButton3.addActionListener(this::jButton3ActionPerformed);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel1.setText("Email");
@@ -150,6 +153,11 @@ public class AddCleanersDialog extends javax.swing.JDialog {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
        this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        AlertUtils.showAddedAlert("Cleaner");
+        this.dispose();
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments

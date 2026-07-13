@@ -10,14 +10,14 @@ import ui.utils.AlertUtils;
  *
  * @author waldo
  */
-public class AddSuppliersDialog extends javax.swing.JDialog {
+public class EditSuppliersDialog extends javax.swing.JDialog {
     
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AddSuppliersDialog.class.getName());
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(EditSuppliersDialog.class.getName());
 
     /**
-     * Creates new form AddMaterialDialog
+     * Creates new form EditSuppliersDialog
      */
-    public AddSuppliersDialog(java.awt.Frame parent, boolean modal) {
+    public EditSuppliersDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
@@ -53,7 +53,7 @@ public class AddSuppliersDialog extends javax.swing.JDialog {
         jButton2.setText("Cancel");
         jButton2.addActionListener(this::jButton2ActionPerformed);
 
-        jButton3.setText("Add Supplier");
+        jButton3.setText("Update Supplier");
         jButton3.addActionListener(this::jButton3ActionPerformed);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -69,7 +69,7 @@ public class AddSuppliersDialog extends javax.swing.JDialog {
         jLabel8.setText("Phone");
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel9.setText("Add New Supplier");
+        jLabel9.setText("Edit Supplier");
         jLabel9.setToolTipText("");
 
         jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -159,7 +159,7 @@ public class AddSuppliersDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        AlertUtils.showAddedAlert("Supplier");
+        AlertUtils.showUpdatedAlert("Supplier");
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -188,7 +188,7 @@ public class AddSuppliersDialog extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                AddSuppliersDialog dialog = new AddSuppliersDialog(new javax.swing.JFrame(), true);
+                EditSuppliersDialog dialog = new EditSuppliersDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
