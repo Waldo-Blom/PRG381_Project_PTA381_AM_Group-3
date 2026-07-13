@@ -2,6 +2,7 @@ package ui.panels;
 
 import ui.MainFrame;
 import ui.popDiaglogs.AddStockIssuanceDialog;
+import utils.CurrentUser;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -19,7 +20,33 @@ public class StockIssuancePnl extends javax.swing.JPanel {
      */
     public StockIssuancePnl() {
         initComponents();
+        
+        utils.uiUtilities.applyTableStyleProperties(jTable1, jScrollPane1);
+        applyRoleRestrictions();
     }
+    
+    private void applyRoleRestrictions() {
+        
+        boolean isStorekeeper = CurrentUser.isStorekeeper();
+        boolean isCleaner = CurrentUser.isCleaner();
+        // Owner is neither, Owner can only view this panel
+
+        // Both Storekeeper and Cleaner can create new issuances
+        btnIssueStock.setEnabled(isStorekeeper || isCleaner);
+        btnIssueStock.setVisible(isStorekeeper || isCleaner);
+
+        // Owner has NO Edit/Delete access at all, hide those colums
+        // Storekeeper and Cleaner both get Edit/Delete columns, but Cleaner
+        
+        //To DO: NNB implement Stock issaunce difference between Storekeeper and Cleaner:
+        // Storekeeper -> All records
+        // Cleaner -> only their own records
+        if (!isStorekeeper && !isCleaner) {
+            javax.swing.table.TableColumnModel columnModel = jTable1.getColumnModel();
+            columnModel.removeColumn(jTable1.getColumn("Edit"));
+            columnModel.removeColumn(jTable1.getColumn("Delete"));
+        }
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -34,7 +61,7 @@ public class StockIssuancePnl extends javax.swing.JPanel {
         searchPnl = new javax.swing.JPanel();
         jTextField1 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btnIssueStock = new javax.swing.JButton();
         jFormattedTextField1 = new javax.swing.JFormattedTextField();
         jFormattedTextField2 = new javax.swing.JFormattedTextField();
         jLabel3 = new javax.swing.JLabel();
@@ -56,15 +83,18 @@ public class StockIssuancePnl extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
 
+        setBackground(new java.awt.Color(245, 246, 250));
         setMaximumSize(new java.awt.Dimension(1000, 700));
         setMinimumSize(new java.awt.Dimension(1000, 700));
         setLayout(new java.awt.BorderLayout());
 
+        contentPnl.setBackground(new java.awt.Color(245, 246, 250));
         contentPnl.setMaximumSize(new java.awt.Dimension(1000, 70));
         contentPnl.setMinimumSize(new java.awt.Dimension(1000, 70));
         contentPnl.setPreferredSize(new java.awt.Dimension(1000, 70));
         contentPnl.setLayout(new javax.swing.BoxLayout(contentPnl, javax.swing.BoxLayout.Y_AXIS));
 
+        searchPnl.setBackground(new java.awt.Color(245, 246, 250));
         searchPnl.setMaximumSize(new java.awt.Dimension(1000, 70));
         searchPnl.setMinimumSize(new java.awt.Dimension(1000, 70));
 
@@ -74,8 +104,8 @@ public class StockIssuancePnl extends javax.swing.JPanel {
 
         jButton1.setText("Search");
 
-        jButton2.setText("+ New Issuance");
-        jButton2.addActionListener(this::jButton2ActionPerformed);
+        btnIssueStock.setText("+ New Issuance");
+        btnIssueStock.addActionListener(this::btnIssueStockActionPerformed);
 
         jFormattedTextField1.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("DD/MM/YYYY"))));
         jFormattedTextField1.setText("mm/dd/yyyy");
@@ -105,7 +135,7 @@ public class StockIssuancePnl extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jFormattedTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnIssueStock, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         searchPnlLayout.setVerticalGroup(
@@ -115,7 +145,7 @@ public class StockIssuancePnl extends javax.swing.JPanel {
                 .addGroup(searchPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnIssueStock, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jFormattedTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jFormattedTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
@@ -125,11 +155,13 @@ public class StockIssuancePnl extends javax.swing.JPanel {
 
         contentPnl.add(searchPnl);
 
+        statsPnl.setBackground(new java.awt.Color(245, 246, 250));
         statsPnl.setMaximumSize(new java.awt.Dimension(1000, 90));
         statsPnl.setMinimumSize(new java.awt.Dimension(1000, 90));
         statsPnl.setPreferredSize(new java.awt.Dimension(1000, 90));
         statsPnl.setLayout(new java.awt.GridLayout(1, 4, 3, 0));
 
+        invValuePnl.setBackground(new java.awt.Color(255, 255, 255));
         invValuePnl.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -161,6 +193,7 @@ public class StockIssuancePnl extends javax.swing.JPanel {
 
         statsPnl.add(invValuePnl);
 
+        totalMatsPnl.setBackground(new java.awt.Color(255, 255, 255));
         totalMatsPnl.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -194,6 +227,7 @@ public class StockIssuancePnl extends javax.swing.JPanel {
 
         statsPnl.add(totalMatsPnl);
 
+        lowStockItemsPnl.setBackground(new java.awt.Color(255, 255, 255));
         lowStockItemsPnl.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -227,15 +261,20 @@ public class StockIssuancePnl extends javax.swing.JPanel {
 
         contentPnl.add(statsPnl);
 
+        jPanel1.setBackground(new java.awt.Color(245, 246, 250));
+
+        jScrollPane1.setBackground(new java.awt.Color(245, 246, 250));
+
+        jTable1.setBackground(new java.awt.Color(245, 246, 250));
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Date", "Material", "Issued To", "Qauntity", "Issued By", "Notes"
+                "Date", "Material", "Issued To", "Qauntity", "Issued By", "Notes", "Edit", "Delete"
             }
         ));
         jScrollPane1.setViewportView(jTable1);
@@ -258,6 +297,7 @@ public class StockIssuancePnl extends javax.swing.JPanel {
 
         add(contentPnl, java.awt.BorderLayout.CENTER);
 
+        headerPnl.setBackground(new java.awt.Color(245, 246, 250));
         headerPnl.setMaximumSize(new java.awt.Dimension(1000, 70));
         headerPnl.setMinimumSize(new java.awt.Dimension(1000, 70));
         headerPnl.setPreferredSize(new java.awt.Dimension(1000, 70));
@@ -277,7 +317,7 @@ public class StockIssuancePnl extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btnIssueStockActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIssueStockActionPerformed
     // Make the AddMaterialsDialog pop up appear, dim the background
     java.awt.Frame parentFrame = (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this);
     MainFrame mainFrame = (MainFrame) parentFrame;
@@ -289,15 +329,15 @@ public class StockIssuancePnl extends javax.swing.JPanel {
     dialog.setVisible(true);           // this line BLOCKS here until dialog closes (since it's modal)
     
     mainFrame.showDimOverlay(false);  // runs AFTER dialog is closed/disposed
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_btnIssueStockActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnIssueStock;
     private javax.swing.JPanel contentPnl;
     private javax.swing.JPanel headerPnl;
     private javax.swing.JPanel invValuePnl;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JFormattedTextField jFormattedTextField1;
     private javax.swing.JFormattedTextField jFormattedTextField2;
     private javax.swing.JLabel jLabel1;
