@@ -24,4 +24,4 @@ replay_pid*
 # NetBeans build artifacts (any project folder)
 **/nbproject/private/
 **/build/
-**/dist/
+**/dist/*.jar
