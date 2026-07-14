@@ -161,7 +161,7 @@ The role of the cleaner is ....
 - [Waldo Blom](https://github.com/Waldo-Blom) — 578068
 - [Tobie Jansen van Vuuren](https://github.com/TobesOfCode) — Student Number
 - [Arnold Mabope](https://github.com/ArnoldDECODER) — Student Number
-- [Jonathan Rossouw](https://github.com/Jonoefen) — Student Number
+- [Jonathan Rossouw](https://github.com/Jonoefen) — 601761
 - [Lindokuhle Shangase](https://github.com/lindoB) — Student Number
 
 ---
