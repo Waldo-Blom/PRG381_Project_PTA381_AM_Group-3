@@ -6,6 +6,11 @@ import javax.swing.JOptionPane;
 import utils.DBConnection;
 import java.sql.ResultSet;
 
+/**
+ *
+ * @author Tobie
+ */
+
 // This class creates the Add Material popup using Inheritance by extending JDialog.
 // It demonstrates Encapsulation by bundling the specific UI and database logic together.
 public class AddMaterialDialog extends javax.swing.JDialog {

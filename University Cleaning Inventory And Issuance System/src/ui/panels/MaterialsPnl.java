@@ -14,6 +14,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import utils.CurrentUser;
 
+/**
+ *
+ * @author Tobie
+ */
+
 // This class builds the Materials management panel and uses Inheritance by extending JPanel.
 // It bundles UI elements and data logic together, demonstrating Encapsulation.
 public class MaterialsPnl extends javax.swing.JPanel {

@@ -9,6 +9,12 @@ import java.text.SimpleDateFormat;
 import javax.swing.table.DefaultTableModel;
 import utils.DBConnection;
 
+/**
+ *
+ * @author Tobie
+ */
+
+
 // This class builds the Dashboard interface and uses Inheritance by extending JPanel.
 // It bundles UI components and data logic together, demonstrating Encapsulation.
 public class DashboardPnl extends javax.swing.JPanel {
