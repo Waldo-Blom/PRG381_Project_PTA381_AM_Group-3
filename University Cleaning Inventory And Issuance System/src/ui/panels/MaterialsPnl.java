@@ -14,30 +14,26 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import utils.CurrentUser;
 
-/**
- *
- * @author waldo, Tobie
- */
+// This class builds the Materials management panel and uses Inheritance by extending JPanel.
+// It bundles UI elements and data logic together, demonstrating Encapsulation.
 public class MaterialsPnl extends javax.swing.JPanel {
 
-    // Constructor
+    // Initializes the panel's layout, styles, and loads initial database records.
+    // Uses Encapsulation by keeping this startup sequence hidden and self-contained.
     public MaterialsPnl() {
         initComponents();
 
-        // Apply custom visual table styles
         utils.uiUtilities.applyTableStyleProperties(tblDisplayMaterials, jScrollPane1);
         
-        // Handle user role limitations
         applyRoleRestrictions();
 
-        // Load materials from database on startup
         refreshMaterialsData("", "All Categories");
 
-        // Set up action click listeners for Edit and Delete columns
         setupTableActionListeners();
     }
     
-    // Hide or disable features depending on user role
+    // Secures the panel by hiding edit/delete features from unauthorized users.
+    // Applies Encapsulation to protect sensitive application actions based on user roles.
     private void applyRoleRestrictions() {
         boolean canEdit = CurrentUser.isStorekeeper();
         
@@ -45,23 +41,22 @@ public class MaterialsPnl extends javax.swing.JPanel {
         btnAdd.setVisible(canEdit);
         
         if (!canEdit) {
-            // Remove Edit and Delete columns entirely if user is not a storekeeper
             javax.swing.table.TableColumnModel columnModel = tblDisplayMaterials.getColumnModel();
             columnModel.removeColumn(tblDisplayMaterials.getColumn("Edit"));
             columnModel.removeColumn(tblDisplayMaterials.getColumn("Delete"));
         }
     }
 
-    // Load and filter materials from the database (Active Filter Version)
+    // Fetches and filters materials from the database to update the table.
+    // Abstracts complex SQL queries and data processing away from the main UI flow.
     public void refreshMaterialsData(String searchTerm, String selectedCategory) {
         DefaultTableModel model = (DefaultTableModel) tblDisplayMaterials.getModel();
-        model.setRowCount(0); // Clear the table before loading new rows
+        model.setRowCount(0); 
 
         int totalItemsCount = 0;
         int totalUnitsSum = 0;
         int lowStockCount = 0;
 
-        // Base query to select materials
         StringBuilder queryBuilder = new StringBuilder(
             "SELECT m.material_name, m.category, m.quantity, m.reorder_level, m.unit_cost, s.supplier_name " +
             "FROM materials m " +
@@ -69,12 +64,10 @@ public class MaterialsPnl extends javax.swing.JPanel {
             "WHERE 1=1"
         );
 
-        // Add filter for search term
         if (searchTerm != null && !searchTerm.trim().isEmpty() && !searchTerm.equals("Search materials ...")) {
             queryBuilder.append(" AND LOWER(material_name) LIKE ?");
         }
         
-        // Add filter for selected category
         if (selectedCategory != null && !selectedCategory.equals("All Categories") && !selectedCategory.isEmpty()) {
             queryBuilder.append(" AND category = ?");
         }
@@ -87,12 +80,10 @@ public class MaterialsPnl extends javax.swing.JPanel {
             try (PreparedStatement pstmt = conn.prepareStatement(queryBuilder.toString())) {
                 int paramIndex = 1;
 
-                // Bind search term parameter
                 if (searchTerm != null && !searchTerm.trim().isEmpty() && !searchTerm.equals("Search materials ...")) {
                     pstmt.setString(paramIndex++, "%" + searchTerm.trim().toLowerCase() + "%");
                 }
                 
-                // Bind selected category parameter
                 if (selectedCategory != null && !selectedCategory.equals("All Categories") && !selectedCategory.isEmpty()) {
                     pstmt.setString(paramIndex++, selectedCategory);
                 }
@@ -103,21 +94,19 @@ public class MaterialsPnl extends javax.swing.JPanel {
                         String category = rs.getString("category");
                         int quantity = rs.getInt("quantity");
                         int reorderLevel = rs.getInt("reorder_level");
-                        //  ADD THESE LINES INSTEAD
+                        
                         String supplierName = rs.getString("supplier_name");
                         if (supplierName == null) {
                             supplierName = "No Supplier Assigned";
                         }
                         double unitCost = rs.getDouble("unit_cost");
 
-                        // Update metric variables
                         totalItemsCount++;
                         totalUnitsSum += quantity;
                         if (quantity <= reorderLevel) {
                             lowStockCount++;
                         }
 
-                        // Add the row to our table model
                         Vector<Object> row = new Vector<>();
                         row.add(name);
                         row.add(category);
@@ -133,12 +122,10 @@ public class MaterialsPnl extends javax.swing.JPanel {
                 }
             }
             
-            // Set metric values to the summary cards
             lblTotalItems.setText(String.valueOf(totalItemsCount));
             lblLowStock.setText(String.valueOf(lowStockCount));
             lblTotalUnits.setText(String.valueOf(totalUnitsSum));
 
-            // Redraw table cells
             tblDisplayMaterials.revalidate();
             tblDisplayMaterials.repaint();
 
@@ -149,12 +136,14 @@ public class MaterialsPnl extends javax.swing.JPanel {
         }
     }
     
-    // Default load method with no filters (Required by components and initialization classes)
+    // Default data loader that calls the filtered version without any search terms.
+    // Demonstrates Polymorphism through Method Overloading for flexible data loading.
     public void refreshMaterialsData() {
         refreshMaterialsData("", "All Categories");
     }
 
-    // Set up table mouse click listeners for Edit and Delete
+    // Listens for mouse clicks on the table to trigger edit or delete actions.
+    // Uses Polymorphism by overriding the MouseAdapter's default click behavior dynamically.
     private void setupTableActionListeners() {
         tblDisplayMaterials.addMouseListener(new MouseAdapter() {
             @Override
@@ -208,7 +197,8 @@ public class MaterialsPnl extends javax.swing.JPanel {
         });
     }
 
-    // Run query to delete a material from the database
+    // Safely removes a specific material record from the database.
+    // Encapsulates the SQL deletion logic to keep data management secure and isolated.
     private void deleteMaterialFromDatabase(String name) {
         String sql = "DELETE FROM materials WHERE material_name = ?";
 
@@ -231,7 +221,8 @@ public class MaterialsPnl extends javax.swing.JPanel {
         }
     }
 
-    // Run query to update a material's stock level in the database
+    // Updates the stock quantity of a specific material in the database.
+    // Uses Encapsulation to handle backend updates without exposing SQL to the user interface.
     private void updateMaterialQuantityInDatabase(String name, int newQty) {
         String sql = "UPDATE materials SET quantity = ? WHERE material_name = ?";
 
@@ -253,11 +244,8 @@ public class MaterialsPnl extends javax.swing.JPanel {
         }
     }
     
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
+    // Auto-generated method that builds and places all visual components on the screen.
+    // Kept private to enforce strict Encapsulation, hiding the complex layout generation code.
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -513,27 +501,35 @@ public class MaterialsPnl extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
-
+        //Todo
     }//GEN-LAST:event_txtSearchActionPerformed
 
+    // Opens the Add Material dialog and dims the background while it's active.
+    // Uses Polymorphism to override default action listener behavior.
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-   // Make the AddMaterialsDialog pop up appear, dim the background
-    java.awt.Frame parentFrame = (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this);
-    MainFrame mainFrame = (MainFrame) parentFrame;
-    
-    mainFrame.showDimOverlay(true);   // dim the background before showing dialog
-    
-    AddMaterialDialog dialog = new AddMaterialDialog(parentFrame, true);
-    dialog.setLocationRelativeTo(parentFrame);
-    dialog.setVisible(true);           // this line blocs here until dialog closes
-    
-    // runs AFTER dialog is closed/disposed
-    mainFrame.showDimOverlay(false);  
-    
-    // Refresh list after window is closed
-    refreshMaterialsData("", "All Categories");
+        
+        // Make the AddMaterialsDialog pop up appear, dim the background
+        java.awt.Frame parentFrame = (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this);
+        MainFrame mainFrame = (MainFrame) parentFrame;
+
+        mainFrame.showDimOverlay(true);   
+
+        AddMaterialDialog dialog = new AddMaterialDialog(parentFrame, true);
+        dialog.setLocationRelativeTo(parentFrame);
+        dialog.setVisible(true);           
+
+        // runs AFTER dialog is closed/disposed
+        mainFrame.showDimOverlay(false);  
+
+        refreshMaterialsData("", "All Categories");
+
+        // Refresh list after window is closed
+        refreshMaterialsData("", "All Categories");
+        
     }//GEN-LAST:event_btnAddActionPerformed
 
+    // Reads the search input and triggers a targeted data refresh.
+    // Demonstrates Polymorphism by executing custom instructions on button click.
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
         String keyword = txtSearch.getText().trim();
         String selectedCategory = cmbCategories.getSelectedItem() != null ? cmbCategories.getSelectedItem().toString() : "All Categories";

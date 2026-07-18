@@ -9,16 +9,12 @@ import java.text.SimpleDateFormat;
 import javax.swing.table.DefaultTableModel;
 import utils.DBConnection;
 
-/**
- * Dashboard Panel providing live metrics and real-time inventory tracking.
- * 
- * @author waldo, Tobie
- */
+// This class builds the Dashboard interface and uses Inheritance by extending JPanel.
+// It bundles UI components and data logic together, demonstrating Encapsulation.
 public class DashboardPnl extends javax.swing.JPanel {
 
-    /**
-     * Creates new form DashboardPanel
-     */
+    // Sets up the panel's visual elements and loads initial data when created.
+    // Applies Encapsulation by managing its own setup routines internally.
     public DashboardPnl() {
         initComponents(); 
         
@@ -30,9 +26,8 @@ public class DashboardPnl extends javax.swing.JPanel {
         refreshDashboard();
     }
 
-    /**
-     * Loads live numbers for all the overview statistics metrics cards using an optimized single query.
-     */
+    // Connects to the database to fetch live summary statistics for the dashboard cards.
+    // Abstracts the complex SQL query execution away from the main UI flow.
     private void loadOverviewMetrics() {
         String queryMetrics = 
             "SELECT " +
@@ -84,12 +79,11 @@ public class DashboardPnl extends javax.swing.JPanel {
         }
     }
 
-    /**
-     * Loads the Low Stock Table using a LEFT JOIN to fetch corresponding Supplier Names instead of IDs.
-     */
+    // Retrieves low stock items from the database to populate the warning table.
+    // Encapsulates the specific data-fetching and table-updating logic within this method.
     private void loadLowStockTable() {
         DefaultTableModel model = (DefaultTableModel) tblLowStockItems.getModel();
-        model.setRowCount(0); // Clear designer placeholder rows
+        model.setRowCount(0); 
 
         String query = 
             "SELECT m.material_name, m.quantity, m.reorder_level, s.supplier_name " +
@@ -122,12 +116,11 @@ public class DashboardPnl extends javax.swing.JPanel {
         }
     }
 
-    /**
-     * Loads the Recent Issuances Table joining materials and cleaners to display actual names.
-     */
+    // Fetches the latest stock issuance records and formats them for the recent activity table.
+    // Keeps the database connection and data processing logic neatly Encapsulated.
     private void loadRecentIssuancesTable() {
         DefaultTableModel model = (DefaultTableModel) tblRecentStockIssuances.getModel();
-        model.setRowCount(0); // Clear placeholder rows
+        model.setRowCount(0); 
 
         String query = 
             "SELECT m.material_name, c.full_name, i.quantity_issued, i.issuance_date " +
@@ -166,14 +159,17 @@ public class DashboardPnl extends javax.swing.JPanel {
         }
     }
 
-    /**
-     * Public wrapper to invoke data loading sweeps across all components.
-     */
+    // A public helper method that updates all dashboard sections at once.
+    // Uses Abstraction to give outside classes a simple way to reload data without knowing how it works.
     public void refreshDashboard() {
         loadOverviewMetrics();
         loadLowStockTable();
         loadRecentIssuancesTable();
     }
+    
+    // Auto-generated method that builds and places all visual components on the screen.
+    // Kept private to enforce strict Encapsulation, hiding messy layout code from the outside.
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 

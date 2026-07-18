@@ -52,7 +52,6 @@ public class LoginFrame extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMaximumSize(new java.awt.Dimension(250, 250));
         setMinimumSize(new java.awt.Dimension(250, 250));
-        getContentPane().setLayout(new java.awt.BorderLayout());
 
         jPanel1.setBackground(new java.awt.Color(45, 84, 226));
         jPanel1.setMaximumSize(new java.awt.Dimension(650, 520));
@@ -60,6 +59,7 @@ public class LoginFrame extends javax.swing.JFrame {
         jPanel1.setPreferredSize(new java.awt.Dimension(650, 520));
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jButton1.setBackground(new java.awt.Color(45, 84, 226));
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
