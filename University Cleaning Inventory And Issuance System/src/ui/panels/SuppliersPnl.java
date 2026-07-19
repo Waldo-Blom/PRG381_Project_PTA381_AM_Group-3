@@ -4,6 +4,7 @@ import ui.popDiaglogs.AddSuppliersDialog;
 import ui.MainFrame;
 
 import utils.CurrentUser;
+import utils.uiUtilities;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -22,7 +23,11 @@ public class SuppliersPnl extends javax.swing.JPanel {
     public SuppliersPnl() {
         initComponents();
         
-        utils.uiUtilities.applyTableStyleProperties(jTable1, jScrollPane1);
+        uiUtilities.applyTableStyleProperties(jTable1, jScrollPane1,
+            new int[]{140, 190, 120, 190, 100, 90, 60, 70});
+        
+        // Placeholder ("hint") text for the inventory search box - clears  itself automatically when the user clicks into it
+        uiUtilities.installPlaceholder(jTextField1, "Search suppliers by name, contact, or email ...");
         applyRoleRestrictions();
     }
     
@@ -91,11 +96,15 @@ public class SuppliersPnl extends javax.swing.JPanel {
         searchPnl.setMinimumSize(new java.awt.Dimension(1000, 70));
 
         jTextField1.setText("Search suppliers by name, contact, or email ...");
-        jTextField1.setToolTipText("Search suppliers by name, contact, or email ...");
+        jTextField1.setToolTipText("");
         jTextField1.addActionListener(this::jTextField1ActionPerformed);
 
+        jButton1.setBackground(new java.awt.Color(59, 91, 219));
+        jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Search");
 
+        btnAddSupplier.setBackground(new java.awt.Color(59, 91, 219));
+        btnAddSupplier.setForeground(new java.awt.Color(255, 255, 255));
         btnAddSupplier.setText("Add new supplier");
         btnAddSupplier.addActionListener(this::btnAddSupplierActionPerformed);
 
@@ -107,10 +116,10 @@ public class SuppliersPnl extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 641, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
-                .addGap(38, 38, 38)
-                .addComponent(btnAddSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(50, Short.MAX_VALUE))
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(26, 26, 26)
+                .addComponent(btnAddSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(84, Short.MAX_VALUE))
         );
         searchPnlLayout.setVerticalGroup(
             searchPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

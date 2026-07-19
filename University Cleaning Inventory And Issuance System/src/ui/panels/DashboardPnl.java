@@ -17,8 +17,10 @@ public class DashboardPnl extends javax.swing.JPanel {
     public DashboardPnl() {
         initComponents();
         
-        utils.uiUtilities.applyTableStyleProperties(jTable1, jScrollPane1);
-        utils.uiUtilities.applyTableStyleProperties(jTable3, jScrollPane3);
+        utils.uiUtilities.applyTableStyleProperties(jTable1, jScrollPane1,
+            new int[]{130, 130, 130, 130}); // adjust once real headers are set
+        utils.uiUtilities.applyTableStyleProperties(jTable3, jScrollPane3,
+            new int[]{150, 150, 90, 110});
     }
 
     /**
@@ -163,7 +165,6 @@ public class DashboardPnl extends javax.swing.JPanel {
         jLabel7.setText("Total Materials");
 
         jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel12.setForeground(new java.awt.Color(13, 110, 253));
         jLabel12.setText("8");
 
         jLabel16.setText("of 190 units total");
@@ -204,7 +205,6 @@ public class DashboardPnl extends javax.swing.JPanel {
         jLabel8.setText("Low Stock Items");
 
         jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel13.setForeground(new java.awt.Color(220, 53, 69));
         jLabel13.setText("4");
 
         jLabel17.setText("Needs attention");
@@ -245,7 +245,6 @@ public class DashboardPnl extends javax.swing.JPanel {
         jLabel9.setText("Active Cleaners");
 
         jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel14.setForeground(new java.awt.Color(25, 135, 84));
         jLabel14.setText("5");
 
         jLabel19.setText("1 inactive");
@@ -286,7 +285,6 @@ public class DashboardPnl extends javax.swing.JPanel {
         jLabel10.setText("Recent Issuances");
 
         jLabel15.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel15.setForeground(new java.awt.Color(108, 117, 125));
         jLabel15.setText("0");
 
         jLabel20.setText("in the Last 7 days");

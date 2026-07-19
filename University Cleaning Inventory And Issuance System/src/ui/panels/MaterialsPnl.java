@@ -3,6 +3,7 @@ import ui.popDiaglogs.AddMaterialDialog;
 import ui.MainFrame;
 
 import utils.CurrentUser;
+import utils.uiUtilities;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -21,7 +22,12 @@ public class MaterialsPnl extends javax.swing.JPanel {
     public MaterialsPnl() {
         initComponents();
         
-        utils.uiUtilities.applyTableStyleProperties(jTable1, jScrollPane1);
+        uiUtilities.applyTableStyleProperties(jTable1, jScrollPane1,
+            new int[]{150, 120, 90, 110, 140, 100, 60, 70});
+        
+         // Placeholder ("hint") text for the inventory search box - clears  itself automatically when the user clicks into it
+        uiUtilities.installPlaceholder(jTextField1, "Search materials ...");
+        
         applyRoleRestrictions();
         
     }
@@ -95,14 +101,19 @@ public class MaterialsPnl extends javax.swing.JPanel {
         searchPnl.setMinimumSize(new java.awt.Dimension(1000, 70));
         searchPnl.setPreferredSize(new java.awt.Dimension(1000, 70));
 
-        jTextField1.setText("Search materials ...");
-        jTextField1.setToolTipText("Search materials ...");
+        jTextField1.setToolTipText("");
         jTextField1.addActionListener(this::jTextField1ActionPerformed);
 
+        jButton1.setBackground(new java.awt.Color(59, 91, 219));
+        jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Search");
 
+        jComboBox1.setBackground(new java.awt.Color(59, 91, 219));
+        jComboBox1.setForeground(new java.awt.Color(255, 255, 255));
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All Catergories", "Item 2", "Item 3", "Item 4" }));
 
+        btnAdd.setBackground(new java.awt.Color(59, 91, 219));
+        btnAdd.setForeground(new java.awt.Color(255, 255, 255));
         btnAdd.setText("Add new Material");
         btnAdd.addActionListener(this::btnAddActionPerformed);
 

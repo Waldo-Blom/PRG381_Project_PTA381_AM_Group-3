@@ -95,7 +95,7 @@ public class ReportsDAO {
             }
 
             try (ResultSet rs = ps.executeQuery()) {
-                // Iterate through every row returned by the database
+          
                 while (rs.next()) {
                     // Add the data from the query to a object that can be loaded to the JTable
                     // The order of columns in this array matches the order expected by the JTable UI in the ReportsPnl

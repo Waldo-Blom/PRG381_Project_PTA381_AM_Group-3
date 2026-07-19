@@ -3,6 +3,7 @@ package ui.panels;
 import ui.MainFrame;
 import ui.popDiaglogs.AddStockIssuanceDialog;
 import utils.CurrentUser;
+import utils.uiUtilities;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -21,7 +22,11 @@ public class StockIssuancePnl extends javax.swing.JPanel {
     public StockIssuancePnl() {
         initComponents();
         
-        utils.uiUtilities.applyTableStyleProperties(jTable1, jScrollPane1);
+        uiUtilities.applyTableStyleProperties(jTable1, jScrollPane1,
+            new int[]{100, 140, 140, 90, 120, 170, 60, 70});
+        
+        // Placeholder ("hint") text for the inventory search box - clears  itself automatically when the user clicks into it
+        uiUtilities.installPlaceholder(jTextField1, "Search by material ...");
         applyRoleRestrictions();
     }
     
@@ -102,9 +107,13 @@ public class StockIssuancePnl extends javax.swing.JPanel {
         jTextField1.setToolTipText("Search by material ...");
         jTextField1.addActionListener(this::jTextField1ActionPerformed);
 
+        jButton1.setBackground(new java.awt.Color(59, 91, 219));
+        jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Search");
 
-        btnIssueStock.setText("+ New Issuance");
+        btnIssueStock.setBackground(new java.awt.Color(59, 91, 219));
+        btnIssueStock.setForeground(new java.awt.Color(255, 255, 255));
+        btnIssueStock.setText("Add New Issuance");
         btnIssueStock.addActionListener(this::btnIssueStockActionPerformed);
 
         jFormattedTextField1.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("DD/MM/YYYY"))));
@@ -130,13 +139,13 @@ public class StockIssuancePnl extends javax.swing.JPanel {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jFormattedTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jFormattedTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnIssueStock, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(18, 18, 18))
         );
         searchPnlLayout.setVerticalGroup(
             searchPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

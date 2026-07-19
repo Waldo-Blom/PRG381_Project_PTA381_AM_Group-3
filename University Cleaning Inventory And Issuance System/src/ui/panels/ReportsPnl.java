@@ -36,10 +36,30 @@ public class ReportsPnl extends javax.swing.JPanel {
     public ReportsPnl() {
         initComponents();
         
-        uiUtilities.applyTableStyleProperties(jTable1, jScrollPane1);
-        uiUtilities.applyTableStyleProperties(jTable2, jScrollPane2);
-        uiUtilities.applyTableStyleProperties(jTable3, jScrollPane3);
-        uiUtilities.applyTableStyleProperties(jTable4, jScrollPane4);
+        // jTable1: Material, Category, Quantity, Reorder Level, Supplier, Unit Cost, Total Value, Status
+        uiUtilities.applyTableStyleProperties(jTable1, jScrollPane1,
+            new int[]{140, 110, 80, 90, 130, 90, 90, 120});
+
+        // jTable2: Material, Category, Current, Reorder Level, Shortage, Supplier
+        uiUtilities.applyTableStyleProperties(jTable2, jScrollPane2,
+            new int[]{170, 120, 70, 70, 70, 160});
+
+        // jTable3: Date, Material, Cleaner, Quantity, Issued By, Notes
+        uiUtilities.applyTableStyleProperties(jTable3, jScrollPane3,
+            new int[]{100, 140, 120, 60, 100, 210});
+
+        // jTable4: Material, Category, Total Issued, Remaining, Value Issed, # Issuances
+        uiUtilities.applyTableStyleProperties(jTable4, jScrollPane4,
+            new int[]{170, 120, 90, 90, 110, 100});
+        
+        // Format currency and date columns (Rand values / readable dates).
+        uiUtilities.formatCurrencyColumn(jTable1, 5); // Inventory Report: Unit Cost
+        uiUtilities.formatCurrencyColumn(jTable1, 6); // Inventory Report: Total Value
+        uiUtilities.formatDateColumn(jTable3, 0);     // Issuance History: Date
+        uiUtilities.formatCurrencyColumn(jTable4, 4); // Material Usage: Value Issued
+        
+        // Placeholder ("hint") text for the inventory search box - clears  itself automatically when the user clicks into it
+        uiUtilities.installPlaceholder(edtSearchInventoryReport, "Search material or supplier");
         
         populateComboBoxes();
         loadReports();
@@ -189,7 +209,7 @@ public class ReportsPnl extends javax.swing.JPanel {
         int totalMaterials = dao.getTotalMaterialsCount();
         int totalUnits = dao.getTotalUnits();
         double totalValue = dao.getTotalValue();
-        int lowStockItems = dao.getLowStockCount();   // already exists in ReportsDAO
+        int lowStockItems = dao.getLowStockCount();   
 
         lblInventoryReportTotalMaterials.setText(String.valueOf(totalMaterials));
         lblInventoryReportTotalUnits.setText(String.valueOf(totalUnits));
@@ -375,7 +395,8 @@ public class ReportsPnl extends javax.swing.JPanel {
         contentPnl.setPreferredSize(new java.awt.Dimension(1000, 70));
         contentPnl.setLayout(new javax.swing.BoxLayout(contentPnl, javax.swing.BoxLayout.LINE_AXIS));
 
-        jTabbedPane1.setBackground(new java.awt.Color(245, 246, 250));
+        jTabbedPane1.setBackground(new java.awt.Color(59, 91, 219));
+        jTabbedPane1.setForeground(new java.awt.Color(255, 255, 255));
 
         inventoryReportPnl.setBackground(new java.awt.Color(245, 246, 250));
         inventoryReportPnl.setLayout(new javax.swing.BoxLayout(inventoryReportPnl, javax.swing.BoxLayout.Y_AXIS));
@@ -529,9 +550,13 @@ public class ReportsPnl extends javax.swing.JPanel {
         edtSearchInventoryReport.setToolTipText("text\tSearch material or supplier");
         edtSearchInventoryReport.addActionListener(this::edtSearchInventoryReportActionPerformed);
 
+        searchMaterialOrSupplier.setBackground(new java.awt.Color(59, 91, 219));
+        searchMaterialOrSupplier.setForeground(new java.awt.Color(255, 255, 255));
         searchMaterialOrSupplier.setText("Search");
         searchMaterialOrSupplier.addActionListener(this::searchMaterialOrSupplierActionPerformed);
 
+        cmbInventoryreportValue.setBackground(new java.awt.Color(59, 91, 219));
+        cmbInventoryreportValue.setForeground(new java.awt.Color(255, 255, 255));
         cmbInventoryreportValue.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Total Value ASC ↑", "Total Value DEC ↓", "Unit Cost ASC ↑", "Unit Cost DEC ↓", "Quantity ASC↑", "Quantity DEC ↓" }));
         cmbInventoryreportValue.addItemListener(this::cmbInventoryreportValueItemStateChanged);
         cmbInventoryreportValue.addActionListener(this::cmbInventoryreportValueActionPerformed);
@@ -643,6 +668,8 @@ public class ReportsPnl extends javax.swing.JPanel {
         searchPnl6.setMaximumSize(new java.awt.Dimension(1000, 70));
         searchPnl6.setMinimumSize(new java.awt.Dimension(1000, 70));
 
+        cmbInssuanceHistoryCleaners.setBackground(new java.awt.Color(59, 91, 219));
+        cmbInssuanceHistoryCleaners.setForeground(new java.awt.Color(255, 255, 255));
         cmbInssuanceHistoryCleaners.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All Cleaners" }));
         cmbInssuanceHistoryCleaners.addItemListener(this::cmbInssuanceHistoryCleanersItemStateChanged);
 
@@ -741,9 +768,13 @@ public class ReportsPnl extends javax.swing.JPanel {
         searchPnl7.setMaximumSize(new java.awt.Dimension(1000, 70));
         searchPnl7.setMinimumSize(new java.awt.Dimension(1000, 70));
 
+        cmbMaterialUsageMaterials.setBackground(new java.awt.Color(59, 91, 219));
+        cmbMaterialUsageMaterials.setForeground(new java.awt.Color(255, 255, 255));
         cmbMaterialUsageMaterials.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All Materials" }));
         cmbMaterialUsageMaterials.addItemListener(this::cmbMaterialUsageMaterialsItemStateChanged);
 
+        cmbMaterialUsageValue.setBackground(new java.awt.Color(59, 91, 219));
+        cmbMaterialUsageValue.setForeground(new java.awt.Color(255, 255, 255));
         cmbMaterialUsageValue.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Total Value Issued ASC ↑", "Total Value Issued DEC ↓", "Total Issed ASC ↑", "Total Issued DEC ↓", "#Issuances ASC↑", "#Issuances DEC ↓" }));
         cmbMaterialUsageValue.addItemListener(this::cmbMaterialUsageValueItemStateChanged);
 
@@ -909,6 +940,8 @@ public class ReportsPnl extends javax.swing.JPanel {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setText("Reports");
 
+        bntExportToCSV.setBackground(new java.awt.Color(59, 91, 219));
+        bntExportToCSV.setForeground(new java.awt.Color(255, 255, 255));
         bntExportToCSV.setText("Export to CSV");
         bntExportToCSV.addActionListener(this::bntExportToCSVActionPerformed);
 
