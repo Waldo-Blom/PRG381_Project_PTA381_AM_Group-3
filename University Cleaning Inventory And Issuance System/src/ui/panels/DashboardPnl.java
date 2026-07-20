@@ -25,8 +25,10 @@ public class DashboardPnl extends javax.swing.JPanel {
         initComponents(); 
         
         // Apply your custom table UI visual styles
-        utils.uiUtilities.applyTableStyleProperties(tblLowStockItems, jScrollPane1);
-        utils.uiUtilities.applyTableStyleProperties(tblRecentStockIssuances, jScrollPane3);
+        utils.uiUtilities.applyTableStyleProperties(tblLowStockItems, jScrollPane1,
+            new int[]{130, 130, 130, 130}); // adjust once real headers are set
+        utils.uiUtilities.applyTableStyleProperties(tblRecentStockIssuances, jScrollPane3,
+            new int[]{150, 150, 90, 110});
         
         // Load live system data immediately on launch
         refreshDashboard();

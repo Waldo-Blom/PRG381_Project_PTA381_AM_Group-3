@@ -14,6 +14,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import utils.CurrentUser;
 
+import utils.uiUtilities;
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
+ */
+
 /**
  *
  * @author Tobie
@@ -29,6 +36,12 @@ public class MaterialsPnl extends javax.swing.JPanel {
         initComponents();
 
         utils.uiUtilities.applyTableStyleProperties(tblDisplayMaterials, jScrollPane1);
+        
+        uiUtilities.applyTableStyleProperties(tblDisplayMaterials, jScrollPane1,
+            new int[]{150, 120, 90, 110, 140, 100, 60, 70});
+        
+         // Placeholder ("hint") text for the inventory search box - clears  itself automatically when the user clicks into it
+        uiUtilities.installPlaceholder(txtSearch, "Search materials ...");
         
         applyRoleRestrictions();
 
@@ -304,6 +317,8 @@ public class MaterialsPnl extends javax.swing.JPanel {
 
         cmbCategories.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All Categories", "Cleaners", "Disinfectants", "Tools", "Safety", "Consumables", "Hygiene" }));
 
+        btnAdd.setBackground(new java.awt.Color(59, 91, 219));
+        btnAdd.setForeground(new java.awt.Color(255, 255, 255));
         btnAdd.setText("Add new Material");
         btnAdd.addActionListener(this::btnAddActionPerformed);
 

@@ -17,7 +17,7 @@ import ui.MainFrame;
  */
 
 
-// LoginView IS a window (JFrame) — inheriting JFrame gives us built-in
+// LoginView IS a window (JFrame) inheriting JFrame gives us built-in
 // window behavior (show, close, resize) for free, and lets NetBeans GUI Builder work.
 public class LoginView {
 
