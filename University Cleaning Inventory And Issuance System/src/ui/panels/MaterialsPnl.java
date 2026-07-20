@@ -14,6 +14,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import utils.CurrentUser;
 
+import utils.uiUtilities;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
@@ -35,11 +37,11 @@ public class MaterialsPnl extends javax.swing.JPanel {
 
         utils.uiUtilities.applyTableStyleProperties(tblDisplayMaterials, jScrollPane1);
         
-        uiUtilities.applyTableStyleProperties(jTable1, jScrollPane1,
+        uiUtilities.applyTableStyleProperties(tblDisplayMaterials, jScrollPane1,
             new int[]{150, 120, 90, 110, 140, 100, 60, 70});
         
          // Placeholder ("hint") text for the inventory search box - clears  itself automatically when the user clicks into it
-        uiUtilities.installPlaceholder(jTextField1, "Search materials ...");
+        uiUtilities.installPlaceholder(txtSearch, "Search materials ...");
         
         applyRoleRestrictions();
 
