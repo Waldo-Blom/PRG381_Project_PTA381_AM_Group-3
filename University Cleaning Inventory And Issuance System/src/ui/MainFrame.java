@@ -142,6 +142,7 @@ public class MainFrame extends javax.swing.JFrame {
         setMaximumSize(new java.awt.Dimension(1200, 700));
         setMinimumSize(new java.awt.Dimension(1200, 700));
         setPreferredSize(new java.awt.Dimension(1200, 700));
+        getContentPane().setLayout(new java.awt.BorderLayout());
 
         sidebarPanel.setPreferredSize(new java.awt.Dimension(200, 700));
         sidebarPanel.setLayout(new java.awt.BorderLayout());
