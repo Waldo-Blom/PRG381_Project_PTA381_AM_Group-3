@@ -17,32 +17,48 @@ import java.util.List;
 /**
  * Data Access Object for the Supplier entity.
  * This is the ONLY class allowed to contain raw SQL for suppliers.
- * All PostgreSQL access for suppliers happens here.
+ *
+ * Matches the real "suppliers" table:
+ *   supplier_id   SERIAL PRIMARY KEY
+ *   supplier_name VARCHAR(100) NOT NULL
+ *   contact_name  VARCHAR(100)
+ *   phone         VARCHAR(20)
+ *   email         VARCHAR(100) UNIQUE
  *
  * @author waldo
  */
 public class SupplierDAO {
 
     private final Connection connection;
+    private String lastError;
 
     public SupplierDAO(Connection connection) {
         this.connection = connection;
     }
 
     /**
+     * The most recent database error message, useful for surfacing the real
+     * reason an operation failed (e.g. a constraint violation) in the UI.
+     */
+    public String getLastError() {
+        return lastError;
+    }
+
+    /**
      * Insert a new supplier into the database.
      */
     public boolean addSupplier(Supplier supplier) {
-        String sql = "INSERT INTO suppliers (name, email, phone, address, status) VALUES (?, ?, ?, ?, ?)";
+        lastError = null;
+        String sql = "INSERT INTO suppliers (supplier_name, contact_name, phone, email) VALUES (?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, supplier.getName());
-            pstmt.setString(2, supplier.getEmail());
+            pstmt.setString(2, supplier.getContactName());
             pstmt.setString(3, supplier.getPhone());
-            pstmt.setString(4, supplier.getAddress());
-            pstmt.setString(5, supplier.getStatus());
+            pstmt.setString(4, supplier.getEmail());
 
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            lastError = e.getMessage();
             e.printStackTrace();
             return false;
         }
@@ -52,14 +68,16 @@ public class SupplierDAO {
      * Get every supplier in the database.
      */
     public List<Supplier> getAllSuppliers() {
+        lastError = null;
         List<Supplier> suppliers = new ArrayList<>();
-        String sql = "SELECT * FROM suppliers ORDER BY name";
+        String sql = "SELECT * FROM suppliers ORDER BY supplier_name";
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 suppliers.add(mapRow(rs));
             }
         } catch (SQLException e) {
+            lastError = e.getMessage();
             e.printStackTrace();
         }
         return suppliers;
@@ -69,6 +87,7 @@ public class SupplierDAO {
      * Get a single supplier by its ID.
      */
     public Supplier getSupplierById(int supplierId) {
+        lastError = null;
         String sql = "SELECT * FROM suppliers WHERE supplier_id = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setInt(1, supplierId);
@@ -78,6 +97,7 @@ public class SupplierDAO {
                 }
             }
         } catch (SQLException e) {
+            lastError = e.getMessage();
             e.printStackTrace();
         }
         return null;
@@ -87,17 +107,18 @@ public class SupplierDAO {
      * Update an existing supplier.
      */
     public boolean updateSupplier(Supplier supplier) {
-        String sql = "UPDATE suppliers SET name = ?, email = ?, phone = ?, address = ?, status = ? WHERE supplier_id = ?";
+        lastError = null;
+        String sql = "UPDATE suppliers SET supplier_name = ?, contact_name = ?, phone = ?, email = ? WHERE supplier_id = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, supplier.getName());
-            pstmt.setString(2, supplier.getEmail());
+            pstmt.setString(2, supplier.getContactName());
             pstmt.setString(3, supplier.getPhone());
-            pstmt.setString(4, supplier.getAddress());
-            pstmt.setString(5, supplier.getStatus());
-            pstmt.setInt(6, supplier.getSupplierId());
+            pstmt.setString(4, supplier.getEmail());
+            pstmt.setInt(5, supplier.getSupplierId());
 
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            lastError = e.getMessage();
             e.printStackTrace();
             return false;
         }
@@ -107,11 +128,13 @@ public class SupplierDAO {
      * Delete a supplier by ID.
      */
     public boolean deleteSupplier(int supplierId) {
+        lastError = null;
         String sql = "DELETE FROM suppliers WHERE supplier_id = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setInt(1, supplierId);
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            lastError = e.getMessage();
             e.printStackTrace();
             return false;
         }
@@ -121,12 +144,13 @@ public class SupplierDAO {
      * Search suppliers by name, phone number, or email.
      */
     public List<Supplier> searchSuppliers(String searchTerm) {
+        lastError = null;
         List<Supplier> suppliers = new ArrayList<>();
         String sql = "SELECT * FROM suppliers "
-                + "WHERE LOWER(name) LIKE LOWER(?) "
+                + "WHERE LOWER(supplier_name) LIKE LOWER(?) "
                 + "OR phone LIKE ? "
                 + "OR LOWER(email) LIKE LOWER(?) "
-                + "ORDER BY name";
+                + "ORDER BY supplier_name";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             String pattern = "%" + searchTerm + "%";
             pstmt.setString(1, pattern);
@@ -139,6 +163,7 @@ public class SupplierDAO {
                 }
             }
         } catch (SQLException e) {
+            lastError = e.getMessage();
             e.printStackTrace();
         }
         return suppliers;
@@ -147,11 +172,10 @@ public class SupplierDAO {
     private Supplier mapRow(ResultSet rs) throws SQLException {
         return new Supplier(
                 rs.getInt("supplier_id"),
-                rs.getString("name"),
+                rs.getString("supplier_name"),
+                rs.getString("contact_name"),
                 rs.getString("email"),
-                rs.getString("phone"),
-                rs.getString("address"),
-                rs.getString("status")
+                rs.getString("phone")
         );
     }
 }

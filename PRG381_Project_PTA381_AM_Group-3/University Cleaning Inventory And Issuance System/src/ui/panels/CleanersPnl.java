@@ -37,6 +37,9 @@ public class CleanersPnl extends javax.swing.JPanel {
         setupTableListeners();
         setupSearchListener();
         setupComboListeners();
+        if (cleanerController.getConnectionError() != null) {
+            AlertUtils.showErrorAlert("Database Connection Error", cleanerController.getConnectionError());
+        }
         loadFilterCombos();
         loadCleaners();
     }
@@ -74,7 +77,7 @@ public class CleanersPnl extends javax.swing.JPanel {
                 cleaner.getEmail(),
                 cleaner.getPhone(),
                 cleaner.getDepartment(),
-                "-",
+                cleaner.getEmployeeId(),
                 cleaner.getHireDate() != null ? cleaner.getHireDate().toString() : "",
                 cleaner.getStatus(),
                 "Edit",
@@ -429,7 +432,7 @@ public class CleanersPnl extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Cleaner", "Email", "Phone number", "Department", "Issuances", "Hire Date", "Status", "Edit", "Delete"
+                "Cleaner", "Email", "Phone number", "Department", "Employee ID", "Hire Date", "Status", "Edit", "Delete"
             }
         ));
         jTable1.setRowHeight(45);
@@ -551,7 +554,10 @@ public class CleanersPnl extends javax.swing.JPanel {
                 loadFilterCombos();
                 loadCleaners();
             } else {
-                AlertUtils.showDeletedFailedAlert("Cleaner");
+                String reason = cleanerController.getLastError();
+                AlertUtils.showErrorAlert("Error", reason != null
+                        ? "Failed to delete cleaner:\n" + reason
+                        : "Failed to delete cleaner. Please try again.");
             }
         }
     }

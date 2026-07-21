@@ -15,14 +15,39 @@ import java.util.List;
 public class SupplierController {
 
     private SupplierService supplierService;
+    private String connectionError;
 
     public SupplierController() {
         try {
             Connection connection = DBConnection.getConnection();
+            if (connection == null) {
+                connectionError = "Could not connect to the database. Check that PostgreSQL is running and that the credentials in DBConnection.java are correct.";
+                return;
+            }
             this.supplierService = new SupplierService(connection);
         } catch (ClassNotFoundException e) {
+            connectionError = "PostgreSQL JDBC driver not found: " + e.getMessage();
             e.printStackTrace();
         }
+    }
+
+    /**
+     * @return a message describing why the controller could not connect to
+     * the database, or null if the connection succeeded.
+     */
+    public String getConnectionError() {
+        return connectionError;
+    }
+
+    /**
+     * The most recent database error message, if the last operation failed
+     * (e.g. a constraint violation such as a duplicate email).
+     */
+    public String getLastError() {
+        if (connectionError != null) {
+            return connectionError;
+        }
+        return supplierService == null ? null : supplierService.getLastError();
     }
 
     public boolean addSupplier(Supplier supplier) {

@@ -1,37 +1,36 @@
 package model;
 
 /**
- * Supplier model class representing a cleaning material supplier
+ * Supplier model class representing a cleaning material supplier.
+ * Mirrors the real "suppliers" table: supplier_id, supplier_name,
+ * contact_name, phone, email. There is no address or status column.
  */
 public class Supplier {
     private int supplierId;
     private String name;
+    private String contactName;
     private String email;
     private String phone;
-    private String address;
-    private String status;
 
     /**
      * Constructor with all fields
      */
-    public Supplier(int supplierId, String name, String email, String phone, String address, String status) {
+    public Supplier(int supplierId, String name, String contactName, String email, String phone) {
         this.supplierId = supplierId;
         this.name = name;
+        this.contactName = contactName;
         this.email = email;
         this.phone = phone;
-        this.address = address;
-        this.status = status;
     }
 
     /**
      * Constructor without ID (for new suppliers)
      */
-    public Supplier(String name, String email, String phone, String address, String status) {
+    public Supplier(String name, String contactName, String email, String phone) {
         this.name = name;
+        this.contactName = contactName;
         this.email = email;
         this.phone = phone;
-        this.address = address;
-        this.status = status;
     }
 
     // Getters and Setters
@@ -51,6 +50,14 @@ public class Supplier {
         this.name = name;
     }
 
+    public String getContactName() {
+        return contactName;
+    }
+
+    public void setContactName(String contactName) {
+        this.contactName = contactName;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -67,31 +74,14 @@ public class Supplier {
         this.phone = phone;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     @Override
     public String toString() {
         return "Supplier{" +
                 "supplierId=" + supplierId +
                 ", name='" + name + '\'' +
+                ", contactName='" + contactName + '\'' +
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
-                ", address='" + address + '\'' +
-                ", status='" + status + '\'' +
                 '}';
     }
 }

@@ -135,13 +135,14 @@ public class MainFrame extends javax.swing.JFrame {
         UserInfoPnl = new javax.swing.JPanel();
         lblUsername = new javax.swing.JLabel();
         lblRole = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        btnLogout = new javax.swing.JButton();
         contentPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMaximumSize(new java.awt.Dimension(1200, 700));
         setMinimumSize(new java.awt.Dimension(1200, 700));
         setPreferredSize(new java.awt.Dimension(1200, 700));
+        getContentPane().setLayout(new java.awt.BorderLayout());
 
         sidebarPanel.setPreferredSize(new java.awt.Dimension(200, 700));
         sidebarPanel.setLayout(new java.awt.BorderLayout());
@@ -263,11 +264,12 @@ public class MainFrame extends javax.swing.JFrame {
         UserInfoPnl.add(lblRole);
         lblRole.setBounds(10, 20, 170, 16);
 
-        jButton1.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(107, 114, 128));
-        jButton1.setText("Log out");
-        UserInfoPnl.add(jButton1);
-        jButton1.setBounds(80, 40, 110, 23);
+        btnLogout.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
+        btnLogout.setForeground(new java.awt.Color(107, 114, 128));
+        btnLogout.setText("Log out");
+        btnLogout.addActionListener(this::btnLogoutActionPerformed);
+        UserInfoPnl.add(btnLogout);
+        btnLogout.setBounds(80, 40, 110, 23);
 
         sidebarPanel.add(UserInfoPnl, java.awt.BorderLayout.SOUTH);
 
@@ -306,35 +308,38 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnMaterialsActionPerformed
 
     private void btnCleanersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCleanersActionPerformed
-        CardLayout cl = (CardLayout) contentPanel.getLayout();
+       CardLayout cl = (CardLayout) contentPanel.getLayout();
        cl.show(contentPanel, "Cleaners"); 
        
         highlightSelected(btnCleaners); // Make the button have a active effect
     }//GEN-LAST:event_btnCleanersActionPerformed
 
     private void btnStockIssuanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStockIssuanceActionPerformed
-         CardLayout cl = (CardLayout) contentPanel.getLayout();
+       CardLayout cl = (CardLayout) contentPanel.getLayout();
        cl.show(contentPanel, "StockIssuance"); 
        
         highlightSelected(btnStockIssuance); // Make the button have a active effect
     }//GEN-LAST:event_btnStockIssuanceActionPerformed
 
     private void btnReportsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReportsActionPerformed
-        CardLayout cl = (CardLayout) contentPanel.getLayout();
+       CardLayout cl = (CardLayout) contentPanel.getLayout();
        cl.show(contentPanel, "Reports"); 
        
         highlightSelected(btnReports); // Make the button have a active effect
     }//GEN-LAST:event_btnReportsActionPerformed
 
+    private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
+
+        CurrentUser.clear();   // Clear the logged in user
+        this.dispose();          // Close MainFrame
+        new LoginFrame().setVisible(true); // Return to the login screen
+    }//GEN-LAST:event_btnLogoutActionPerformed
+
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+        //Change the Theme of the app
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -345,8 +350,7 @@ public class MainFrame extends javax.swing.JFrame {
         } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new MainFrame().setVisible(true));
     }
@@ -357,12 +361,12 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel UserInfoPnl;
     private javax.swing.JButton btnCleaners;
     private javax.swing.JButton btnDashboard;
+    private javax.swing.JButton btnLogout;
     private javax.swing.JButton btnMaterials;
     private javax.swing.JButton btnReports;
     private javax.swing.JButton btnStockIssuance;
     private javax.swing.JButton btnSuppliers;
     private javax.swing.JPanel contentPanel;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel lblLogoName;
     private javax.swing.JLabel lblRole;

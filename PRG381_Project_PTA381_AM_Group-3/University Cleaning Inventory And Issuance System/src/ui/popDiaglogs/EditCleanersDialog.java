@@ -59,8 +59,7 @@ public class EditCleanersDialog extends javax.swing.JDialog {
         if (cleanerBeingEdited == null) {
             return;
         }
-        jTextField7.setEditable(false);
-        jTextField7.setText(String.valueOf(cleanerBeingEdited.getCleanerId()));
+        jTextField7.setText(cleanerBeingEdited.getEmployeeId());
         jTextField3.setText(cleanerBeingEdited.getName());
         jTextField1.setText(cleanerBeingEdited.getEmail());
         jTextField8.setText(cleanerBeingEdited.getPhone());
@@ -212,14 +211,15 @@ public class EditCleanersDialog extends javax.swing.JDialog {
             return;
         }
 
+        String employeeId = jTextField7.getText().trim();
         String name = jTextField3.getText().trim();
         String email = jTextField1.getText().trim();
         String phone = jTextField8.getText().trim();
         Object selectedDepartment = jComboBox1.getSelectedItem();
         String department = selectedDepartment == null ? "" : selectedDepartment.toString();
 
-        if (name.isEmpty() || email.isEmpty() || phone.isEmpty()) {
-            AlertUtils.showValidationAlert("Full name, email, and phone are required.");
+        if (employeeId.isEmpty() || name.isEmpty() || email.isEmpty() || phone.isEmpty()) {
+            AlertUtils.showValidationAlert("Employee ID, full name, email, and phone are required.");
             return;
         }
         if (department.isEmpty() || department.equals("Select department")) {
@@ -227,6 +227,7 @@ public class EditCleanersDialog extends javax.swing.JDialog {
             return;
         }
 
+        cleanerBeingEdited.setEmployeeId(employeeId);
         cleanerBeingEdited.setName(name);
         cleanerBeingEdited.setEmail(email);
         cleanerBeingEdited.setPhone(phone);
@@ -239,7 +240,10 @@ public class EditCleanersDialog extends javax.swing.JDialog {
             AlertUtils.showUpdatedAlert("Cleaner");
             this.dispose();
         } else {
-            AlertUtils.showUpdatedFailedAlert("Cleaner");
+            String reason = cleanerController.getLastError();
+            AlertUtils.showErrorAlert("Error", reason != null
+                    ? "Failed to update cleaner:\n" + reason
+                    : "Failed to update cleaner. Please try again.");
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 

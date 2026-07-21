@@ -36,6 +36,7 @@ public class EditSuppliersDialog extends javax.swing.JDialog {
         this.supplierController = supplierController;
         this.supplierBeingEdited = supplier;
         initComponents();
+        jTextField5.setEnabled(false);
         populateFields();
     }
 
@@ -47,9 +48,9 @@ public class EditSuppliersDialog extends javax.swing.JDialog {
             return;
         }
         jTextField6.setText(supplierBeingEdited.getName());
+        jTextField2.setText(supplierBeingEdited.getContactName());
         jTextField1.setText(supplierBeingEdited.getEmail());
         jTextField7.setText(supplierBeingEdited.getPhone());
-        jTextField5.setText(supplierBeingEdited.getAddress());
     }
 
     /**
@@ -110,7 +111,7 @@ public class EditSuppliersDialog extends javax.swing.JDialog {
         jLabel9.setToolTipText("");
 
         jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel10.setText("Address");
+        jLabel10.setText("Address (not stored)");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -202,9 +203,9 @@ public class EditSuppliersDialog extends javax.swing.JDialog {
         }
 
         String name = jTextField6.getText().trim();
+        String contactName = jTextField2.getText().trim();
         String email = jTextField1.getText().trim();
         String phone = jTextField7.getText().trim();
-        String address = jTextField5.getText().trim();
 
         if (name.isEmpty() || email.isEmpty() || phone.isEmpty()) {
             AlertUtils.showValidationAlert("Company name, email, and phone are required.");
@@ -212,9 +213,9 @@ public class EditSuppliersDialog extends javax.swing.JDialog {
         }
 
         supplierBeingEdited.setName(name);
+        supplierBeingEdited.setContactName(contactName);
         supplierBeingEdited.setEmail(email);
         supplierBeingEdited.setPhone(phone);
-        supplierBeingEdited.setAddress(address);
 
         boolean success = supplierController.updateSupplier(supplierBeingEdited);
 
@@ -223,7 +224,10 @@ public class EditSuppliersDialog extends javax.swing.JDialog {
             AlertUtils.showUpdatedAlert("Supplier");
             this.dispose();
         } else {
-            AlertUtils.showUpdatedFailedAlert("Supplier");
+            String reason = supplierController.getLastError();
+            AlertUtils.showErrorAlert("Error", reason != null
+                    ? "Failed to update supplier:\n" + reason
+                    : "Failed to update supplier. Please try again.");
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 

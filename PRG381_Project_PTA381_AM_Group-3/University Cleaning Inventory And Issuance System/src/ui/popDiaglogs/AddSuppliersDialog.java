@@ -34,6 +34,7 @@ public class AddSuppliersDialog extends javax.swing.JDialog {
         super(parent, modal);
         this.supplierController = supplierController;
         initComponents();
+        jTextField5.setEnabled(false);
     }
 
     /**
@@ -94,7 +95,7 @@ public class AddSuppliersDialog extends javax.swing.JDialog {
         jLabel9.setToolTipText("");
 
         jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel10.setText("Address");
+        jLabel10.setText("Address (not stored)");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -181,16 +182,16 @@ public class AddSuppliersDialog extends javax.swing.JDialog {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         String name = jTextField6.getText().trim();
+        String contactName = jTextField2.getText().trim();
         String email = jTextField1.getText().trim();
         String phone = jTextField7.getText().trim();
-        String address = jTextField5.getText().trim();
 
         if (name.isEmpty() || email.isEmpty() || phone.isEmpty()) {
             AlertUtils.showValidationAlert("Company name, email, and phone are required.");
             return;
         }
 
-        Supplier supplier = new Supplier(name, email, phone, address, "Active");
+        Supplier supplier = new Supplier(name, contactName, email, phone);
         boolean success = supplierController.addSupplier(supplier);
 
         if (success) {
@@ -198,7 +199,10 @@ public class AddSuppliersDialog extends javax.swing.JDialog {
             AlertUtils.showAddedAlert("Supplier");
             this.dispose();
         } else {
-            AlertUtils.showAddedFailedAlert("Supplier");
+            String reason = supplierController.getLastError();
+            AlertUtils.showErrorAlert("Error", reason != null
+                    ? "Failed to add supplier:\n" + reason
+                    : "Failed to add supplier. Please try again.");
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 

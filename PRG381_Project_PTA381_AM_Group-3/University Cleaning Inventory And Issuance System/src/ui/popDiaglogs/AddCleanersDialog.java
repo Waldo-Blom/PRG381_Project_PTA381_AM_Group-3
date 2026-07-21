@@ -36,8 +36,7 @@ public class AddCleanersDialog extends javax.swing.JDialog {
         super(parent, modal);
         this.cleanerController = cleanerController;
         initComponents();
-        jTextField7.setEditable(false);
-        jTextField7.setText("Auto-generated");
+        jTextField7.setToolTipText("e.g. EMP-001");
         loadDepartments();
     }
 
@@ -193,14 +192,15 @@ public class AddCleanersDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        String employeeId = jTextField7.getText().trim();
         String name = jTextField3.getText().trim();
         String email = jTextField1.getText().trim();
         String phone = jTextField8.getText().trim();
         Object selectedDepartment = jComboBox1.getSelectedItem();
         String department = selectedDepartment == null ? "" : selectedDepartment.toString();
 
-        if (name.isEmpty() || email.isEmpty() || phone.isEmpty()) {
-            AlertUtils.showValidationAlert("Full name, email, and phone are required.");
+        if (employeeId.isEmpty() || name.isEmpty() || email.isEmpty() || phone.isEmpty()) {
+            AlertUtils.showValidationAlert("Employee ID, full name, email, and phone are required.");
             return;
         }
         if (department.isEmpty() || department.equals("Select department")) {
@@ -208,7 +208,8 @@ public class AddCleanersDialog extends javax.swing.JDialog {
             return;
         }
 
-        Cleaner cleaner = new Cleaner(name, email, phone, department, LocalDate.now(), "Active");
+        // status is constrained by the database to 'active' or 'inactive'
+        Cleaner cleaner = new Cleaner(employeeId, name, email, phone, department, LocalDate.now(), "active");
         boolean success = cleanerController.addCleaner(cleaner);
 
         if (success) {
@@ -216,7 +217,10 @@ public class AddCleanersDialog extends javax.swing.JDialog {
             AlertUtils.showAddedAlert("Cleaner");
             this.dispose();
         } else {
-            AlertUtils.showAddedFailedAlert("Cleaner");
+            String reason = cleanerController.getLastError();
+            AlertUtils.showErrorAlert("Error", reason != null
+                    ? "Failed to add cleaner:\n" + reason
+                    : "Failed to add cleaner. Please try again.");
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 

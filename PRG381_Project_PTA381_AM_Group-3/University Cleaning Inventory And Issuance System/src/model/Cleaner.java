@@ -7,6 +7,7 @@ import java.time.LocalDate;
  */
 public class Cleaner {
     private int cleanerId;
+    private String employeeId;
     private String name;
     private String email;
     private String phone;
@@ -17,8 +18,9 @@ public class Cleaner {
     /**
      * Constructor with all fields
      */
-    public Cleaner(int cleanerId, String name, String email, String phone, String department, LocalDate hireDate, String status) {
+    public Cleaner(int cleanerId, String employeeId, String name, String email, String phone, String department, LocalDate hireDate, String status) {
         this.cleanerId = cleanerId;
+        this.employeeId = employeeId;
         this.name = name;
         this.email = email;
         this.phone = phone;
@@ -30,7 +32,8 @@ public class Cleaner {
     /**
      * Constructor without ID (for new cleaners)
      */
-    public Cleaner(String name, String email, String phone, String department, LocalDate hireDate, String status) {
+    public Cleaner(String employeeId, String name, String email, String phone, String department, LocalDate hireDate, String status) {
+        this.employeeId = employeeId;
         this.name = name;
         this.email = email;
         this.phone = phone;
@@ -46,6 +49,14 @@ public class Cleaner {
 
     public void setCleanerId(int cleanerId) {
         this.cleanerId = cleanerId;
+    }
+
+    public String getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(String employeeId) {
+        this.employeeId = employeeId;
     }
 
     public String getName() {
@@ -100,6 +111,7 @@ public class Cleaner {
     public String toString() {
         return "Cleaner{" +
                 "cleanerId=" + cleanerId +
+                ", employeeId='" + employeeId + '\'' +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +

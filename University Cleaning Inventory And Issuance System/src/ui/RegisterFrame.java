@@ -1,20 +1,22 @@
 package ui;
-
+ 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-
-import view.RegisterView;
+ 
+import controller.AuthController;
+import javax.swing.JOptionPane;
+ 
 /**
  *
  * @author waldo
  */
 public class RegisterFrame extends javax.swing.JFrame {
     
-    private final RegisterView registerView = new RegisterView();
+    private final AuthController authController = new AuthController();
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(RegisterFrame.class.getName());
-
+ 
     /**
      * Creates new form LoginFrame
      */
@@ -108,12 +110,8 @@ public class RegisterFrame extends javax.swing.JFrame {
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel8.setText("Role");
 
-        txtPassword.setText("jPasswordField1");
-
         jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel9.setText("Confirm Password");
-
-        txtConfirmPass.setText("jPasswordField1");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -254,25 +252,34 @@ public class RegisterFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        String fullName = txtFullName.getText();
+  String fullName = txtFullName.getText();
         String username = txtUsername.getText();
         String email = txtEmail.getText();
         String password = new String(txtPassword.getPassword());
         String confirmPassword = new String(txtConfirmPass.getPassword());
-        String role = (String)cmbRole.getSelectedItem();
-
-        registerView.handleCreateAccount(this, fullName, username, email, password, confirmPassword, role);
+        String role = (String) cmbRole.getSelectedItem();
+ 
+        String error = authController.register(fullName, username, email, password, confirmPassword, role);
+ 
+        // If it is null then it was successfull.
+        // If not null there was some error and then the string explaining what the error was is passed to the MessageDialog
+        if (error != null) {
+            JOptionPane.showMessageDialog(this, error, "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+ 
+        JOptionPane.showMessageDialog(this, "Your was created succssfully. You can now sign in.",
+                "Success", JOptionPane.INFORMATION_MESSAGE);
+ 
+        this.dispose();
+        new LoginFrame().setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+        //Change the Theme of the app
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -283,8 +290,7 @@ public class RegisterFrame extends javax.swing.JFrame {
         } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-
+       
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new RegisterFrame().setVisible(true));
     }

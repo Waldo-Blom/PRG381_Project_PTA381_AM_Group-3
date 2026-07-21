@@ -50,4 +50,11 @@ public class SupplierService {
         }
         return supplierDAO.searchSuppliers(searchTerm.trim());
     }
+
+    /**
+     * The most recent database error message, if the last operation failed.
+     */
+    public String getLastError() {
+        return supplierDAO.getLastError();
+    }
 }

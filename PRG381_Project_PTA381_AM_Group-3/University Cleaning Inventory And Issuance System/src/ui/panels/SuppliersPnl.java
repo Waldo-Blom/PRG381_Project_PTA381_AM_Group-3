@@ -35,6 +35,9 @@ public class SuppliersPnl extends javax.swing.JPanel {
         setupTableColumns();
         setupTableListeners();
         setupSearchListener();
+        if (supplierController.getConnectionError() != null) {
+            AlertUtils.showErrorAlert("Database Connection Error", supplierController.getConnectionError());
+        }
         loadSuppliers();
     }
 
@@ -70,9 +73,9 @@ public class SuppliersPnl extends javax.swing.JPanel {
                 supplier.getName(),
                 supplier.getEmail(),
                 supplier.getPhone(),
-                supplier.getAddress(),
+                supplier.getContactName(),
                 "-",
-                supplier.getStatus(),
+                "-",
                 "Edit",
                 "Delete"
             });
@@ -86,10 +89,13 @@ public class SuppliersPnl extends javax.swing.JPanel {
         if (currentSuppliers == null) {
             return;
         }
-        long active = currentSuppliers.stream().filter(s -> "Active".equalsIgnoreCase(s.getStatus())).count();
+        long withContact = currentSuppliers.stream()
+                .filter(s -> s.getContactName() != null && !s.getContactName().trim().isEmpty())
+                .count();
 
         jLabel6.setText(String.valueOf(currentSuppliers.size()));
-        jLabel7.setText(String.valueOf(active));
+        jLabel7.setText(String.valueOf(withContact));
+        jLabel8.setText("-");
     }
 
     /**
@@ -241,7 +247,7 @@ public class SuppliersPnl extends javax.swing.JPanel {
         jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel4.setText("Active");
+        jLabel4.setText("With Contact Person");
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel7.setText("3");
@@ -320,7 +326,7 @@ public class SuppliersPnl extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Supplier", "Email", "Phone number", "Address", "Materials", "Status", "Edit", "Delete"
+                "Supplier", "Email", "Phone number", "Contact Person", "Materials", "Status", "Edit", "Delete"
             }
         ));
         jScrollPane1.setViewportView(jTable1);
@@ -440,7 +446,10 @@ public class SuppliersPnl extends javax.swing.JPanel {
                 AlertUtils.showDeletedAlert("Supplier");
                 loadSuppliers();
             } else {
-                AlertUtils.showDeletedFailedAlert("Supplier");
+                String reason = supplierController.getLastError();
+                AlertUtils.showErrorAlert("Error", reason != null
+                        ? "Failed to delete supplier:\n" + reason
+                        : "Failed to delete supplier. Please try again.");
             }
         }
     }

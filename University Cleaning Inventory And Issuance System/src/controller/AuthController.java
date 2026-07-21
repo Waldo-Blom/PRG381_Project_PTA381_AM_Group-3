@@ -4,6 +4,7 @@
  */
 package controller;
 
+import dao.UserDAO;
 import model.User;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,31 +14,34 @@ import java.util.regex.Pattern;
  * @author waldo
  */
 public class AuthController {
-    
-    // No database exists as of yet so a temp email and password are used
-    String fullname = "Test User";
-    String username = "admin";
-    String email = "admin@sparklingclean.com";
-    String password = "admin";
-    String role = "Storekeeper";
 
-    public User login(String emailEntred, String passwordEntered) {
-        if (emailEntred.equalsIgnoreCase(email) && passwordEntered.equals(password)) {
-            return new User(fullname, username, email, password, role);
-        }
-        return null; // no match
-    }
-    
-     /**
-     * Validates registration input. 
-     * Duplicate user check will be done in the UserDAO once the database is availible and has been created
-     
+    private final UserDAO userDAO = new UserDAO();
+
+    /**
+     * Attempts to log the user in against the database.
+     * Returns the matching User on success, or null if the credentials are incorrect.
+     * @param emailEntered
+     * @param passwordEntered
+     * @return 
      */
-    
+    public User login(String emailEntered, String passwordEntered) {
+        try {
+            return userDAO.login(emailEntered, passwordEntered);
+        } catch (Exception ex) {
+            return null;
+        }
+        
+    }
+
+     /**
+     * Validates registration input, checks for duplicate username/email,
+     * and stores the new user if everything passes.
+     */
+
     // Credit for the regex check: https://stackoverflow.com/questions/8204680/java-regex-email
     private static final Pattern VALID_EMAIL_ADDRESS_REGEX =
-            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
-    
+        Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+
     public String register(String fullName, String username, String email,
                             String password, String confirmPassword, String role) {
 
@@ -56,21 +60,39 @@ public class AuthController {
             return passwordError;
         }
 
-        // TODO: check userDAO usernameExists() 
-        // TODO: userDAO registerUser(newUser) to actually store the user in the database
+        try {
+            if (userDAO.usernameExists(username)) {
+                return "That username is already taken.";
+            }
+            if (userDAO.emailExists(email)) {
+                return "An account with that email already exists.";
+            }
 
-        return null; // validation passed
+            User newUser = new User(fullName, username, email, null, role);
+            // This is done as a seperate method call as in the .registerUser method we hash the password
+            // And also save the user to the database
+            User saved = userDAO.registerUser(newUser, password); 
+
+
+            if (saved == null) {
+                return "Registration failed. Please try again.";
+            }
+        } catch (Exception ex) {
+            return "A database error occurred. Please try again later.";
+        }
+
+        return null; // registration succeeded
      }
-    
+
     /** A Password is considered valid if all of the below are true:
-     * - The passowrd has a length of at least 8 charathers
+     * - The password has a length of at least 8 charathers
      * - The password has at least one upperacase letter
      * - The password contains at least one lower case letter
      * - The password contains at least one digit
-     * - The passowrd contains at least 1 special character
-     * 
+     * - The password contains at least 1 special character
+     *
      **/
-    
+
      // Credit for the regex check: https://stackoverflow.com/questions/8204680/java-regex-email
     private static boolean validateEmail(String emailStr) {
         Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);

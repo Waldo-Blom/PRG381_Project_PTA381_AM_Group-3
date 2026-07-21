@@ -64,4 +64,11 @@ public class CleanerService {
     public List<String> getDepartments() {
         return cleanerDAO.getDepartments();
     }
+
+    /**
+     * The most recent database error message, if the last operation failed.
+     */
+    public String getLastError() {
+        return cleanerDAO.getLastError();
+    }
 }
