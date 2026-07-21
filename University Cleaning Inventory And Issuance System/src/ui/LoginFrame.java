@@ -1,27 +1,31 @@
 package ui;
-
+ 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-
-import view.LoginView;
+ 
+import controller.AuthController;
+import utils.CurrentUser;
+import model.User;
+import javax.swing.JOptionPane;
+ 
 /**
  *
  * @author waldo
  */
 public class LoginFrame extends javax.swing.JFrame {
-    
+ 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(LoginFrame.class.getName());
-    private final LoginView loginView = new LoginView();
-
+    private final AuthController authController = new AuthController();
+ 
     /**
      * Creates new form LoginFrame
      */
     public LoginFrame() {
         initComponents();
         
-         setResizable(false);
+        setResizable(false);
         setSize(660, 530);           // fixed window size
         setLocationRelativeTo(null);  // centers it on screen
     }
@@ -187,11 +191,32 @@ public class LoginFrame extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         String email = jTextField1.getText();
         String password = new String(jPasswordField1.getPassword());
-        loginView.handleSignIn(this, email, password);
+ 
+        if (email.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Email and Password are required.",
+                    "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+ 
+        User user = authController.login(email, password);
+ 
+        if (user == null) {
+            JOptionPane.showMessageDialog(this, "Invalid email or password.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+ 
+        CurrentUser.set(user);
+        JOptionPane.showMessageDialog(this, "Welcome, " + user.getFullName() + "!",
+                "Success", JOptionPane.INFORMATION_MESSAGE);
+ 
+        this.dispose();
+        new MainFrame().setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-      loginView.handleRegisterLink(this);
+        this.dispose();
+        new RegisterFrame().setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**

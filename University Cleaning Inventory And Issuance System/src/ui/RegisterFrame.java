@@ -1,20 +1,22 @@
 package ui;
-
+ 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-
-import view.RegisterView;
+ 
+import controller.AuthController;
+import javax.swing.JOptionPane;
+ 
 /**
  *
  * @author waldo
  */
 public class RegisterFrame extends javax.swing.JFrame {
     
-    private final RegisterView registerView = new RegisterView();
+    private final AuthController authController = new AuthController();
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(RegisterFrame.class.getName());
-
+ 
     /**
      * Creates new form LoginFrame
      */
@@ -250,14 +252,27 @@ public class RegisterFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        String fullName = txtFullName.getText();
+  String fullName = txtFullName.getText();
         String username = txtUsername.getText();
         String email = txtEmail.getText();
         String password = new String(txtPassword.getPassword());
         String confirmPassword = new String(txtConfirmPass.getPassword());
-        String role = (String)cmbRole.getSelectedItem();
-
-        registerView.handleCreateAccount(this, fullName, username, email, password, confirmPassword, role);
+        String role = (String) cmbRole.getSelectedItem();
+ 
+        String error = authController.register(fullName, username, email, password, confirmPassword, role);
+ 
+        // If it is null then it was successfull.
+        // If not null there was some error and then the string explaining what the error was is passed to the MessageDialog
+        if (error != null) {
+            JOptionPane.showMessageDialog(this, error, "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+ 
+        JOptionPane.showMessageDialog(this, "Your was created succssfully. You can now sign in.",
+                "Success", JOptionPane.INFORMATION_MESSAGE);
+ 
+        this.dispose();
+        new LoginFrame().setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
