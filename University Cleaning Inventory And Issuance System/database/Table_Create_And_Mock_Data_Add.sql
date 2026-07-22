@@ -216,7 +216,7 @@ CREATE TABLE public.users (
     email character varying(100) NOT NULL,
     password_hash character varying(255) NOT NULL,
     role character varying(20) NOT NULL,
-    CONSTRAINT users_role_check CHECK (((role)::text = ANY ((ARRAY['Storekeeper'::character varying, 'Supervisor'::character varying, 'Owner'::character varying])::text[])))
+    CONSTRAINT users_role_check CHECK (((role)::text = ANY ((ARRAY['Storekeeper'::character varying, 'Cleaner'::character varying, 'Owner'::character varying])::text[])))
 );
 
 
@@ -328,14 +328,14 @@ COPY public.materials (material_id, material_name, category, description, quanti
 --
 
 COPY public.stock_issuances (issuance_id, issuance_date, material_id, cleaner_id, quantity_issued, issued_by_user_id, notes) FROM stdin;
-1	2026-06-28 09:15:00	1	1	5	2	Weekly supply for Science Building
-2	2026-06-27 11:30:00	3	2	2	2	Replace worn cloths
-3	2026-06-26 14:00:00	4	3	3	2	Routine replenishment
-4	2026-06-25 10:45:00	2	4	4	2	Deep cleaning request
-5	2026-06-24 08:30:00	7	1	3	2	Regular stock replenishment
-6	2026-06-23 13:10:00	5	2	2	2	Library window cleaning
-7	2026-06-22 15:20:00	1	6	4	2	Gymnasium floor sanitization
-8	2026-06-21 09:05:00	8	3	2	2	Hand sanitation stations replenishment
+1	2026-06-28 09:15:00	1	1	5	3	Weekly supply for Science Building
+2	2026-06-27 11:30:00	3	2	2	3	Replace worn cloths
+3	2026-06-26 14:00:00	4	3	3	3	Routine replenishment
+4	2026-06-25 10:45:00	2	4	4	3	Deep cleaning request
+5	2026-06-24 08:30:00	7	1	3	3	Regular stock replenishment
+6	2026-06-23 13:10:00	5	2	2	3	Library window cleaning
+7	2026-06-22 15:20:00	1	6	4	3	Gymnasium floor sanitization
+8	2026-06-21 09:05:00	8	3	2	3	Hand sanitation stations replenishment
 \.
 
 
@@ -360,7 +360,7 @@ COPY public.suppliers (supplier_id, supplier_name, contact_name, phone, email) F
 
 COPY public.users (user_id, full_name, username, email, password_hash, role) FROM stdin;
 1	System Administrator	admin	owner@example.com	179588aa09cff63f9230f9d80fb2d294159e3aababd22b3338e922a879f92eca	Owner
-2	Sarah Jenkins	sjenkins	supervisor@example.com	179588aa09cff63f9230f9d80fb2d294159e3aababd22b3338e922a879f92eca	Supervisor
+2	Sarah Jenkins	sjenkins	cleaner@example.com	179588aa09cff63f9230f9d80fb2d294159e3aababd22b3338e922a879f92eca	Cleaner
 3	John Doe	jdoe	storekeeper@example.com	179588aa09cff63f9230f9d80fb2d294159e3aababd22b3338e922a879f92eca	Storekeeper
 \.
 

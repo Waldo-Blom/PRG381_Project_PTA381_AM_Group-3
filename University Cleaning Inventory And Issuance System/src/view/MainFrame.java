@@ -21,9 +21,13 @@ import view.panels.SuppliersPnl;
 import utils.CurrentUser;
 import model.User;
 
+
 public class MainFrame extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainFrame.class.getName());
+    
+     // Keep a reference to the DashboardPnl instance so we can refresh it later (e.g. on nav click)
+    private DashboardPnl dashboardPnl;
 
     //This method is used to get a dim overly effect for the pop ups
     public void showDimOverlay(boolean show) {
@@ -69,7 +73,8 @@ public class MainFrame extends javax.swing.JFrame {
         //Add all the created conent panel sections
         contentPanel.add(new javax.swing.JPanel(), "Blank"); // A blank place holder will show first. As not all the users have access to all the same pages.
         contentPanel.add(new CleanersPnl(), "Cleaners");
-        contentPanel.add(new DashboardPnl(), "Dashboard");
+        dashboardPnl = new DashboardPnl();
+        contentPanel.add(dashboardPnl, "Dashboard");
         contentPanel.add(new MaterialsPnl(), "Materials");
         contentPanel.add(new ReportsPnl(), "Reports");
         contentPanel.add(new StockIssuancePnl(), "StockIssuance");
@@ -293,8 +298,10 @@ public class MainFrame extends javax.swing.JFrame {
     private void btnDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDashboardActionPerformed
        CardLayout cl = (CardLayout) contentPanel.getLayout();
        cl.show(contentPanel, "Dashboard");  
-       
+       dashboardPnl.refreshDashboard();
        highlightSelected(btnDashboard); // Make the button have a active effect
+       
+       
     }//GEN-LAST:event_btnDashboardActionPerformed
 
     private void btnMaterialsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMaterialsActionPerformed

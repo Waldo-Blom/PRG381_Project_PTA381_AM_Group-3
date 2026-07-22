@@ -478,7 +478,7 @@ public class ReportsPnl extends javax.swing.JPanel {
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel8.setText("Total Value");
 
-        lblInventoryReportTotalValue.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lblInventoryReportTotalValue.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
         lblInventoryReportTotalValue.setText("R100,000");
 
         javax.swing.GroupLayout lowStockItemsPnlLayout = new javax.swing.GroupLayout(lowStockItemsPnl);
@@ -501,7 +501,7 @@ public class ReportsPnl extends javax.swing.JPanel {
                 .addComponent(jLabel8)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblInventoryReportTotalValue)
-                .addContainerGap(32, Short.MAX_VALUE))
+                .addContainerGap(34, Short.MAX_VALUE))
         );
 
         statsPnl.add(lowStockItemsPnl);
