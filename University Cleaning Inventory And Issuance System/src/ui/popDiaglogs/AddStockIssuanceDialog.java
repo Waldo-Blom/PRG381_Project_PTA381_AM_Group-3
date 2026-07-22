@@ -4,7 +4,7 @@
  */
 package ui.popDiaglogs;
 
-import Controller.StockIssuanceController;
+import controller.StockIssuanceController;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -15,8 +15,8 @@ import dao.CleanerDAO;
 import utils.CurrentUser;
 import model.User;
 import javax.swing.JOptionPane;
-import Controller.MaterialDAO;
-import Controller.MaterialDatabaseDAO;
+import controller.MaterialDAO;
+import controller.MaterialDatabaseDAO;
 import utils.DBConnection;
 import java.time.format.ResolverStyle;
 import java.time.format.DateTimeParseException;

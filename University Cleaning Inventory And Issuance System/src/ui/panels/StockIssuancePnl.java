@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.StockIssuance;
 
-import Controller.StockIssuanceController;
+import controller.StockIssuanceController;
 
 
 
