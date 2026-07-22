@@ -189,8 +189,8 @@ public class AddCleanersDialog extends javax.swing.JDialog {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         String employeeId = jTextField7.getText().trim();
-        String name = jTextField3.getText().trim();
-        String email = jTextField1.getText().trim();
+        String name = jTextField1.getText().trim();
+        String email = jTextField3.getText().trim();
         String phone = jTextField8.getText().trim();
         Object selectedDepartment = jComboBox1.getSelectedItem();
         String department = selectedDepartment == null ? "" : selectedDepartment.toString();
