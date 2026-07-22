@@ -14,38 +14,6 @@ import java.sql.SQLException;
  */
 public class DBConnection {
 
-//    // PostgreSQL JDBC driver class
-//    private static final String DRIVER = "org.postgresql.Driver";
-//
-//    // JDBC URL to connect to the local PostgreSQL server + database
-//    private static final String JDBC_URL = "jdbc:postgresql://localhost:5432/sparkling_clean";
-//
-//    //Postgre local username and password that is required to access postgre
-//    private static final String USER = "postgres";
-//    private static final String PASSWORD = "password";
-//
-//    // Set connection object to connect to the Postgre database
-//    Connection con;
-//
-//    //Set Constructor
-//    public DBConnection() {
-//    }
-//
-//    // Create a connect to database method
-//    public void connect() throws ClassNotFoundException {
-//        try {
-//            // Dynamically load the JDBC driver class at runtime
-//            Class.forName(DRIVER);
-//            this.con = DriverManager.getConnection(JDBC_URL, USER, PASSWORD);
-//            if (this.con != null) {
-//                System.out.println("Connected to database");
-//            }
-//        } catch (SQLException ex) {
-//            ex.printStackTrace();
-//        }
-//    }
-    
-    
     // PostgreSQL JDBC driver class
     private static final String DRIVER = "org.postgresql.Driver";
 
@@ -54,7 +22,7 @@ public class DBConnection {
 
     //Postgre local username and password that is required to access postgre
     private static final String USER = "postgres";
-    private static final String PASSWORD = "belgiumcampus";
+    private static final String PASSWORD = "password";
 
     //Set Constructor
     public DBConnection() {
