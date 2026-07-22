@@ -12,6 +12,8 @@ import javax.swing.JOptionPane;
 import model.StockIssuance;
 import dao.StockIssuanceDAO;
 import dao.CleanerDAO;
+import utils.CurrentUser;
+import model.User;
 import javax.swing.JOptionPane;
 import Controller.MaterialDAO;
 import Controller.MaterialDatabaseDAO;
@@ -262,8 +264,14 @@ private int getSelectedCleanerId() {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AddStockIssuanceDialog.class.getName());
 
-    private int getLoggedInUserId() {
-    return 1;
+  private int getLoggedInUserId() {
+    User currentUser = CurrentUser.get();
+    if (currentUser != null) {
+        // User.getId() returns a String (e.g., "5"), so parse it to int
+        return Integer.parseInt(currentUser.getId());
+    }
+    // Fallback – should never happen if the user is logged in
+    throw new IllegalStateException("No user is currently logged in.");
 }
 
     /**
