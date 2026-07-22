@@ -58,7 +58,6 @@
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="jTextField1" alignment="0" min="-2" pref="203" max="-2" attributes="0"/>
                                           <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jLabel10" alignment="0" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
@@ -66,7 +65,6 @@
                                           <Component id="jTextField7" min="-2" pref="185" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
-                                  <Component id="jTextField5" alignment="0" min="-2" pref="406" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="236" max="32767" attributes="0"/>
                           </Group>
@@ -103,11 +101,7 @@
                   <Component id="jTextField7" min="-2" max="-2" attributes="0"/>
                   <Component id="jTextField1" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="jTextField5" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="23" max="32767" attributes="0"/>
+              <EmptySpace pref="15" max="32767" attributes="0"/>
               <Component id="jSeparator2" min="-2" pref="10" max="-2" attributes="0"/>
               <EmptySpace pref="12" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
@@ -183,16 +177,6 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JSeparator" name="jSeparator2">
-    </Component>
-    <Component class="javax.swing.JLabel" name="jLabel10">
-      <Properties>
-        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-          <Font name="Segoe UI" size="14" style="0"/>
-        </Property>
-        <Property name="text" type="java.lang.String" value="Address"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JTextField" name="jTextField5">
     </Component>
   </SubComponents>
 </Form>

@@ -25,6 +25,8 @@ import utils.uiUtilities;
  */
 public class SuppliersPnl extends javax.swing.JPanel {
 
+    private static final String SEARCH_PLACEHOLDER = "Search suppliers by name, contact, or email ...";
+
     private final SupplierController supplierController = new SupplierController();
     private List<Supplier> currentSuppliers;
 
@@ -49,7 +51,7 @@ public class SuppliersPnl extends javax.swing.JPanel {
         loadSuppliers();
     }
     
-     private void applyRoleRestrictions() {
+         private void applyRoleRestrictions() {
         //Only the owner can edit supplier details 
         // Storeowner can only view
         boolean canEdit = CurrentUser.isOwner();
@@ -67,7 +69,49 @@ public class SuppliersPnl extends javax.swing.JPanel {
          }
     }
 
-   
+    /**
+     * The search field ships with literal instructional text already typed
+     * into it (not a real placeholder), so it must be cleared on focus and
+     * restored when left empty, otherwise every search treats that text as
+     * an actual search term and returns zero rows.
+     */
+    private void setupSearchPlaceholder() {
+        jTextField1.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent e) {
+                if (jTextField1.getText().equals(SEARCH_PLACEHOLDER)) {
+                    jTextField1.setText("");
+                }
+            }
+
+            @Override
+            public void focusLost(java.awt.event.FocusEvent e) {
+                if (jTextField1.getText().trim().isEmpty()) {
+                    jTextField1.setText(SEARCH_PLACEHOLDER);
+                }
+            }
+        });
+    }
+
+    /**
+     * Treats the field as empty if it still holds the un-cleared placeholder.
+     */
+    private String getSearchTerm() {
+        String text = jTextField1.getText().trim();
+        return text.equals(SEARCH_PLACEHOLDER) ? "" : text;
+    }
+
+    /**
+     * Sets column widths and disables auto-resize so every column of data is
+     * fully visible, with horizontal scrolling for anything that overflows.
+     */
+    private void setupTableColumns() {
+        jTable1.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        int[] widths = {160, 200, 130, 220, 90, 100, 60, 70};
+        for (int i = 0; i < widths.length && i < jTable1.getColumnModel().getColumnCount(); i++) {
+            jTable1.getColumnModel().getColumn(i).setPreferredWidth(widths[i]);
+        }
+    }
 
     /**
      * Loads all suppliers from PostgreSQL into the table.
@@ -86,14 +130,14 @@ public class SuppliersPnl extends javax.swing.JPanel {
         model.setRowCount(0);
         for (Supplier supplier : suppliers) {
             model.addRow(new Object[]{
-                    supplier.getName(),
-                    supplier.getEmail(),
-                    supplier.getPhone(),
-                    supplier.getContactName(),
-                    "-",
-                    "-",
-                    "Edit",
-                    "Delete"
+                supplier.getName(),
+                supplier.getEmail(),
+                supplier.getPhone(),
+                supplier.getContactName(),
+                "-",
+                "-",
+                "Edit",
+                "Delete"
             });
         }
     }
@@ -119,7 +163,7 @@ public class SuppliersPnl extends javax.swing.JPanel {
      * (by supplier name, phone number, or email).
      */
     private void applyFilters() {
-        String searchTerm = jTextField1.getText().trim();
+        String searchTerm = getSearchTerm();
         currentSuppliers = searchTerm.isEmpty()
                 ? supplierController.getAllSuppliers()
                 : supplierController.searchSuppliers(searchTerm);
@@ -196,25 +240,25 @@ public class SuppliersPnl extends javax.swing.JPanel {
         javax.swing.GroupLayout searchPnlLayout = new javax.swing.GroupLayout(searchPnl);
         searchPnl.setLayout(searchPnlLayout);
         searchPnlLayout.setHorizontalGroup(
-                searchPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(searchPnlLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 641, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1)
-                                .addGap(38, 38, 38)
-                                .addComponent(btnAddSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(50, Short.MAX_VALUE))
+            searchPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(searchPnlLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 641, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton1)
+                .addGap(38, 38, 38)
+                .addComponent(btnAddSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(50, Short.MAX_VALUE))
         );
         searchPnlLayout.setVerticalGroup(
-                searchPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(searchPnlLayout.createSequentialGroup()
-                                .addGap(17, 17, 17)
-                                .addGroup(searchPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jButton1)
-                                        .addComponent(btnAddSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addContainerGap(9, Short.MAX_VALUE))
+            searchPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(searchPnlLayout.createSequentialGroup()
+                .addGap(17, 17, 17)
+                .addGroup(searchPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1)
+                    .addComponent(btnAddSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(9, Short.MAX_VALUE))
         );
 
         contentPnl.add(searchPnl);
@@ -237,24 +281,24 @@ public class SuppliersPnl extends javax.swing.JPanel {
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
-                jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGap(27, 27, 27)
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel3)
-                                        .addGroup(jPanel3Layout.createSequentialGroup()
-                                                .addGap(15, 15, 15)
-                                                .addComponent(jLabel6)))
-                                .addGap(180, 180, 180))
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(27, 27, 27)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addComponent(jLabel6)))
+                .addGap(180, 180, 180))
         );
         jPanel3Layout.setVerticalGroup(
-                jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel6)
-                                .addContainerGap())
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel6)
+                .addContainerGap())
         );
 
         summaryPnl.add(jPanel3);
@@ -271,24 +315,24 @@ public class SuppliersPnl extends javax.swing.JPanel {
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
-                jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(31, 31, 31)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(jPanel2Layout.createSequentialGroup()
-                                                .addGap(6, 6, 6)
-                                                .addComponent(jLabel7))
-                                        .addComponent(jLabel4))
-                                .addContainerGap())
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(31, 31, 31)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(jLabel7))
+                    .addComponent(jLabel4))
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
-                jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel7)
-                                .addContainerGap())
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel7)
+                .addContainerGap())
         );
 
         summaryPnl.add(jPanel2);
@@ -305,24 +349,24 @@ public class SuppliersPnl extends javax.swing.JPanel {
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
-                jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addGap(31, 31, 31)
-                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel5)
-                                        .addGroup(jPanel4Layout.createSequentialGroup()
-                                                .addGap(6, 6, 6)
-                                                .addComponent(jLabel8)))
-                                .addGap(178, 178, 178))
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(31, 31, 31)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(jLabel8)))
+                .addGap(178, 178, 178))
         );
         jPanel4Layout.setVerticalGroup(
-                jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jLabel5)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel8)
-                                .addContainerGap())
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel8)
+                .addContainerGap())
         );
 
         summaryPnl.add(jPanel4);
@@ -335,33 +379,33 @@ public class SuppliersPnl extends javax.swing.JPanel {
 
         jTable1.setBackground(new java.awt.Color(245, 246, 250));
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
-                new Object [][] {
-                        {null, null, null, null, null, null, null, null},
-                        {null, null, null, null, null, null, null, null},
-                        {null, null, null, null, null, null, null, null},
-                        {null, null, null, null, null, null, null, null}
-                },
-                new String [] {
-                        "Supplier", "Email", "Phone number", "Contact Person", "Materials", "Status", "Edit", "Delete"
-                }
+            new Object [][] {
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "Supplier", "Email", "Phone number", "Contact Person", "Materials", "Status", "Edit", "Delete"
+            }
         ));
         jScrollPane1.setViewportView(jTable1);
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
-                jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 988, Short.MAX_VALUE)
-                                .addContainerGap())
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 988, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
-                jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                                .addContainerGap(8, Short.MAX_VALUE)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 456, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap())
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addContainerGap(8, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 456, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         contentPnl.add(jPanel5);
@@ -389,21 +433,21 @@ public class SuppliersPnl extends javax.swing.JPanel {
     }//GEN-LAST:event_jTextField1ActionPerformed
 
     private void btnAddSupplierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddSupplierActionPerformed
-        // Make the AddMaterialsDialog pop up appear, dim the background
-        java.awt.Frame parentFrame = (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this);
-        MainFrame mainFrame = (MainFrame) parentFrame;
+    // Make the AddMaterialsDialog pop up appear, dim the background
+    java.awt.Frame parentFrame = (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this);
+    MainFrame mainFrame = (MainFrame) parentFrame;
+    
+    mainFrame.showDimOverlay(true);   // dim the background BEFORE showing dialog
+    
+    AddSuppliersDialog dialog = new AddSuppliersDialog(parentFrame, true, supplierController);
+    dialog.setLocationRelativeTo(parentFrame);
+    dialog.setVisible(true);           // this line BLOCKS here until dialog closes (since it's modal)
+    
+    mainFrame.showDimOverlay(false);  // runs AFTER dialog is closed/disposed
 
-        mainFrame.showDimOverlay(true);   // dim the background BEFORE showing dialog
-
-        AddSuppliersDialog dialog = new AddSuppliersDialog(parentFrame, true, supplierController);
-        dialog.setLocationRelativeTo(parentFrame);
-        dialog.setVisible(true);           // this line BLOCKS here until dialog closes (since it's modal)
-
-        mainFrame.showDimOverlay(false);  // runs AFTER dialog is closed/disposed
-
-        if (dialog.isSupplierAdded()) {
-            loadSuppliers();
-        }
+    if (dialog.isSupplierAdded()) {
+        loadSuppliers();
+    }
     }//GEN-LAST:event_btnAddSupplierActionPerformed
 
     private void setupTableListeners() {
@@ -412,7 +456,7 @@ public class SuppliersPnl extends javax.swing.JPanel {
             public void mouseClicked(MouseEvent e) {
                 int row = jTable1.rowAtPoint(e.getPoint());
                 int col = jTable1.columnAtPoint(e.getPoint());
-
+                
                 if (row >= 0 && col >= 0 && currentSuppliers != null && row < currentSuppliers.size()) {
                     if (col == 6) { // Edit column
                         handleEditSupplier(currentSuppliers.get(row));
@@ -421,16 +465,16 @@ public class SuppliersPnl extends javax.swing.JPanel {
                     }
                 }
             }
-
+            
             @Override
             public void mousePressed(MouseEvent e) {}
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {}
-
+            
             @Override
             public void mouseEntered(MouseEvent e) {}
-
+            
             @Override
             public void mouseExited(MouseEvent e) {}
         });
@@ -439,13 +483,13 @@ public class SuppliersPnl extends javax.swing.JPanel {
     private void handleEditSupplier(Supplier supplier) {
         java.awt.Frame parentFrame = (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this);
         MainFrame mainFrame = (MainFrame) parentFrame;
-
+        
         mainFrame.showDimOverlay(true);
-
+        
         EditSuppliersDialog dialog = new EditSuppliersDialog(parentFrame, true, supplierController, supplier);
         dialog.setLocationRelativeTo(parentFrame);
         dialog.setVisible(true);
-
+        
         mainFrame.showDimOverlay(false);
 
         if (dialog.isSupplierUpdated()) {
@@ -455,7 +499,7 @@ public class SuppliersPnl extends javax.swing.JPanel {
 
     private void handleDeleteSupplier(Supplier supplier) {
         int response = AlertUtils.showDeleteConfirmation("Supplier", supplier.getName());
-
+        
         if (response == javax.swing.JOptionPane.YES_OPTION) {
             boolean success = supplierController.deleteSupplier(supplier.getSupplierId());
             if (success) {
