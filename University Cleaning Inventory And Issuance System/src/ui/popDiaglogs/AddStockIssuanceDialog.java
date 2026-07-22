@@ -10,6 +10,20 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import javax.swing.JOptionPane;
 import model.StockIssuance;
+import dao.StockIssuanceDAO;
+import dao.CleanerDAO;
+import javax.swing.JOptionPane;
+import Controller.MaterialDAO;
+import Controller.MaterialDatabaseDAO;
+import utils.DBConnection;
+
+
+import java.util.ArrayList;
+import java.util.List;
+import model.Material;
+import model.Cleaner;
+
+
 
 /**
  *
@@ -17,38 +31,185 @@ import model.StockIssuance;
  */
 public class AddStockIssuanceDialog extends javax.swing.JDialog {
     
-    private final StockIssuanceController issuanceController;
+private final StockIssuanceController issuanceController;
+private final MaterialDAO materialDAO;
+private  CleanerDAO cleanerDAO;
+private final List<Material> loadedMaterials = new ArrayList<>();
+private final List<Cleaner> loadedCleaners = new ArrayList<>();
     
-    private int getSelectedMaterialId() {
+    /**
+     * Creates new form AddMaterialDialog
+     */
+    public AddStockIssuanceDialog(java.awt.Frame parent, boolean modal) {
+        super(parent, modal);
+        initComponents();
+         issuanceController = new StockIssuanceController();
+          materialDAO = new MaterialDatabaseDAO();
+         
+      try {
+        cleanerDAO = new CleanerDAO(
+                DBConnection.getConnection()
+        );
+
+        loadMaterials();
+        loadCleaners();
+
+    } catch (ClassNotFoundException ex) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Could not connect to the database.",
+                "Database Error",
+                JOptionPane.ERROR_MESSAGE
+        );
+
+        ex.printStackTrace();
+    }
+        
+    }
+    
+   private void loadMaterials() {
+
+    cmbMaterial.removeAllItems();
+    loadedMaterials.clear();
+
+    cmbMaterial.addItem(
+            "Choose a material to issue"
+    );
+
+    try {
+
+        List<Material> materials =
+                materialDAO.getAllMaterials();
+
+        for (Material material : materials) {
+
+            // Only display materials that have stock available.
+            if (material.getQuantity() > 0) {
+
+                loadedMaterials.add(material);
+
+                cmbMaterial.addItem(
+                        material.getMaterialName()
+                );
+            }
+        }
+
+        System.out.println(
+                "Materials loaded: "
+                + loadedMaterials.size()
+        );
+
+    } catch (Exception ex) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Materials could not be loaded.\n"
+                + ex.getMessage(),
+                "Loading Error",
+                JOptionPane.ERROR_MESSAGE
+        );
+
+        ex.printStackTrace();
+    }
+}
+    
+    
+    
+private void loadCleaners() {
+
+    cmbCleaner.removeAllItems();
+    loadedCleaners.clear();
+
+    cmbCleaner.addItem(
+            "Choose a cleaner to issue to"
+    );
+
+    try {
+
+        List<Cleaner> cleaners =
+                cleanerDAO.getAllCleaners();
+
+        for (Cleaner cleaner : cleaners) {
+
+            /*
+             * Only show active cleaners.
+             * Remove this condition if CleanerDAO already filters them.
+             */
+            if (cleaner.getStatus() == null
+                    || cleaner.getStatus()
+                            .equalsIgnoreCase("active")) {
+
+                loadedCleaners.add(cleaner);
+
+                cmbCleaner.addItem(
+                        cleaner.getName()
+                );
+            }
+        }
+
+        System.out.println(
+                "Cleaners loaded: "
+                + loadedCleaners.size()
+        );
+
+    } catch (Exception ex) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Cleaners could not be loaded.\n"
+                + ex.getMessage(),
+                "Loading Error",
+                JOptionPane.ERROR_MESSAGE
+        );
+
+        ex.printStackTrace();
+    }
+}
+
+private int getSelectedMaterialId() {
 
     int selectedIndex =
-            Material.getSelectedIndex();
+            cmbMaterial.getSelectedIndex();
 
     if (selectedIndex <= 0) {
+
         throw new IllegalArgumentException(
                 "Please select a material."
         );
     }
 
-    return selectedIndex;
+    /*
+     * Combo index 0 is the placeholder, so subtract 1
+     * to access the matching Material object.
+     */
+    Material selectedMaterial =
+            loadedMaterials.get(selectedIndex - 1);
+
+    return selectedMaterial.getMaterialId();
 }
-    
-    private int getSelectedCleanerId() {
+
+private int getSelectedCleanerId() {
 
     int selectedIndex =
-            Cleaner.getSelectedIndex();
+            cmbCleaner.getSelectedIndex();
 
     if (selectedIndex <= 0) {
+
         throw new IllegalArgumentException(
                 "Please select a cleaner."
         );
     }
 
-    
-    
-    
-    return selectedIndex;
+    Cleaner selectedCleaner =
+            loadedCleaners.get(selectedIndex - 1);
+
+    return selectedCleaner.getCleanerId();
 }
+
+
+
+
     private Timestamp getSelectedDate() {
 
     String dateText =
@@ -81,17 +242,6 @@ public class AddStockIssuanceDialog extends javax.swing.JDialog {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AddStockIssuanceDialog.class.getName());
 
-    /**
-     * Creates new form AddMaterialDialog
-     */
-    public AddStockIssuanceDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
-        initComponents();
-        
-        issuanceController = new StockIssuanceController();
-        
-        
-    }
     private int getLoggedInUserId() {
     return 1;
 }
@@ -114,8 +264,8 @@ public class AddStockIssuanceDialog extends javax.swing.JDialog {
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        Material = new javax.swing.JComboBox<>();
-        Cleaner = new javax.swing.JComboBox<>();
+        cmbMaterial = new javax.swing.JComboBox<>();
+        cmbCleaner = new javax.swing.JComboBox<>();
         Date = new javax.swing.JFormattedTextField();
         jSeparator1 = new javax.swing.JSeparator();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -150,9 +300,9 @@ public class AddStockIssuanceDialog extends javax.swing.JDialog {
         jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel10.setText("Notes (Optional)");
 
-        Material.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Choose a materail to issue" }));
+        cmbMaterial.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Choose a materail to issue" }));
 
-        Cleaner.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Choose a cleaner to issue to" }));
+        cmbCleaner.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Choose a cleaner to issue to" }));
 
         Date.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("DD/MM/YYYY"))));
         Date.setText("mm/dd/yyyy");
@@ -170,7 +320,7 @@ public class AddStockIssuanceDialog extends javax.swing.JDialog {
                 .addGap(45, 45, 45)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(Cleaner, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cmbCleaner, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
@@ -186,7 +336,7 @@ public class AddStockIssuanceDialog extends javax.swing.JDialog {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel10)
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(Material, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(cmbMaterial, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jLabel7)
                                         .addComponent(jLabel9)
                                         .addGroup(layout.createSequentialGroup()
@@ -209,11 +359,11 @@ public class AddStockIssuanceDialog extends javax.swing.JDialog {
                 .addGap(12, 12, 12)
                 .addComponent(jLabel7)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Material, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cmbMaterial, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Cleaner, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cmbCleaner, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
@@ -384,11 +534,11 @@ try {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> Cleaner;
     private javax.swing.JFormattedTextField Date;
-    private javax.swing.JComboBox<String> Material;
     private javax.swing.JTextArea Notes;
     private javax.swing.JTextField Quantity;
+    private javax.swing.JComboBox<String> cmbCleaner;
+    private javax.swing.JComboBox<String> cmbMaterial;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;

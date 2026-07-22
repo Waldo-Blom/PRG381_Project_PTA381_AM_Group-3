@@ -3,19 +3,18 @@ package ui.panels;
 import ui.MainFrame;
 import ui.popDiaglogs.AddStockIssuanceDialog;
 import utils.CurrentUser;
-<<<<<<< HEAD
-import Controller.StockIssuanceController;
+import utils.uiUtilities;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.StockIssuance;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
-=======
-import utils.uiUtilities;
->>>>>>> origin/Dev
+import Controller.StockIssuanceController;
+
+
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -27,44 +26,27 @@ import utils.uiUtilities;
  * @author waldo
  */
 public class StockIssuancePnl extends javax.swing.JPanel {
-
-
-    private final StockIssuanceController issuanceController;
     
+ private final StockIssuanceController issuanceController;
     /**
      * Creates new form MaterialsPanel
      */
     public StockIssuancePnl() {
-<<<<<<< HEAD
-       
-           initComponents();
-
-    issuanceController = new StockIssuanceController();
-
-    utils.uiUtilities.applyTableStyleProperties(jTable1, jScrollPane1);
-    applyRoleRestrictions();
-
-    loadIssuanceHistory();
-     updateSummaryCards();
-
-=======
         initComponents();
+        issuanceController =
+        new StockIssuanceController();
+       
         
         uiUtilities.applyTableStyleProperties(jTable1, jScrollPane1,
             new int[]{100, 140, 140, 90, 120, 170, 60, 70});
         
         // Placeholder ("hint") text for the inventory search box - clears  itself automatically when the user clicks into it
-        uiUtilities.installPlaceholder(jTextField1, "Search by material ...");
+        uiUtilities.installPlaceholder(SearchMaterial, "Search by material ...");
         applyRoleRestrictions();
->>>>>>> origin/Dev
+    loadIssuanceHistory();
+    updateSummaryCards();
     }
-    
-    private void searchIssuances() {
-
-    String searchText =
-            SearchMaterial.getText()
-                    .trim()
-                    .toLowerCase();
+private void loadIssuanceHistory() {
 
     DefaultTableModel tableModel =
             (DefaultTableModel) jTable1.getModel();
@@ -75,23 +57,11 @@ public class StockIssuancePnl extends javax.swing.JPanel {
             issuanceController.loadAllIssuances();
 
     for (StockIssuance issuance : issuances) {
-
-        String materialValue =
-                String.valueOf(
-                        issuance.getMaterialId()
-                ).toLowerCase();
-
-        if (searchText.isEmpty()
-                || materialValue.contains(searchText)) {
-
-            addIssuanceToTable(
-                    tableModel,
-                    issuance
-            );
-        }
+        addIssuanceToTable(tableModel, issuance);
     }
 }
-    private void addIssuanceToTable(
+
+private void addIssuanceToTable(
         DefaultTableModel tableModel,
         StockIssuance issuance) {
 
@@ -106,30 +76,29 @@ public class StockIssuancePnl extends javax.swing.JPanel {
         "Delete"
     });
 }
-    
-    
-    
-    
-    
-  
- private void loadIssuanceHistory() {
 
-    DefaultTableModel tableModel =
-            (DefaultTableModel) jTable1.getModel();
-
-    tableModel.setRowCount(0);
+private void updateSummaryCards() {
 
     List<StockIssuance> issuances =
             issuanceController.loadAllIssuances();
 
+    int totalIssuance = issuances.size();
+    int totalItemsIssued = 0;
+
     for (StockIssuance issuance : issuances) {
-        addIssuanceToTable(
-                tableModel,
-                issuance
-        );
+        totalItemsIssued += issuance.getQuantityIssued();
     }
+    
+
+    lblTotalIssuances.setText(
+            String.valueOf(totalIssuance)
+    );
+
+    lblTototalItemsIssued.setText(
+            String.valueOf(totalItemsIssued)
+    );
 }
- 
+
 private void filterIssuances() {
 
     String searchText =
@@ -144,21 +113,25 @@ private void filterIssuances() {
             ToDate.getText().trim();
 
     DateTimeFormatter formatter =
-            DateTimeFormatter.ofPattern("MM/dd/yyyy");
+            DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     try {
 
         LocalDate fromDate = null;
         LocalDate toDate = null;
 
-        if (!fromText.isEmpty()) {
+        if (!fromText.isEmpty()
+                && !fromText.equalsIgnoreCase("dd/MM/yyyy")) {
+
             fromDate = LocalDate.parse(
                     fromText,
                     formatter
             );
         }
 
-        if (!toText.isEmpty()) {
+        if (!toText.isEmpty()
+                && !toText.equalsIgnoreCase("mm/dd/yyyy")) {
+
             toDate = LocalDate.parse(
                     toText,
                     formatter
@@ -189,22 +162,28 @@ private void filterIssuances() {
                             issuance.getMaterialId()
                     ).toLowerCase();
 
-            LocalDate issuanceLocalDate =
-                    issuance.getIssuanceDate()
-                            .toLocalDateTime()
-                            .toLocalDate();
-
             boolean matchesMaterial =
                     searchText.isEmpty()
                     || materialValue.contains(searchText);
 
-            boolean matchesFromDate =
-                    fromDate == null
-                    || !issuanceLocalDate.isBefore(fromDate);
+            boolean matchesFromDate = true;
+            boolean matchesToDate = true;
 
-            boolean matchesToDate =
-                    toDate == null
-                    || !issuanceLocalDate.isAfter(toDate);
+            if (issuance.getIssuanceDate() != null) {
+
+                LocalDate issuanceDate =
+                        issuance.getIssuanceDate()
+                                .toLocalDateTime()
+                                .toLocalDate();
+
+                matchesFromDate =
+                        fromDate == null
+                        || !issuanceDate.isBefore(fromDate);
+
+                matchesToDate =
+                        toDate == null
+                        || !issuanceDate.isAfter(toDate);
+            }
 
             if (matchesMaterial
                     && matchesFromDate
@@ -236,40 +215,12 @@ private void filterIssuances() {
         );
     }
 }
- 
- 
- 
- 
- 
- 
- 
- 
-    
-    private void updateSummaryCards() {
 
-    List<StockIssuance> issuances =
-            issuanceController.loadAllIssuances();
-
-    int totalIssuances =
-            issuances.size();
-
-    int totalItemsIssued = 0;
-
-    for (StockIssuance issuance : issuances) {
-        totalItemsIssued +=
-                issuance.getQuantityIssued();
-    }
-
-    TotalIssuance.setText(
-            String.valueOf(totalIssuances)
-    );
-
-    TotalItemIssued.setText(
-            String.valueOf(totalItemsIssued)
-    );
+private void refreshIssuancePage() {
+    loadIssuanceHistory();
+    updateSummaryCards();
 }
-    
-    
+
     
     private void applyRoleRestrictions() {
         
@@ -313,12 +264,12 @@ private void filterIssuances() {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         statsPnl = new javax.swing.JPanel();
-        Totalisuuances = new javax.swing.JPanel();
+        invValuePnl = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
-        TotalIssuance = new javax.swing.JLabel();
-        TotalItemsIssuedPnl = new javax.swing.JPanel();
+        lblTotalIssuances = new javax.swing.JLabel();
+        totalMatsPnl = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
-        TotalItemIssued = new javax.swing.JLabel();
+        lblTototalItemsIssued = new javax.swing.JLabel();
         lowStockItemsPnl = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
@@ -360,11 +311,9 @@ private void filterIssuances() {
 
         FromDate.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("DD/MM/YYYY"))));
         FromDate.setText("mm/dd/yyyy");
-        FromDate.addActionListener(this::FromDateActionPerformed);
 
         ToDate.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("DD/MM/YYYY"))));
         ToDate.setText("mm/dd/yyyy");
-        ToDate.addActionListener(this::ToDateActionPerformed);
 
         jLabel3.setText("From:");
 
@@ -382,13 +331,8 @@ private void filterIssuances() {
                 .addGap(24, 24, 24)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-<<<<<<< HEAD
                 .addComponent(FromDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
-=======
-                .addComponent(jFormattedTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
->>>>>>> origin/Dev
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ToDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -419,71 +363,71 @@ private void filterIssuances() {
         statsPnl.setPreferredSize(new java.awt.Dimension(1000, 90));
         statsPnl.setLayout(new java.awt.GridLayout(1, 4, 3, 0));
 
-        Totalisuuances.setBackground(new java.awt.Color(255, 255, 255));
-        Totalisuuances.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        invValuePnl.setBackground(new java.awt.Color(255, 255, 255));
+        invValuePnl.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel6.setText("Total Issuances");
 
-        TotalIssuance.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        TotalIssuance.setText("6");
+        lblTotalIssuances.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lblTotalIssuances.setText("6");
 
-        javax.swing.GroupLayout TotalisuuancesLayout = new javax.swing.GroupLayout(Totalisuuances);
-        Totalisuuances.setLayout(TotalisuuancesLayout);
-        TotalisuuancesLayout.setHorizontalGroup(
-            TotalisuuancesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(TotalisuuancesLayout.createSequentialGroup()
+        javax.swing.GroupLayout invValuePnlLayout = new javax.swing.GroupLayout(invValuePnl);
+        invValuePnl.setLayout(invValuePnlLayout);
+        invValuePnlLayout.setHorizontalGroup(
+            invValuePnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(invValuePnlLayout.createSequentialGroup()
                 .addGap(16, 16, 16)
-                .addGroup(TotalisuuancesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(TotalIssuance)
+                .addGroup(invValuePnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblTotalIssuances)
                     .addComponent(jLabel6))
                 .addContainerGap(219, Short.MAX_VALUE))
         );
-        TotalisuuancesLayout.setVerticalGroup(
-            TotalisuuancesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(TotalisuuancesLayout.createSequentialGroup()
+        invValuePnlLayout.setVerticalGroup(
+            invValuePnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(invValuePnlLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(TotalIssuance)
+                .addComponent(lblTotalIssuances)
                 .addContainerGap(22, Short.MAX_VALUE))
         );
 
-        statsPnl.add(Totalisuuances);
+        statsPnl.add(invValuePnl);
 
-        TotalItemsIssuedPnl.setBackground(new java.awt.Color(255, 255, 255));
-        TotalItemsIssuedPnl.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        totalMatsPnl.setBackground(new java.awt.Color(255, 255, 255));
+        totalMatsPnl.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel7.setText("Total Items Issued");
 
-        TotalItemIssued.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        TotalItemIssued.setText("8");
+        lblTototalItemsIssued.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lblTototalItemsIssued.setText("8");
 
-        javax.swing.GroupLayout TotalItemsIssuedPnlLayout = new javax.swing.GroupLayout(TotalItemsIssuedPnl);
-        TotalItemsIssuedPnl.setLayout(TotalItemsIssuedPnlLayout);
-        TotalItemsIssuedPnlLayout.setHorizontalGroup(
-            TotalItemsIssuedPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(TotalItemsIssuedPnlLayout.createSequentialGroup()
+        javax.swing.GroupLayout totalMatsPnlLayout = new javax.swing.GroupLayout(totalMatsPnl);
+        totalMatsPnl.setLayout(totalMatsPnlLayout);
+        totalMatsPnlLayout.setHorizontalGroup(
+            totalMatsPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(totalMatsPnlLayout.createSequentialGroup()
                 .addGap(16, 16, 16)
-                .addGroup(TotalItemsIssuedPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(totalMatsPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7)
-                    .addGroup(TotalItemsIssuedPnlLayout.createSequentialGroup()
+                    .addGroup(totalMatsPnlLayout.createSequentialGroup()
                         .addGap(6, 6, 6)
-                        .addComponent(TotalItemIssued)))
+                        .addComponent(lblTototalItemsIssued)))
                 .addContainerGap(200, Short.MAX_VALUE))
         );
-        TotalItemsIssuedPnlLayout.setVerticalGroup(
-            TotalItemsIssuedPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(TotalItemsIssuedPnlLayout.createSequentialGroup()
+        totalMatsPnlLayout.setVerticalGroup(
+            totalMatsPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(totalMatsPnlLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel7)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(TotalItemIssued)
+                .addComponent(lblTototalItemsIssued)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        statsPnl.add(TotalItemsIssuedPnl);
+        statsPnl.add(totalMatsPnl);
 
         lowStockItemsPnl.setBackground(new java.awt.Color(255, 255, 255));
         lowStockItemsPnl.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -541,16 +485,13 @@ private void filterIssuances() {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 988, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1000, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(17, 17, 17)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(17, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 447, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -576,15 +517,10 @@ private void filterIssuances() {
 
     private void SearchMaterialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchMaterialActionPerformed
         // TODO add your handling code here:
-        searchIssuances();
     }//GEN-LAST:event_SearchMaterialActionPerformed
 
     private void btnIssueStockActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIssueStockActionPerformed
-
-
-
-
-// Make the AddMaterialsDialog pop up appear, dim the background
+    // Make the AddMaterialsDialog pop up appear, dim the background
     java.awt.Frame parentFrame = (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this);
     MainFrame mainFrame = (MainFrame) parentFrame;
     
@@ -595,43 +531,23 @@ private void filterIssuances() {
     dialog.setVisible(true);           // this line BLOCKS here until dialog closes (since it's modal)
     
     mainFrame.showDimOverlay(false);  // runs AFTER dialog is closed/disposed
-    
-   loadIssuanceHistory();
-   updateSummaryCards();
+refreshIssuancePage();
     }//GEN-LAST:event_btnIssueStockActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        searchIssuances();
+filterIssuances();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void FromDateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FromDateActionPerformed
-        // TODO add your handling code here:
-        
-        filterIssuances();
-    }//GEN-LAST:event_FromDateActionPerformed
-
-    private void ToDateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ToDateActionPerformed
-        // TODO add your handling code here:
-        filterIssuances();
-        
-    }//GEN-LAST:event_ToDateActionPerformed
-
-    
-    
-    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JFormattedTextField FromDate;
     private javax.swing.JTextField SearchMaterial;
     private javax.swing.JFormattedTextField ToDate;
-    private javax.swing.JLabel TotalIssuance;
-    private javax.swing.JLabel TotalItemIssued;
-    private javax.swing.JPanel TotalItemsIssuedPnl;
-    private javax.swing.JPanel Totalisuuances;
     private javax.swing.JButton btnIssueStock;
     private javax.swing.JPanel contentPnl;
     private javax.swing.JPanel headerPnl;
+    private javax.swing.JPanel invValuePnl;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel13;
@@ -644,8 +560,11 @@ private void filterIssuances() {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JLabel lblTotalIssuances;
+    private javax.swing.JLabel lblTototalItemsIssued;
     private javax.swing.JPanel lowStockItemsPnl;
     private javax.swing.JPanel searchPnl;
     private javax.swing.JPanel statsPnl;
+    private javax.swing.JPanel totalMatsPnl;
     // End of variables declaration//GEN-END:variables
 }

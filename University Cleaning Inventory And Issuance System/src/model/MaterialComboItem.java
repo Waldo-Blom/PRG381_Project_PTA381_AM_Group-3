@@ -9,21 +9,27 @@ package model;
  * @author BC-STUDENT
  */
 public class MaterialComboItem {
-//    private final int materialId;
-//    private final String materialName;
-//
-//    public MaterialComboItem(int materialId, String materialName) {
-//        this.materialId = materialId;
-//        this.materialName = materialName;
-//    }
-//
-//    public int getMaterialId() {
-//        return materialId;
-//    }
-//
-//    @Override
-//    public String toString() {
-//        return materialName;
-//    }
-//    
+private final int materialId;
+    private final String materialName;
+
+    public MaterialComboItem(
+            int materialId,
+            String materialName) {
+
+        this.materialId = materialId;
+        this.materialName = materialName;
+    }
+
+    public int getMaterialId() {
+        return materialId;
+    }
+
+    public String getMaterialName() {
+        return materialName;
+    }
+
+    @Override
+    public String toString() {
+        return materialName;
+    }  
 }
