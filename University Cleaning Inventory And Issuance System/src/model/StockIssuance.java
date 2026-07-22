@@ -16,6 +16,9 @@ public class StockIssuance {
     private int quantityIssued;
     private int issuedByUserId;
     private String notes;
+    private String materialName;
+    private String cleanerName;
+    private String issuedByUsername;
 
     public StockIssuance() {
     }
@@ -90,4 +93,27 @@ public class StockIssuance {
     public void setNotes(String notes) {
         this.notes = notes;
     }
+    public String getMaterialName() {
+    return materialName;
+}
+
+public void setMaterialName(String materialName) {
+    this.materialName = materialName;
+}
+
+public String getCleanerName() {
+    return cleanerName;
+}
+
+public void setCleanerName(String cleanerName) {
+    this.cleanerName = cleanerName;
+}
+
+public String getIssuedByUsername() {
+    return issuedByUsername;
+}
+
+public void setIssuedByUsername(String issuedByUsername) {
+    this.issuedByUsername = issuedByUsername;
+}
 }

@@ -4,15 +4,13 @@ import ui.MainFrame;
 import ui.popDiaglogs.AddStockIssuanceDialog;
 import utils.CurrentUser;
 import utils.uiUtilities;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.StockIssuance;
 
 import Controller.StockIssuanceController;
+
 
 
 
@@ -32,17 +30,26 @@ public class StockIssuancePnl extends javax.swing.JPanel {
      * Creates new form MaterialsPanel
      */
     public StockIssuancePnl() {
-        initComponents();
-        issuanceController =
-        new StockIssuanceController();
-       
-        
-        uiUtilities.applyTableStyleProperties(jTable1, jScrollPane1,
-            new int[]{100, 140, 140, 90, 120, 170, 60, 70});
-        
-        // Placeholder ("hint") text for the inventory search box - clears  itself automatically when the user clicks into it
-        uiUtilities.installPlaceholder(SearchMaterial, "Search by material ...");
-        applyRoleRestrictions();
+      initComponents();
+
+    issuanceController =
+            new StockIssuanceController();
+
+    configureIssuanceTable();
+    hideIssuanceIdColumn();
+
+    uiUtilities.applyTableStyleProperties(
+            jTable1,
+            jScrollPane1,
+            new int[]{100, 140, 140, 90, 120, 170, 60, 70}
+    );
+
+    uiUtilities.installPlaceholder(
+            SearchMaterial,
+            "Search by material ..."
+    );
+
+    applyRoleRestrictions();
     loadIssuanceHistory();
     updateSummaryCards();
     }
@@ -65,17 +72,34 @@ private void addIssuanceToTable(
         DefaultTableModel tableModel,
         StockIssuance issuance) {
 
-    tableModel.addRow(new Object[]{
+tableModel.addRow(new Object[]{
+        issuance.getIssuanceId(),
         issuance.getIssuanceDate(),
-        issuance.getMaterialId(),
-        issuance.getCleanerId(),
+        issuance.getMaterialName(),
+        issuance.getCleanerName(),
         issuance.getQuantityIssued(),
-        issuance.getIssuedByUserId(),
+        issuance.getIssuedByUsername(),
         issuance.getNotes(),
         "Edit",
         "Delete"
     });
 }
+
+private void hideIssuanceIdColumn() {
+
+    jTable1.getColumnModel()
+            .getColumn(0)
+            .setMinWidth(0);
+
+    jTable1.getColumnModel()
+            .getColumn(0)
+            .setMaxWidth(0);
+
+    jTable1.getColumnModel()
+            .getColumn(0)
+            .setPreferredWidth(0);
+}
+
 
 private void updateSummaryCards() {
 
@@ -98,7 +122,6 @@ private void updateSummaryCards() {
             String.valueOf(totalItemsIssued)
     );
 }
-
 private void filterIssuances() {
 
     String searchText =
@@ -106,88 +129,39 @@ private void filterIssuances() {
                     .trim()
                     .toLowerCase();
 
-    String fromText =
-            FromDate.getText().trim();
+    /*
+     * Ignore the placeholder text.
+     */
+    if (searchText.equals(
+            "search by material ..."
+                    .toLowerCase())) {
 
-    String toText =
-            ToDate.getText().trim();
+        searchText = "";
+    }
 
-    DateTimeFormatter formatter =
-            DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    DefaultTableModel tableModel =
+            (DefaultTableModel) jTable1.getModel();
+
+    tableModel.setRowCount(0);
 
     try {
-
-        LocalDate fromDate = null;
-        LocalDate toDate = null;
-
-        if (!fromText.isEmpty()
-                && !fromText.equalsIgnoreCase("dd/MM/yyyy")) {
-
-            fromDate = LocalDate.parse(
-                    fromText,
-                    formatter
-            );
-        }
-
-        if (!toText.isEmpty()
-                && !toText.equalsIgnoreCase("mm/dd/yyyy")) {
-
-            toDate = LocalDate.parse(
-                    toText,
-                    formatter
-            );
-        }
-
-        if (fromDate != null
-                && toDate != null
-                && fromDate.isAfter(toDate)) {
-
-            throw new IllegalArgumentException(
-                    "The From date cannot be after the To date."
-            );
-        }
-
-        DefaultTableModel tableModel =
-                (DefaultTableModel) jTable1.getModel();
-
-        tableModel.setRowCount(0);
 
         List<StockIssuance> issuances =
                 issuanceController.loadAllIssuances();
 
         for (StockIssuance issuance : issuances) {
 
-            String materialValue =
-                    String.valueOf(
-                            issuance.getMaterialId()
-                    ).toLowerCase();
+            String materialName =
+                    issuance.getMaterialName() == null
+                    ? ""
+                    : issuance.getMaterialName()
+                            .toLowerCase();
 
             boolean matchesMaterial =
                     searchText.isEmpty()
-                    || materialValue.contains(searchText);
+                    || materialName.contains(searchText);
 
-            boolean matchesFromDate = true;
-            boolean matchesToDate = true;
-
-            if (issuance.getIssuanceDate() != null) {
-
-                LocalDate issuanceDate =
-                        issuance.getIssuanceDate()
-                                .toLocalDateTime()
-                                .toLocalDate();
-
-                matchesFromDate =
-                        fromDate == null
-                        || !issuanceDate.isBefore(fromDate);
-
-                matchesToDate =
-                        toDate == null
-                        || !issuanceDate.isAfter(toDate);
-            }
-
-            if (matchesMaterial
-                    && matchesFromDate
-                    && matchesToDate) {
+            if (matchesMaterial) {
 
                 addIssuanceToTable(
                         tableModel,
@@ -196,12 +170,79 @@ private void filterIssuances() {
             }
         }
 
-    } catch (DateTimeParseException ex) {
+    } catch (Exception ex) {
 
         JOptionPane.showMessageDialog(
                 this,
-                "Enter dates using MM/dd/yyyy.",
-                "Invalid Date",
+                "The issuance records could not be searched.\n"
+                + ex.getMessage(),
+                "Search Error",
+                JOptionPane.ERROR_MESSAGE
+        );
+
+        ex.printStackTrace();
+    }
+}
+
+private void editIssuanceQuantity(
+         int issuanceId,
+         int modelRow) {
+Object currentQuantity =
+            jTable1.getModel()
+                    .getValueAt(modelRow, 4);
+
+    String input =
+            JOptionPane.showInputDialog(
+                    this,
+                    "Enter the new quantity:",
+                    currentQuantity
+            );
+
+    if (input == null) {
+        return;
+    }
+
+    try {
+
+        int newQuantity =
+                Integer.parseInt(
+                        input.trim()
+                );
+
+        boolean updated =
+                issuanceController
+                        .updateIssuanceQuantity(
+                                issuanceId,
+                                newQuantity
+                        );
+
+        if (updated) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Quantity updated successfully.",
+                    "Success",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+
+            refreshIssuancePage();
+
+        } else {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "The quantity could not be updated.",
+                    "Update Failed",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+
+    } catch (NumberFormatException ex) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Enter a valid whole number.",
+                "Invalid Quantity",
                 JOptionPane.WARNING_MESSAGE
         );
 
@@ -215,6 +256,96 @@ private void filterIssuances() {
         );
     }
 }
+
+private void deleteIssuance(
+        int issuanceId) {
+
+     int choice =
+            JOptionPane.showConfirmDialog(
+                    this,
+                    "Delete this stock issuance?\n"
+                    + "The issued quantity will be returned to stock.",
+                    "Confirm Delete",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE
+            );
+
+    if (choice != JOptionPane.YES_OPTION) {
+        return;
+    }
+
+    try {
+
+        boolean deleted =
+                issuanceController
+                        .deleteIssuance(issuanceId);
+
+        if (deleted) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Issuance deleted and stock restored.",
+                    "Deleted",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+
+            refreshIssuancePage();
+
+        } else {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "The issuance could not be deleted.",
+                    "Delete Failed",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+
+    } catch (IllegalArgumentException ex) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                ex.getMessage(),
+                "Delete Error",
+                JOptionPane.WARNING_MESSAGE
+        );
+    }
+}
+
+
+private void configureIssuanceTable() {
+
+    DefaultTableModel model =
+            new DefaultTableModel(
+                    new Object[]{
+                        "ID",
+                        "Date",
+                        "Material",
+                        "Issued To",
+                        "Quantity",
+                        "Issued By",
+                        "Notes",
+                        "Edit",
+                        "Delete"
+                    },
+                    0
+            ) {
+
+        @Override
+        public boolean isCellEditable(
+                int row,
+                int column) {
+
+            return false;
+        }
+    };
+
+    jTable1.setModel(model);
+
+    hideIssuanceIdColumn();
+}
+
+
 
 private void refreshIssuancePage() {
     loadIssuanceHistory();
@@ -259,10 +390,6 @@ private void refreshIssuancePage() {
         SearchMaterial = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         btnIssueStock = new javax.swing.JButton();
-        FromDate = new javax.swing.JFormattedTextField();
-        ToDate = new javax.swing.JFormattedTextField();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
         statsPnl = new javax.swing.JPanel();
         invValuePnl = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
@@ -309,16 +436,6 @@ private void refreshIssuancePage() {
         btnIssueStock.setText("Add New Issuance");
         btnIssueStock.addActionListener(this::btnIssueStockActionPerformed);
 
-        FromDate.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("DD/MM/YYYY"))));
-        FromDate.setText("mm/dd/yyyy");
-
-        ToDate.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("DD/MM/YYYY"))));
-        ToDate.setText("mm/dd/yyyy");
-
-        jLabel3.setText("From:");
-
-        jLabel4.setText("To:");
-
         javax.swing.GroupLayout searchPnlLayout = new javax.swing.GroupLayout(searchPnl);
         searchPnl.setLayout(searchPnlLayout);
         searchPnlLayout.setHorizontalGroup(
@@ -328,15 +445,7 @@ private void refreshIssuancePage() {
                 .addComponent(SearchMaterial, javax.swing.GroupLayout.PREFERRED_SIZE, 470, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
-                .addGap(24, 24, 24)
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(FromDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ToDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 291, Short.MAX_VALUE)
                 .addComponent(btnIssueStock, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18))
         );
@@ -347,11 +456,7 @@ private void refreshIssuancePage() {
                 .addGroup(searchPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(SearchMaterial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1)
-                    .addComponent(btnIssueStock, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(FromDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ToDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4))
+                    .addComponent(btnIssueStock, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(9, Short.MAX_VALUE))
         );
 
@@ -479,6 +584,11 @@ private void refreshIssuancePage() {
                 "Date", "Material", "Issued To", "Qauntity", "Issued By", "Notes", "Edit", "Delete"
             }
         ));
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -515,35 +625,74 @@ private void refreshIssuancePage() {
         add(headerPnl, java.awt.BorderLayout.NORTH);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void SearchMaterialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchMaterialActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_SearchMaterialActionPerformed
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        // TODO add your handling code here
+           int viewRow =
+            jTable1.rowAtPoint(evt.getPoint());
+
+    int viewColumn =
+            jTable1.columnAtPoint(evt.getPoint());
+
+    if (viewRow < 0 || viewColumn < 0) {
+        return;
+    }
+
+    int modelRow =
+            jTable1.convertRowIndexToModel(viewRow);
+
+    int modelColumn =
+            jTable1.convertColumnIndexToModel(viewColumn);
+
+    int issuanceId =
+            Integer.parseInt(
+                    jTable1.getModel()
+                            .getValueAt(modelRow, 0)
+                            .toString()
+            );
+
+    if (modelColumn == 7) {
+
+        editIssuanceQuantity(
+                issuanceId,
+                modelRow
+        );
+
+    } else if (modelColumn == 8) {
+
+        deleteIssuance(
+                issuanceId
+        );
+    }
+    }//GEN-LAST:event_jTable1MouseClicked
 
     private void btnIssueStockActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIssueStockActionPerformed
-    // Make the AddMaterialsDialog pop up appear, dim the background
-    java.awt.Frame parentFrame = (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this);
-    MainFrame mainFrame = (MainFrame) parentFrame;
-    
-    mainFrame.showDimOverlay(true);   // dim the background BEFORE showing dialog
-    
-    AddStockIssuanceDialog dialog = new AddStockIssuanceDialog(parentFrame, true);
-    dialog.setLocationRelativeTo(parentFrame);
-    dialog.setVisible(true);           // this line BLOCKS here until dialog closes (since it's modal)
-    
-    mainFrame.showDimOverlay(false);  // runs AFTER dialog is closed/disposed
-refreshIssuancePage();
+        // Make the AddMaterialsDialog pop up appear, dim the background
+        java.awt.Frame parentFrame = (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this);
+        MainFrame mainFrame = (MainFrame) parentFrame;
+
+        mainFrame.showDimOverlay(true);   // dim the background BEFORE showing dialog
+
+        AddStockIssuanceDialog dialog = new AddStockIssuanceDialog(parentFrame, true);
+        dialog.setLocationRelativeTo(parentFrame);
+        dialog.setVisible(true);           // this line BLOCKS here until dialog closes (since it's modal)
+
+        mainFrame.showDimOverlay(false);  // runs AFTER dialog is closed/disposed
+        refreshIssuancePage();
     }//GEN-LAST:event_btnIssueStockActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-filterIssuances();
+        filterIssuances();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void SearchMaterialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchMaterialActionPerformed
+        // TODO add your handling code here:
+        filterIssuances();
+    }//GEN-LAST:event_SearchMaterialActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JFormattedTextField FromDate;
     private javax.swing.JTextField SearchMaterial;
-    private javax.swing.JFormattedTextField ToDate;
     private javax.swing.JButton btnIssueStock;
     private javax.swing.JPanel contentPnl;
     private javax.swing.JPanel headerPnl;
@@ -552,8 +701,6 @@ filterIssuances();
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;

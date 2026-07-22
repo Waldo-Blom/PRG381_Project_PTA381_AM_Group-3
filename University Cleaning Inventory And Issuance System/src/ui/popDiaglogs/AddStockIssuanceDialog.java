@@ -16,12 +16,22 @@ import javax.swing.JOptionPane;
 import Controller.MaterialDAO;
 import Controller.MaterialDatabaseDAO;
 import utils.DBConnection;
-
+import java.time.format.ResolverStyle;
+import java.time.format.DateTimeParseException;
 
 import java.util.ArrayList;
 import java.util.List;
+
+
 import model.Material;
 import model.Cleaner;
+import model.StockIssuance;
+
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 
 
 
@@ -212,29 +222,39 @@ private int getSelectedCleanerId() {
 
     private Timestamp getSelectedDate() {
 
-    String dateText =
-            Date.getText().trim();
+        String dateText = txtDate.getText();
 
-    if (dateText.isEmpty()) {
-        return new Timestamp(
-                System.currentTimeMillis()
+        if (dateText == null) {
+            return new Timestamp(System.currentTimeMillis());
+        }
+
+        dateText = dateText.trim();
+
+        System.out.println(
+                "Date entered: [" + dateText + "]"
+                + " Length: " + dateText.length()
         );
-    }
 
-    DateTimeFormatter formatter =
-            DateTimeFormatter.ofPattern(
-                    "MM/dd/yyyy"
-            );
+        if (dateText.isEmpty()
+                || dateText.equalsIgnoreCase("mm/dd/yyyy")) {
 
-    LocalDate date =
-            LocalDate.parse(
-                    dateText,
-                    formatter
-            );
+            return new Timestamp(System.currentTimeMillis());
+        }
 
-    return Timestamp.valueOf(
-            date.atStartOfDay()
-    );
+        DateTimeFormatter formatter
+                = DateTimeFormatter
+                        .ofPattern("M/d/uuuu")
+                        .withResolverStyle(
+                                ResolverStyle.STRICT
+                        );
+
+        LocalDate selectedDate
+                = LocalDate.parse(dateText, formatter);
+
+        return Timestamp.valueOf(
+                selectedDate.atStartOfDay()
+        );
+
 }
     
     
@@ -266,7 +286,7 @@ private int getSelectedCleanerId() {
         jLabel10 = new javax.swing.JLabel();
         cmbMaterial = new javax.swing.JComboBox<>();
         cmbCleaner = new javax.swing.JComboBox<>();
-        Date = new javax.swing.JFormattedTextField();
+        txtDate = new javax.swing.JFormattedTextField();
         jSeparator1 = new javax.swing.JSeparator();
         jScrollPane1 = new javax.swing.JScrollPane();
         Notes = new javax.swing.JTextArea();
@@ -304,9 +324,8 @@ private int getSelectedCleanerId() {
 
         cmbCleaner.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Choose a cleaner to issue to" }));
 
-        Date.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("DD/MM/YYYY"))));
-        Date.setText("mm/dd/yyyy");
-        Date.addActionListener(this::DateActionPerformed);
+        txtDate.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("MM/dd/yyyy"))));
+        txtDate.addActionListener(this::txtDateActionPerformed);
 
         Notes.setColumns(20);
         Notes.setRows(5);
@@ -345,7 +364,7 @@ private int getSelectedCleanerId() {
                                                 .addComponent(Quantity, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE))
                                             .addGap(35, 35, 35)
                                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(Date, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(txtDate, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addComponent(jLabel8)))
                                         .addComponent(jSeparator1)
                                         .addComponent(jScrollPane1)))))
@@ -371,7 +390,7 @@ private int getSelectedCleanerId() {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(Quantity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(Date, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -474,7 +493,26 @@ try {
                 JOptionPane.WARNING_MESSAGE
         );
 
-    } catch (IllegalArgumentException ex) {
+    }   catch (DateTimeParseException ex) {
+
+    JOptionPane.showMessageDialog(
+            this,
+            "Enter a valid date using MM/dd/yyyy.\n"
+            + "Example: 12/31/2026",
+            "Invalid Date",
+            JOptionPane.WARNING_MESSAGE
+    );
+
+    System.err.println(
+            "Date parsing error: " + ex.getMessage()
+    );
+
+    } 
+
+
+
+
+        catch (IllegalArgumentException ex) {
 
         JOptionPane.showMessageDialog(
                 this,
@@ -482,8 +520,8 @@ try {
                 "Validation Error",
                 JOptionPane.WARNING_MESSAGE
         );
-
-    } catch (Exception ex) {
+}
+      catch (Exception ex) {
 
         JOptionPane.showMessageDialog(
                 this,
@@ -497,9 +535,9 @@ try {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton3ActionPerformed
 
-    private void DateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DateActionPerformed
+    private void txtDateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDateActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_DateActionPerformed
+    }//GEN-LAST:event_txtDateActionPerformed
 
     /**
      * @param args the command line arguments
@@ -534,7 +572,6 @@ try {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JFormattedTextField Date;
     private javax.swing.JTextArea Notes;
     private javax.swing.JTextField Quantity;
     private javax.swing.JComboBox<String> cmbCleaner;
@@ -549,5 +586,6 @@ try {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JFormattedTextField txtDate;
     // End of variables declaration//GEN-END:variables
 }

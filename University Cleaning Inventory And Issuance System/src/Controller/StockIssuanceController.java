@@ -66,4 +66,39 @@ public class StockIssuanceController {
 
         return issuanceDAO.getIssuanceById(issuanceId);
     }
+    
+    public boolean deleteIssuance(int issuanceId) {
+
+    if (issuanceId <= 0) {
+        throw new IllegalArgumentException(
+                "A valid issuance must be selected."
+        );
+    }
+
+    return issuanceDAO.deleteIssuance(
+            issuanceId
+    );
+}
+    
+    public boolean updateIssuanceQuantity(
+        int issuanceId,
+        int newQuantity) {
+
+    if (issuanceId <= 0) {
+        throw new IllegalArgumentException(
+                "A valid issuance must be selected."
+        );
+    }
+
+    if (newQuantity <= 0) {
+        throw new IllegalArgumentException(
+                "Quantity must be greater than zero."
+        );
+    }
+
+    return issuanceDAO.updateIssuanceQuantity(
+            issuanceId,
+            newQuantity
+    );
+}
 }
