@@ -327,9 +327,6 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JPasswordField" name="txtPassword">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="jPasswordField1"/>
-              </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel9">
               <Properties>
@@ -340,9 +337,6 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JPasswordField" name="txtConfirmPass">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="jPasswordField1"/>
-              </Properties>
             </Component>
           </SubComponents>
         </Container>

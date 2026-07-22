@@ -10,14 +10,14 @@
 // *
 // * @author waldo
 // */
-//public class AddSuppliersDialog extends javax.swing.JDialog {
+//public class EditSuppliersDialog extends javax.swing.JDialog {
 //
-//    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AddSuppliersDialog.class.getName());
+//    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(EditSuppliersDialog.class.getName());
 //
 //    /**
-//     * Creates new form AddMaterialDialog
+//     * Creates new form EditSuppliersDialog
 //     */
-//    public AddSuppliersDialog(java.awt.Frame parent, boolean modal) {
+//    public EditSuppliersDialog(java.awt.Frame parent, boolean modal) {
 //        super(parent, modal);
 //        initComponents();
 //    }
@@ -53,7 +53,7 @@
 //        jButton2.setText("Cancel");
 //        jButton2.addActionListener(this::jButton2ActionPerformed);
 //
-//        jButton3.setText("Add Supplier");
+//        jButton3.setText("Update Supplier");
 //        jButton3.addActionListener(this::jButton3ActionPerformed);
 //
 //        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -69,7 +69,7 @@
 //        jLabel8.setText("Phone");
 //
 //        jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-//        jLabel9.setText("Add New Supplier");
+//        jLabel9.setText("Edit Supplier");
 //        jLabel9.setToolTipText("");
 //
 //        jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -159,7 +159,7 @@
 //    }//GEN-LAST:event_jButton2ActionPerformed
 //
 //    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-//        AlertUtils.showAddedAlert("Supplier");
+//        AlertUtils.showUpdatedAlert("Supplier");
 //        this.dispose();
 //    }//GEN-LAST:event_jButton3ActionPerformed
 //
@@ -167,7 +167,11 @@
 //     * @param args the command line arguments
 //     */
 //    public static void main(String args[]) {
-//        //Change the Theme of the app
+//        /* Set the Nimbus look and feel */
+//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
+//         */
 //        try {
 //            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
 //                if ("Nimbus".equals(info.getName())) {
@@ -178,12 +182,13 @@
 //        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
 //            logger.log(java.util.logging.Level.SEVERE, null, ex);
 //        }
+//        //</editor-fold>
 //
 //        /* Create and display the dialog */
 //        java.awt.EventQueue.invokeLater(new Runnable() {
 //            @Override
 //            public void run() {
-//                AddSuppliersDialog dialog = new AddSuppliersDialog(new javax.swing.JFrame(), true);
+//                EditSuppliersDialog dialog = new EditSuppliersDialog(new javax.swing.JFrame(), true);
 //                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
 //                    @Override
 //                    public void windowClosing(java.awt.event.WindowEvent e) {
@@ -227,36 +232,52 @@ import ui.utils.AlertUtils;
  *
  * @author waldo
  */
-public class AddSuppliersDialog extends javax.swing.JDialog {
+public class EditSuppliersDialog extends javax.swing.JDialog {
 
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AddSuppliersDialog.class.getName());
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(EditSuppliersDialog.class.getName());
 
     private final SupplierController supplierController;
-    private boolean supplierAdded = false;
+    private final Supplier supplierBeingEdited;
+    private boolean supplierUpdated = false;
 
     /**
-     * Creates new form AddMaterialDialog
+     * Creates new form EditSuppliersDialog
      */
-    public AddSuppliersDialog(java.awt.Frame parent, boolean modal) {
-        this(parent, modal, new SupplierController());
+    public EditSuppliersDialog(java.awt.Frame parent, boolean modal) {
+        this(parent, modal, new SupplierController(), null);
     }
 
     /**
-     * Creates new form AddSuppliersDialog wired to a SupplierController so it
-     * can persist the new supplier to PostgreSQL.
+     * Creates new form EditSuppliersDialog wired to a SupplierController and
+     * pre-filled with the supplier that is being edited.
      */
-    public AddSuppliersDialog(java.awt.Frame parent, boolean modal, SupplierController supplierController) {
+    public EditSuppliersDialog(java.awt.Frame parent, boolean modal, SupplierController supplierController, Supplier supplier) {
         super(parent, modal);
         this.supplierController = supplierController;
+        this.supplierBeingEdited = supplier;
         initComponents();
         jTextField5.setEnabled(false);
+        populateFields();
     }
 
     /**
-     * @return true if a supplier was successfully added while this dialog was open
+     * Pre-fills the form fields with the values of the supplier being edited.
      */
-    public boolean isSupplierAdded() {
-        return supplierAdded;
+    private void populateFields() {
+        if (supplierBeingEdited == null) {
+            return;
+        }
+        jTextField6.setText(supplierBeingEdited.getName());
+        jTextField2.setText(supplierBeingEdited.getContactName());
+        jTextField1.setText(supplierBeingEdited.getEmail());
+        jTextField7.setText(supplierBeingEdited.getPhone());
+    }
+
+    /**
+     * @return true if the supplier was successfully updated while this dialog was open
+     */
+    public boolean isSupplierUpdated() {
+        return supplierUpdated;
     }
 
     /**
@@ -290,7 +311,7 @@ public class AddSuppliersDialog extends javax.swing.JDialog {
         jButton2.setText("Cancel");
         jButton2.addActionListener(this::jButton2ActionPerformed);
 
-        jButton3.setText("Add Supplier");
+        jButton3.setText("Update Supplier");
         jButton3.addActionListener(this::jButton3ActionPerformed);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -306,7 +327,7 @@ public class AddSuppliersDialog extends javax.swing.JDialog {
         jLabel8.setText("Phone");
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel9.setText("Add New Supplier");
+        jLabel9.setText("Edit Supplier");
         jLabel9.setToolTipText("");
 
         jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -396,6 +417,11 @@ public class AddSuppliersDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        if (supplierBeingEdited == null) {
+            AlertUtils.showUpdatedFailedAlert("Supplier");
+            return;
+        }
+
         String name = jTextField6.getText().trim();
         String contactName = jTextField2.getText().trim();
         String email = jTextField1.getText().trim();
@@ -406,18 +432,22 @@ public class AddSuppliersDialog extends javax.swing.JDialog {
             return;
         }
 
-        Supplier supplier = new Supplier(name, contactName, email, phone);
-        boolean success = supplierController.addSupplier(supplier);
+        supplierBeingEdited.setName(name);
+        supplierBeingEdited.setContactName(contactName);
+        supplierBeingEdited.setEmail(email);
+        supplierBeingEdited.setPhone(phone);
+
+        boolean success = supplierController.updateSupplier(supplierBeingEdited);
 
         if (success) {
-            supplierAdded = true;
-            AlertUtils.showAddedAlert("Supplier");
+            supplierUpdated = true;
+            AlertUtils.showUpdatedAlert("Supplier");
             this.dispose();
         } else {
             String reason = supplierController.getLastError();
             AlertUtils.showErrorAlert("Error", reason != null
-                    ? "Failed to add supplier:\n" + reason
-                    : "Failed to add supplier. Please try again.");
+                    ? "Failed to update supplier:\n" + reason
+                    : "Failed to update supplier. Please try again.");
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -446,7 +476,7 @@ public class AddSuppliersDialog extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                AddSuppliersDialog dialog = new AddSuppliersDialog(new javax.swing.JFrame(), true);
+                EditSuppliersDialog dialog = new EditSuppliersDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

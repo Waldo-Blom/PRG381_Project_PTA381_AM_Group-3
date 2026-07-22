@@ -3,6 +3,7 @@ package ui.panels;
 import ui.MainFrame;
 import ui.popDiaglogs.AddStockIssuanceDialog;
 import utils.CurrentUser;
+<<<<<<< HEAD
 import Controller.StockIssuanceController;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -12,6 +13,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+=======
+import utils.uiUtilities;
+>>>>>>> origin/Dev
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -31,6 +35,7 @@ public class StockIssuancePnl extends javax.swing.JPanel {
      * Creates new form MaterialsPanel
      */
     public StockIssuancePnl() {
+<<<<<<< HEAD
        
            initComponents();
 
@@ -42,6 +47,16 @@ public class StockIssuancePnl extends javax.swing.JPanel {
     loadIssuanceHistory();
      updateSummaryCards();
 
+=======
+        initComponents();
+        
+        uiUtilities.applyTableStyleProperties(jTable1, jScrollPane1,
+            new int[]{100, 140, 140, 90, 120, 170, 60, 70});
+        
+        // Placeholder ("hint") text for the inventory search box - clears  itself automatically when the user clicks into it
+        uiUtilities.installPlaceholder(jTextField1, "Search by material ...");
+        applyRoleRestrictions();
+>>>>>>> origin/Dev
     }
     
     private void searchIssuances() {
@@ -333,10 +348,14 @@ private void filterIssuances() {
         SearchMaterial.setToolTipText("Search by material ...");
         SearchMaterial.addActionListener(this::SearchMaterialActionPerformed);
 
+        jButton1.setBackground(new java.awt.Color(59, 91, 219));
+        jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Search");
         jButton1.addActionListener(this::jButton1ActionPerformed);
 
-        btnIssueStock.setText("+ New Issuance");
+        btnIssueStock.setBackground(new java.awt.Color(59, 91, 219));
+        btnIssueStock.setForeground(new java.awt.Color(255, 255, 255));
+        btnIssueStock.setText("Add New Issuance");
         btnIssueStock.addActionListener(this::btnIssueStockActionPerformed);
 
         FromDate.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("DD/MM/YYYY"))));
@@ -363,14 +382,19 @@ private void filterIssuances() {
                 .addGap(24, 24, 24)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+<<<<<<< HEAD
                 .addComponent(FromDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+=======
+                .addComponent(jFormattedTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
+>>>>>>> origin/Dev
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ToDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnIssueStock, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(18, 18, 18))
         );
         searchPnlLayout.setVerticalGroup(
             searchPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

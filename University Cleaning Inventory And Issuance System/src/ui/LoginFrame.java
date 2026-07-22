@@ -1,27 +1,31 @@
 package ui;
-
+ 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-
-import view.LoginView;
+ 
+import controller.AuthController;
+import utils.CurrentUser;
+import model.User;
+import javax.swing.JOptionPane;
+ 
 /**
  *
  * @author waldo
  */
 public class LoginFrame extends javax.swing.JFrame {
-    
+ 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(LoginFrame.class.getName());
-    private final LoginView loginView = new LoginView();
-
+    private final AuthController authController = new AuthController();
+ 
     /**
      * Creates new form LoginFrame
      */
     public LoginFrame() {
         initComponents();
         
-         setResizable(false);
+        setResizable(false);
         setSize(660, 530);           // fixed window size
         setLocationRelativeTo(null);  // centers it on screen
     }
@@ -73,7 +77,7 @@ public class LoginFrame extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel2.setText("Email");
 
-        jTextField1.setText("admin@sparklingclean.com");
+        jTextField1.setText("owner@example.com");
         jTextField1.setToolTipText("username");
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -87,6 +91,8 @@ public class LoginFrame extends javax.swing.JFrame {
         jButton2.setBorderPainted(false);
         jButton2.setContentAreaFilled(false);
         jButton2.addActionListener(this::jButton2ActionPerformed);
+
+        jPasswordField1.setText("Password@1234");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -185,22 +191,39 @@ public class LoginFrame extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         String email = jTextField1.getText();
         String password = new String(jPasswordField1.getPassword());
-        loginView.handleSignIn(this, email, password);
+ 
+        if (email.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Email and Password are required.",
+                    "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+ 
+        User user = authController.login(email, password);
+ 
+        if (user == null) {
+            JOptionPane.showMessageDialog(this, "Invalid email or password.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+ 
+        CurrentUser.set(user);
+        JOptionPane.showMessageDialog(this, "Welcome, " + user.getFullName() + "!",
+                "Success", JOptionPane.INFORMATION_MESSAGE);
+ 
+        this.dispose();
+        new MainFrame().setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-      loginView.handleRegisterLink(this);
+        this.dispose();
+        new RegisterFrame().setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+        //Change the Theme of the app
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -211,8 +234,7 @@ public class LoginFrame extends javax.swing.JFrame {
         } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new LoginFrame().setVisible(true));
     }

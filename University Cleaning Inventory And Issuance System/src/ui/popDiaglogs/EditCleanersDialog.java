@@ -10,14 +10,14 @@
 // *
 // * @author waldo
 // */
-//public class AddCleanersDialog extends javax.swing.JDialog {
+//public class EditCleanersDialog extends javax.swing.JDialog {
 //
-//    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AddCleanersDialog.class.getName());
+//    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(EditCleanersDialog.class.getName());
 //
 //    /**
-//     * Creates new form AddMaterialDialog
+//     * Creates new form EditCleanersDialog
 //     */
-//    public AddCleanersDialog(java.awt.Frame parent, boolean modal) {
+//    public EditCleanersDialog(java.awt.Frame parent, boolean modal) {
 //        super(parent, modal);
 //        initComponents();
 //    }
@@ -53,7 +53,7 @@
 //        jButton2.setText("Cancel");
 //        jButton2.addActionListener(this::jButton2ActionPerformed);
 //
-//        jButton3.setText("Add Cleaner");
+//        jButton3.setText("Update Cleaner");
 //        jButton3.addActionListener(this::jButton3ActionPerformed);
 //
 //        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -63,7 +63,7 @@
 //        jLabel8.setText("Employee ID");
 //
 //        jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-//        jLabel9.setText("Add New Cleaner");
+//        jLabel9.setText("Edit Cleaner");
 //        jLabel9.setToolTipText("");
 //
 //        jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -155,7 +155,7 @@
 //    }//GEN-LAST:event_jButton2ActionPerformed
 //
 //    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-//        AlertUtils.showAddedAlert("Cleaner");
+//        AlertUtils.showUpdatedAlert("Cleaner");
 //        this.dispose();
 //    }//GEN-LAST:event_jButton3ActionPerformed
 //
@@ -163,7 +163,11 @@
 //     * @param args the command line arguments
 //     */
 //    public static void main(String args[]) {
-//        //Change the Theme of the app
+//        /* Set the Nimbus look and feel */
+//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
+//         */
 //        try {
 //            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
 //                if ("Nimbus".equals(info.getName())) {
@@ -174,12 +178,13 @@
 //        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
 //            logger.log(java.util.logging.Level.SEVERE, null, ex);
 //        }
+//        //</editor-fold>
 //
 //        /* Create and display the dialog */
 //        java.awt.EventQueue.invokeLater(new Runnable() {
 //            @Override
 //            public void run() {
-//                AddCleanersDialog dialog = new AddCleanersDialog(new javax.swing.JFrame(), true);
+//                EditCleanersDialog dialog = new EditCleanersDialog(new javax.swing.JFrame(), true);
 //                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
 //                    @Override
 //                    public void windowClosing(java.awt.event.WindowEvent e) {
@@ -209,6 +214,7 @@
 //    // End of variables declaration//GEN-END:variables
 //}
 
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
@@ -219,36 +225,36 @@ import controller.CleanerController;
 import model.Cleaner;
 import ui.utils.AlertUtils;
 
-import java.time.LocalDate;
-
 /**
  *
  * @author waldo
  */
-public class AddCleanersDialog extends javax.swing.JDialog {
+public class EditCleanersDialog extends javax.swing.JDialog {
 
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AddCleanersDialog.class.getName());
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(EditCleanersDialog.class.getName());
 
     private final CleanerController cleanerController;
-    private boolean cleanerAdded = false;
+    private final Cleaner cleanerBeingEdited;
+    private boolean cleanerUpdated = false;
 
     /**
-     * Creates new form AddMaterialDialog
+     * Creates new form EditCleanersDialog
      */
-    public AddCleanersDialog(java.awt.Frame parent, boolean modal) {
-        this(parent, modal, new CleanerController());
+    public EditCleanersDialog(java.awt.Frame parent, boolean modal) {
+        this(parent, modal, new CleanerController(), null);
     }
 
     /**
-     * Creates new form AddCleanersDialog wired to a CleanerController so it
-     * can load departments from PostgreSQL and persist the new cleaner.
+     * Creates new form EditCleanersDialog wired to a CleanerController and
+     * pre-filled with the cleaner that is being edited.
      */
-    public AddCleanersDialog(java.awt.Frame parent, boolean modal, CleanerController cleanerController) {
+    public EditCleanersDialog(java.awt.Frame parent, boolean modal, CleanerController cleanerController, Cleaner cleaner) {
         super(parent, modal);
         this.cleanerController = cleanerController;
+        this.cleanerBeingEdited = cleaner;
         initComponents();
-        jTextField7.setToolTipText("e.g. EMP-001");
         loadDepartments();
+        populateFields();
     }
 
     /**
@@ -264,10 +270,24 @@ public class AddCleanersDialog extends javax.swing.JDialog {
     }
 
     /**
-     * @return true if a cleaner was successfully added while this dialog was open
+     * Pre-fills the form fields with the values of the cleaner being edited.
      */
-    public boolean isCleanerAdded() {
-        return cleanerAdded;
+    private void populateFields() {
+        if (cleanerBeingEdited == null) {
+            return;
+        }
+        jTextField7.setText(cleanerBeingEdited.getEmployeeId());
+        jTextField3.setText(cleanerBeingEdited.getName());
+        jTextField1.setText(cleanerBeingEdited.getEmail());
+        jTextField8.setText(cleanerBeingEdited.getPhone());
+        jComboBox1.setSelectedItem(cleanerBeingEdited.getDepartment());
+    }
+
+    /**
+     * @return true if the cleaner was successfully updated while this dialog was open
+     */
+    public boolean isCleanerUpdated() {
+        return cleanerUpdated;
     }
 
     /**
@@ -301,7 +321,7 @@ public class AddCleanersDialog extends javax.swing.JDialog {
         jButton2.setText("Cancel");
         jButton2.addActionListener(this::jButton2ActionPerformed);
 
-        jButton3.setText("Add Cleaner");
+        jButton3.setText("Update Cleaner");
         jButton3.addActionListener(this::jButton3ActionPerformed);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -311,7 +331,7 @@ public class AddCleanersDialog extends javax.swing.JDialog {
         jLabel8.setText("Employee ID");
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel9.setText("Add New Cleaner");
+        jLabel9.setText("Edit Cleaner");
         jLabel9.setToolTipText("");
 
         jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -403,6 +423,11 @@ public class AddCleanersDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        if (cleanerBeingEdited == null) {
+            AlertUtils.showUpdatedFailedAlert("Cleaner");
+            return;
+        }
+
         String employeeId = jTextField7.getText().trim();
         String name = jTextField3.getText().trim();
         String email = jTextField1.getText().trim();
@@ -419,19 +444,23 @@ public class AddCleanersDialog extends javax.swing.JDialog {
             return;
         }
 
-        // status is constrained by the database to 'active' or 'inactive'
-        Cleaner cleaner = new Cleaner(employeeId, name, email, phone, department, LocalDate.now(), "active");
-        boolean success = cleanerController.addCleaner(cleaner);
+        cleanerBeingEdited.setEmployeeId(employeeId);
+        cleanerBeingEdited.setName(name);
+        cleanerBeingEdited.setEmail(email);
+        cleanerBeingEdited.setPhone(phone);
+        cleanerBeingEdited.setDepartment(department);
+
+        boolean success = cleanerController.updateCleaner(cleanerBeingEdited);
 
         if (success) {
-            cleanerAdded = true;
-            AlertUtils.showAddedAlert("Cleaner");
+            cleanerUpdated = true;
+            AlertUtils.showUpdatedAlert("Cleaner");
             this.dispose();
         } else {
             String reason = cleanerController.getLastError();
             AlertUtils.showErrorAlert("Error", reason != null
-                    ? "Failed to add cleaner:\n" + reason
-                    : "Failed to add cleaner. Please try again.");
+                    ? "Failed to update cleaner:\n" + reason
+                    : "Failed to update cleaner. Please try again.");
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -460,7 +489,7 @@ public class AddCleanersDialog extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                AddCleanersDialog dialog = new AddCleanersDialog(new javax.swing.JFrame(), true);
+                EditCleanersDialog dialog = new EditCleanersDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -489,4 +518,3 @@ public class AddCleanersDialog extends javax.swing.JDialog {
     private javax.swing.JTextField jTextField8;
     // End of variables declaration//GEN-END:variables
 }
-
