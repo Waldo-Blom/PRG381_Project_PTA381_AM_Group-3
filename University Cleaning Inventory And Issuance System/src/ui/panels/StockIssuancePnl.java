@@ -4,6 +4,15 @@ import ui.MainFrame;
 import ui.popDiaglogs.AddStockIssuanceDialog;
 import utils.CurrentUser;
 import utils.uiUtilities;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import model.StockIssuance;
+
+import controller.StockIssuanceController;
+
+
+
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -15,20 +24,334 @@ import utils.uiUtilities;
  * @author waldo
  */
 public class StockIssuancePnl extends javax.swing.JPanel {
-
+    
+ private final StockIssuanceController issuanceController;
     /**
      * Creates new form MaterialsPanel
      */
     public StockIssuancePnl() {
-        initComponents();
-        
-        uiUtilities.applyTableStyleProperties(jTable1, jScrollPane1,
-            new int[]{100, 140, 140, 90, 120, 170, 60, 70});
-        
-        // Placeholder ("hint") text for the inventory search box - clears  itself automatically when the user clicks into it
-        uiUtilities.installPlaceholder(jTextField1, "Search by material ...");
-        applyRoleRestrictions();
+      initComponents();
+
+    issuanceController =
+            new StockIssuanceController();
+
+    configureIssuanceTable();
+    hideIssuanceIdColumn();
+
+    uiUtilities.applyTableStyleProperties(
+            jTable1,
+            jScrollPane1,
+            new int[]{100, 140, 140, 90, 120, 170, 60, 70}
+    );
+
+    uiUtilities.installPlaceholder(
+            SearchMaterial,
+            "Search by material ..."
+    );
+
+    applyRoleRestrictions();
+    loadIssuanceHistory();
+    updateSummaryCards();
     }
+private void loadIssuanceHistory() {
+
+    DefaultTableModel tableModel =
+            (DefaultTableModel) jTable1.getModel();
+
+    tableModel.setRowCount(0);
+
+    List<StockIssuance> issuances =
+            issuanceController.loadAllIssuances();
+
+    for (StockIssuance issuance : issuances) {
+        addIssuanceToTable(tableModel, issuance);
+    }
+}
+
+private void addIssuanceToTable(
+        DefaultTableModel tableModel,
+        StockIssuance issuance) {
+
+tableModel.addRow(new Object[]{
+        issuance.getIssuanceId(),
+        issuance.getIssuanceDate(),
+        issuance.getMaterialName(),
+        issuance.getCleanerName(),
+        issuance.getQuantityIssued(),
+        issuance.getIssuedByUsername(),
+        issuance.getNotes(),
+        "Edit",
+        "Delete"
+    });
+}
+
+private void hideIssuanceIdColumn() {
+
+    jTable1.getColumnModel()
+            .getColumn(0)
+            .setMinWidth(0);
+
+    jTable1.getColumnModel()
+            .getColumn(0)
+            .setMaxWidth(0);
+
+    jTable1.getColumnModel()
+            .getColumn(0)
+            .setPreferredWidth(0);
+}
+
+
+private void updateSummaryCards() {
+
+    List<StockIssuance> issuances =
+            issuanceController.loadAllIssuances();
+
+    int totalIssuance = issuances.size();
+    int totalItemsIssued = 0;
+
+    for (StockIssuance issuance : issuances) {
+        totalItemsIssued += issuance.getQuantityIssued();
+    }
+    
+
+    lblTotalIssuances.setText(
+            String.valueOf(totalIssuance)
+    );
+
+    lblTototalItemsIssued.setText(
+            String.valueOf(totalItemsIssued)
+    );
+}
+private void filterIssuances() {
+
+    String searchText =
+            SearchMaterial.getText()
+                    .trim()
+                    .toLowerCase();
+
+    /*
+     * Ignore the placeholder text.
+     */
+    if (searchText.equals(
+            "search by material ..."
+                    .toLowerCase())) {
+
+        searchText = "";
+    }
+
+    DefaultTableModel tableModel =
+            (DefaultTableModel) jTable1.getModel();
+
+    tableModel.setRowCount(0);
+
+    try {
+
+        List<StockIssuance> issuances =
+                issuanceController.loadAllIssuances();
+
+        for (StockIssuance issuance : issuances) {
+
+            String materialName =
+                    issuance.getMaterialName() == null
+                    ? ""
+                    : issuance.getMaterialName()
+                            .toLowerCase();
+
+            boolean matchesMaterial =
+                    searchText.isEmpty()
+                    || materialName.contains(searchText);
+
+            if (matchesMaterial) {
+
+                addIssuanceToTable(
+                        tableModel,
+                        issuance
+                );
+            }
+        }
+
+    } catch (Exception ex) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                "The issuance records could not be searched.\n"
+                + ex.getMessage(),
+                "Search Error",
+                JOptionPane.ERROR_MESSAGE
+        );
+
+        ex.printStackTrace();
+    }
+}
+
+private void editIssuanceQuantity(
+         int issuanceId,
+         int modelRow) {
+Object currentQuantity =
+            jTable1.getModel()
+                    .getValueAt(modelRow, 4);
+
+    String input =
+            JOptionPane.showInputDialog(
+                    this,
+                    "Enter the new quantity:",
+                    currentQuantity
+            );
+
+    if (input == null) {
+        return;
+    }
+
+    try {
+
+        int newQuantity =
+                Integer.parseInt(
+                        input.trim()
+                );
+
+        boolean updated =
+                issuanceController
+                        .updateIssuanceQuantity(
+                                issuanceId,
+                                newQuantity
+                        );
+
+        if (updated) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Quantity updated successfully.",
+                    "Success",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+
+            refreshIssuancePage();
+
+        } else {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "The quantity could not be updated.",
+                    "Update Failed",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+
+    } catch (NumberFormatException ex) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Enter a valid whole number.",
+                "Invalid Quantity",
+                JOptionPane.WARNING_MESSAGE
+        );
+
+    } catch (IllegalArgumentException ex) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                ex.getMessage(),
+                "Validation Error",
+                JOptionPane.WARNING_MESSAGE
+        );
+    }
+}
+
+private void deleteIssuance(
+        int issuanceId) {
+
+     int choice =
+            JOptionPane.showConfirmDialog(
+                    this,
+                    "Delete this stock issuance?\n"
+                    + "The issued quantity will be returned to stock.",
+                    "Confirm Delete",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE
+            );
+
+    if (choice != JOptionPane.YES_OPTION) {
+        return;
+    }
+
+    try {
+
+        boolean deleted =
+                issuanceController
+                        .deleteIssuance(issuanceId);
+
+        if (deleted) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Issuance deleted and stock restored.",
+                    "Deleted",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+
+            refreshIssuancePage();
+
+        } else {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "The issuance could not be deleted.",
+                    "Delete Failed",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+
+    } catch (IllegalArgumentException ex) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                ex.getMessage(),
+                "Delete Error",
+                JOptionPane.WARNING_MESSAGE
+        );
+    }
+}
+
+
+private void configureIssuanceTable() {
+
+    DefaultTableModel model =
+            new DefaultTableModel(
+                    new Object[]{
+                        "ID",
+                        "Date",
+                        "Material",
+                        "Issued To",
+                        "Quantity",
+                        "Issued By",
+                        "Notes",
+                        "Edit",
+                        "Delete"
+                    },
+                    0
+            ) {
+
+        @Override
+        public boolean isCellEditable(
+                int row,
+                int column) {
+
+            return false;
+        }
+    };
+
+    jTable1.setModel(model);
+
+    hideIssuanceIdColumn();
+}
+
+
+
+private void refreshIssuancePage() {
+    loadIssuanceHistory();
+    updateSummaryCards();
+}
+
     
     private void applyRoleRestrictions() {
         
@@ -64,20 +387,16 @@ public class StockIssuancePnl extends javax.swing.JPanel {
 
         contentPnl = new javax.swing.JPanel();
         searchPnl = new javax.swing.JPanel();
-        jTextField1 = new javax.swing.JTextField();
+        SearchMaterial = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         btnIssueStock = new javax.swing.JButton();
-        jFormattedTextField1 = new javax.swing.JFormattedTextField();
-        jFormattedTextField2 = new javax.swing.JFormattedTextField();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
         statsPnl = new javax.swing.JPanel();
         invValuePnl = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
+        lblTotalIssuances = new javax.swing.JLabel();
         totalMatsPnl = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
+        lblTototalItemsIssued = new javax.swing.JLabel();
         lowStockItemsPnl = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
@@ -103,28 +422,19 @@ public class StockIssuancePnl extends javax.swing.JPanel {
         searchPnl.setMaximumSize(new java.awt.Dimension(1000, 70));
         searchPnl.setMinimumSize(new java.awt.Dimension(1000, 70));
 
-        jTextField1.setText("Search by material ...");
-        jTextField1.setToolTipText("Search by material ...");
-        jTextField1.addActionListener(this::jTextField1ActionPerformed);
+        SearchMaterial.setText("Search by material ...");
+        SearchMaterial.setToolTipText("Search by material ...");
+        SearchMaterial.addActionListener(this::SearchMaterialActionPerformed);
 
         jButton1.setBackground(new java.awt.Color(59, 91, 219));
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Search");
+        jButton1.addActionListener(this::jButton1ActionPerformed);
 
         btnIssueStock.setBackground(new java.awt.Color(59, 91, 219));
         btnIssueStock.setForeground(new java.awt.Color(255, 255, 255));
         btnIssueStock.setText("Add New Issuance");
         btnIssueStock.addActionListener(this::btnIssueStockActionPerformed);
-
-        jFormattedTextField1.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("DD/MM/YYYY"))));
-        jFormattedTextField1.setText("mm/dd/yyyy");
-
-        jFormattedTextField2.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("DD/MM/YYYY"))));
-        jFormattedTextField2.setText("mm/dd/yyyy");
-
-        jLabel3.setText("From:");
-
-        jLabel4.setText("To:");
 
         javax.swing.GroupLayout searchPnlLayout = new javax.swing.GroupLayout(searchPnl);
         searchPnl.setLayout(searchPnlLayout);
@@ -132,18 +442,10 @@ public class StockIssuancePnl extends javax.swing.JPanel {
             searchPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(searchPnlLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 470, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(SearchMaterial, javax.swing.GroupLayout.PREFERRED_SIZE, 470, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
-                .addGap(24, 24, 24)
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jFormattedTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jFormattedTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 291, Short.MAX_VALUE)
                 .addComponent(btnIssueStock, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18))
         );
@@ -152,13 +454,9 @@ public class StockIssuancePnl extends javax.swing.JPanel {
             .addGroup(searchPnlLayout.createSequentialGroup()
                 .addGap(17, 17, 17)
                 .addGroup(searchPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(SearchMaterial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1)
-                    .addComponent(btnIssueStock, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jFormattedTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jFormattedTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4))
+                    .addComponent(btnIssueStock, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(9, Short.MAX_VALUE))
         );
 
@@ -176,8 +474,8 @@ public class StockIssuancePnl extends javax.swing.JPanel {
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel6.setText("Total Issuances");
 
-        jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel11.setText("6");
+        lblTotalIssuances.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lblTotalIssuances.setText("6");
 
         javax.swing.GroupLayout invValuePnlLayout = new javax.swing.GroupLayout(invValuePnl);
         invValuePnl.setLayout(invValuePnlLayout);
@@ -186,7 +484,7 @@ public class StockIssuancePnl extends javax.swing.JPanel {
             .addGroup(invValuePnlLayout.createSequentialGroup()
                 .addGap(16, 16, 16)
                 .addGroup(invValuePnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel11)
+                    .addComponent(lblTotalIssuances)
                     .addComponent(jLabel6))
                 .addContainerGap(219, Short.MAX_VALUE))
         );
@@ -196,7 +494,7 @@ public class StockIssuancePnl extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel11)
+                .addComponent(lblTotalIssuances)
                 .addContainerGap(22, Short.MAX_VALUE))
         );
 
@@ -208,8 +506,8 @@ public class StockIssuancePnl extends javax.swing.JPanel {
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel7.setText("Total Items Issued");
 
-        jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel12.setText("8");
+        lblTototalItemsIssued.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lblTototalItemsIssued.setText("8");
 
         javax.swing.GroupLayout totalMatsPnlLayout = new javax.swing.GroupLayout(totalMatsPnl);
         totalMatsPnl.setLayout(totalMatsPnlLayout);
@@ -221,7 +519,7 @@ public class StockIssuancePnl extends javax.swing.JPanel {
                     .addComponent(jLabel7)
                     .addGroup(totalMatsPnlLayout.createSequentialGroup()
                         .addGap(6, 6, 6)
-                        .addComponent(jLabel12)))
+                        .addComponent(lblTototalItemsIssued)))
                 .addContainerGap(200, Short.MAX_VALUE))
         );
         totalMatsPnlLayout.setVerticalGroup(
@@ -230,7 +528,7 @@ public class StockIssuancePnl extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel7)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel12)
+                .addComponent(lblTototalItemsIssued)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -286,6 +584,11 @@ public class StockIssuancePnl extends javax.swing.JPanel {
                 "Date", "Material", "Issued To", "Qauntity", "Issued By", "Notes", "Edit", "Delete"
             }
         ));
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -296,9 +599,9 @@ public class StockIssuancePnl extends javax.swing.JPanel {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(17, 17, 17)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(17, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 447, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -322,47 +625,90 @@ public class StockIssuancePnl extends javax.swing.JPanel {
         add(headerPnl, java.awt.BorderLayout.NORTH);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        // TODO add your handling code here
+           int viewRow =
+            jTable1.rowAtPoint(evt.getPoint());
+
+    int viewColumn =
+            jTable1.columnAtPoint(evt.getPoint());
+
+    if (viewRow < 0 || viewColumn < 0) {
+        return;
+    }
+
+    int modelRow =
+            jTable1.convertRowIndexToModel(viewRow);
+
+    int modelColumn =
+            jTable1.convertColumnIndexToModel(viewColumn);
+
+    int issuanceId =
+            Integer.parseInt(
+                    jTable1.getModel()
+                            .getValueAt(modelRow, 0)
+                            .toString()
+            );
+
+    if (modelColumn == 7) {
+
+        editIssuanceQuantity(
+                issuanceId,
+                modelRow
+        );
+
+    } else if (modelColumn == 8) {
+
+        deleteIssuance(
+                issuanceId
+        );
+    }
+    }//GEN-LAST:event_jTable1MouseClicked
 
     private void btnIssueStockActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIssueStockActionPerformed
-    // Make the AddMaterialsDialog pop up appear, dim the background
-    java.awt.Frame parentFrame = (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this);
-    MainFrame mainFrame = (MainFrame) parentFrame;
-    
-    mainFrame.showDimOverlay(true);   // dim the background BEFORE showing dialog
-    
-    AddStockIssuanceDialog dialog = new AddStockIssuanceDialog(parentFrame, true);
-    dialog.setLocationRelativeTo(parentFrame);
-    dialog.setVisible(true);           // this line BLOCKS here until dialog closes (since it's modal)
-    
-    mainFrame.showDimOverlay(false);  // runs AFTER dialog is closed/disposed
+        // Make the AddMaterialsDialog pop up appear, dim the background
+        java.awt.Frame parentFrame = (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this);
+        MainFrame mainFrame = (MainFrame) parentFrame;
+
+        mainFrame.showDimOverlay(true);   // dim the background BEFORE showing dialog
+
+        AddStockIssuanceDialog dialog = new AddStockIssuanceDialog(parentFrame, true);
+        dialog.setLocationRelativeTo(parentFrame);
+        dialog.setVisible(true);           // this line BLOCKS here until dialog closes (since it's modal)
+
+        mainFrame.showDimOverlay(false);  // runs AFTER dialog is closed/disposed
+        refreshIssuancePage();
     }//GEN-LAST:event_btnIssueStockActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        filterIssuances();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void SearchMaterialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchMaterialActionPerformed
+        // TODO add your handling code here:
+        filterIssuances();
+    }//GEN-LAST:event_SearchMaterialActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField SearchMaterial;
     private javax.swing.JButton btnIssueStock;
     private javax.swing.JPanel contentPnl;
     private javax.swing.JPanel headerPnl;
     private javax.swing.JPanel invValuePnl;
     private javax.swing.JButton jButton1;
-    private javax.swing.JFormattedTextField jFormattedTextField1;
-    private javax.swing.JFormattedTextField jFormattedTextField2;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JLabel lblTotalIssuances;
+    private javax.swing.JLabel lblTototalItemsIssued;
     private javax.swing.JPanel lowStockItemsPnl;
     private javax.swing.JPanel searchPnl;
     private javax.swing.JPanel statsPnl;

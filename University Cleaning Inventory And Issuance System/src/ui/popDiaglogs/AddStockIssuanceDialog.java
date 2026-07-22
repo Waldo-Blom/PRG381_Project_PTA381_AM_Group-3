@@ -4,21 +4,275 @@
  */
 package ui.popDiaglogs;
 
+import controller.StockIssuanceController;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import javax.swing.JOptionPane;
+import model.StockIssuance;
+import dao.StockIssuanceDAO;
+import dao.CleanerDAO;
+import utils.CurrentUser;
+import model.User;
+import javax.swing.JOptionPane;
+import controller.MaterialDAO;
+import controller.MaterialDatabaseDAO;
+import utils.DBConnection;
+import java.time.format.ResolverStyle;
+import java.time.format.DateTimeParseException;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+import model.Material;
+import model.Cleaner;
+import model.StockIssuance;
+
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
+
+
+
 /**
  *
  * @author waldo
  */
 public class AddStockIssuanceDialog extends javax.swing.JDialog {
     
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AddStockIssuanceDialog.class.getName());
-
+private final StockIssuanceController issuanceController;
+private final MaterialDAO materialDAO;
+private  CleanerDAO cleanerDAO;
+private final List<Material> loadedMaterials = new ArrayList<>();
+private final List<Cleaner> loadedCleaners = new ArrayList<>();
+    
     /**
      * Creates new form AddMaterialDialog
      */
     public AddStockIssuanceDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+         issuanceController = new StockIssuanceController();
+          materialDAO = new MaterialDatabaseDAO();
+         
+      try {
+        cleanerDAO = new CleanerDAO(
+                DBConnection.getConnection()
+        );
+
+        loadMaterials();
+        loadCleaners();
+
+    } catch (ClassNotFoundException ex) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Could not connect to the database.",
+                "Database Error",
+                JOptionPane.ERROR_MESSAGE
+        );
+
+        ex.printStackTrace();
     }
+        
+    }
+    
+   private void loadMaterials() {
+
+    cmbMaterial.removeAllItems();
+    loadedMaterials.clear();
+
+    cmbMaterial.addItem(
+            "Choose a material to issue"
+    );
+
+    try {
+
+        List<Material> materials =
+                materialDAO.getAllMaterials();
+
+        for (Material material : materials) {
+
+            // Only display materials that have stock available.
+            if (material.getQuantity() > 0) {
+
+                loadedMaterials.add(material);
+
+                cmbMaterial.addItem(
+                        material.getMaterialName()
+                );
+            }
+        }
+
+        System.out.println(
+                "Materials loaded: "
+                + loadedMaterials.size()
+        );
+
+    } catch (Exception ex) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Materials could not be loaded.\n"
+                + ex.getMessage(),
+                "Loading Error",
+                JOptionPane.ERROR_MESSAGE
+        );
+
+        ex.printStackTrace();
+    }
+}
+    
+    
+    
+private void loadCleaners() {
+
+    cmbCleaner.removeAllItems();
+    loadedCleaners.clear();
+
+    cmbCleaner.addItem(
+            "Choose a cleaner to issue to"
+    );
+
+    try {
+
+        List<Cleaner> cleaners =
+                cleanerDAO.getAllCleaners();
+
+        for (Cleaner cleaner : cleaners) {
+
+            /*
+             * Only show active cleaners.
+             * Remove this condition if CleanerDAO already filters them.
+             */
+            if (cleaner.getStatus() == null
+                    || cleaner.getStatus()
+                            .equalsIgnoreCase("active")) {
+
+                loadedCleaners.add(cleaner);
+
+                cmbCleaner.addItem(
+                        cleaner.getName()
+                );
+            }
+        }
+
+        System.out.println(
+                "Cleaners loaded: "
+                + loadedCleaners.size()
+        );
+
+    } catch (Exception ex) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Cleaners could not be loaded.\n"
+                + ex.getMessage(),
+                "Loading Error",
+                JOptionPane.ERROR_MESSAGE
+        );
+
+        ex.printStackTrace();
+    }
+}
+
+private int getSelectedMaterialId() {
+
+    int selectedIndex =
+            cmbMaterial.getSelectedIndex();
+
+    if (selectedIndex <= 0) {
+
+        throw new IllegalArgumentException(
+                "Please select a material."
+        );
+    }
+
+    /*
+     * Combo index 0 is the placeholder, so subtract 1
+     * to access the matching Material object.
+     */
+    Material selectedMaterial =
+            loadedMaterials.get(selectedIndex - 1);
+
+    return selectedMaterial.getMaterialId();
+}
+
+private int getSelectedCleanerId() {
+
+    int selectedIndex =
+            cmbCleaner.getSelectedIndex();
+
+    if (selectedIndex <= 0) {
+
+        throw new IllegalArgumentException(
+                "Please select a cleaner."
+        );
+    }
+
+    Cleaner selectedCleaner =
+            loadedCleaners.get(selectedIndex - 1);
+
+    return selectedCleaner.getCleanerId();
+}
+
+
+
+
+    private Timestamp getSelectedDate() {
+
+        String dateText = txtDate.getText();
+
+        if (dateText == null) {
+            return new Timestamp(System.currentTimeMillis());
+        }
+
+        dateText = dateText.trim();
+
+        System.out.println(
+                "Date entered: [" + dateText + "]"
+                + " Length: " + dateText.length()
+        );
+
+        if (dateText.isEmpty()
+                || dateText.equalsIgnoreCase("mm/dd/yyyy")) {
+
+            return new Timestamp(System.currentTimeMillis());
+        }
+
+        DateTimeFormatter formatter
+                = DateTimeFormatter
+                        .ofPattern("M/d/uuuu")
+                        .withResolverStyle(
+                                ResolverStyle.STRICT
+                        );
+
+        LocalDate selectedDate
+                = LocalDate.parse(dateText, formatter);
+
+        return Timestamp.valueOf(
+                selectedDate.atStartOfDay()
+        );
+
+}
+    
+    
+    
+    
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AddStockIssuanceDialog.class.getName());
+
+  private int getLoggedInUserId() {
+    User currentUser = CurrentUser.get();
+    if (currentUser != null) {
+        // User.getId() returns a String (e.g., "5"), so parse it to int
+        return Integer.parseInt(currentUser.getId());
+    }
+    // Fallback – should never happen if the user is logged in
+    throw new IllegalStateException("No user is currently logged in.");
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -32,18 +286,18 @@ public class AddStockIssuanceDialog extends javax.swing.JDialog {
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        Quantity = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jComboBox2 = new javax.swing.JComboBox<>();
-        jFormattedTextField2 = new javax.swing.JFormattedTextField();
+        cmbMaterial = new javax.swing.JComboBox<>();
+        cmbCleaner = new javax.swing.JComboBox<>();
+        txtDate = new javax.swing.JFormattedTextField();
         jSeparator1 = new javax.swing.JSeparator();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        Notes = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(480, 360));
@@ -53,6 +307,7 @@ public class AddStockIssuanceDialog extends javax.swing.JDialog {
         jButton2.addActionListener(this::jButton2ActionPerformed);
 
         jButton3.setText("Issue Stock");
+        jButton3.addActionListener(this::jButton3ActionPerformed);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel1.setText("Quantity");
@@ -73,16 +328,16 @@ public class AddStockIssuanceDialog extends javax.swing.JDialog {
         jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel10.setText("Notes (Optional)");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Choose a materail to issue" }));
+        cmbMaterial.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Choose a materail to issue" }));
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Choose a cleaner to issue to" }));
+        cmbCleaner.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Choose a cleaner to issue to" }));
 
-        jFormattedTextField2.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("DD/MM/YYYY"))));
-        jFormattedTextField2.setText("mm/dd/yyyy");
+        txtDate.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("MM/dd/yyyy"))));
+        txtDate.addActionListener(this::txtDateActionPerformed);
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        Notes.setColumns(20);
+        Notes.setRows(5);
+        jScrollPane1.setViewportView(Notes);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -92,7 +347,7 @@ public class AddStockIssuanceDialog extends javax.swing.JDialog {
                 .addGap(45, 45, 45)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cmbCleaner, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
@@ -108,16 +363,16 @@ public class AddStockIssuanceDialog extends javax.swing.JDialog {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel10)
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(cmbMaterial, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jLabel7)
                                         .addComponent(jLabel9)
                                         .addGroup(layout.createSequentialGroup()
                                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                 .addComponent(jLabel1)
-                                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addComponent(Quantity, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE))
                                             .addGap(35, 35, 35)
                                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(jFormattedTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(txtDate, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addComponent(jLabel8)))
                                         .addComponent(jSeparator1)
                                         .addComponent(jScrollPane1)))))
@@ -131,19 +386,19 @@ public class AddStockIssuanceDialog extends javax.swing.JDialog {
                 .addGap(12, 12, 12)
                 .addComponent(jLabel7)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cmbMaterial, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cmbCleaner, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jLabel8))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jFormattedTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(Quantity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -163,6 +418,134 @@ public class AddStockIssuanceDialog extends javax.swing.JDialog {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
        this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+
+try {
+
+        int materialId =
+                getSelectedMaterialId();
+
+        int cleanerId =
+                getSelectedCleanerId();
+
+        String quantityText =
+                Quantity.getText().trim();
+
+        if (quantityText.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Please enter the quantity."
+            );
+        }
+
+        int quantity =
+                Integer.parseInt(quantityText);
+
+        if (quantity <= 0) {
+            throw new IllegalArgumentException(
+                    "Quantity must be greater than zero."
+            );
+        }
+
+        Timestamp issuanceDate =
+                getSelectedDate();
+
+        int loggedInUserId =
+                getLoggedInUserId();
+
+        String notes =
+                Notes.getText().trim();
+
+        StockIssuance issuance =
+                new StockIssuance();
+
+        issuance.setMaterialId(materialId);
+        issuance.setCleanerId(cleanerId);
+        issuance.setQuantityIssued(quantity);
+        issuance.setIssuanceDate(issuanceDate);
+        issuance.setIssuedByUserId(loggedInUserId);
+        issuance.setNotes(notes);
+
+        boolean saved =
+                issuanceController.issueMaterial(
+                        issuance
+                );
+
+        if (saved) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Stock issued successfully.",
+                    "Success",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+
+            dispose();
+
+        } else {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Stock issuance could not be saved.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+
+    } catch (NumberFormatException ex) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Quantity must be a whole number.",
+                "Validation Error",
+                JOptionPane.WARNING_MESSAGE
+        );
+
+    }   catch (DateTimeParseException ex) {
+
+    JOptionPane.showMessageDialog(
+            this,
+            "Enter a valid date using MM/dd/yyyy.\n"
+            + "Example: 12/31/2026",
+            "Invalid Date",
+            JOptionPane.WARNING_MESSAGE
+    );
+
+    System.err.println(
+            "Date parsing error: " + ex.getMessage()
+    );
+
+    } 
+
+
+
+
+        catch (IllegalArgumentException ex) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                ex.getMessage(),
+                "Validation Error",
+                JOptionPane.WARNING_MESSAGE
+        );
+}
+      catch (Exception ex) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Unexpected error: " + ex.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+        );
+
+        ex.printStackTrace();
+    }
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void txtDateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDateActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtDateActionPerformed
 
     /**
      * @param args the command line arguments
@@ -197,11 +580,12 @@ public class AddStockIssuanceDialog extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextArea Notes;
+    private javax.swing.JTextField Quantity;
+    private javax.swing.JComboBox<String> cmbCleaner;
+    private javax.swing.JComboBox<String> cmbMaterial;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JComboBox<String> jComboBox2;
-    private javax.swing.JFormattedTextField jFormattedTextField2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel4;
@@ -210,7 +594,6 @@ public class AddStockIssuanceDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JFormattedTextField txtDate;
     // End of variables declaration//GEN-END:variables
 }
