@@ -22,7 +22,7 @@ public class DBConnection {
 
     //Postgre local username and password that is required to access postgre
     private static final String USER = "postgres";
-    private static final String PASSWORD = "belgiumcampus";
+    private static final String PASSWORD = "password";
 
     //Set Constructor
     public DBConnection() {
