@@ -1,7 +1,7 @@
-package ui.panels;
+package view.panels;
 
-import ui.MainFrame;
-import ui.popDiaglogs.AddStockIssuanceDialog;
+import view.MainFrame;
+import view.popUpDialogs.AddStockIssuanceDialog;
 import utils.CurrentUser;
 import utils.uiUtilities;
 import java.util.List;

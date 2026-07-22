@@ -1,4 +1,4 @@
-package ui.utils;
+package utils;
 
 import javax.swing.JOptionPane;
 

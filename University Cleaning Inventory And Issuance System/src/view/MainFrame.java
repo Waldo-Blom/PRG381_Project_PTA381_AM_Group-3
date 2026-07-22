@@ -1,4 +1,4 @@
-package ui;
+package view;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -9,13 +9,14 @@ package ui;
  *
  * @author waldo
  */
-import ui.panels.MaterialsPnl;
-import ui.panels.DashboardPnl;
+import view.LoginFrame;
+import view.panels.MaterialsPnl;
+import view.panels.DashboardPnl;
 import java.awt.CardLayout;
-import ui.panels.CleanersPnl;
-import ui.panels.ReportsPnl;
-import ui.panels.StockIssuancePnl;
-import ui.panels.SuppliersPnl;
+import view.panels.CleanersPnl;
+import view.panels.ReportsPnl;
+import view.panels.StockIssuancePnl;
+import view.panels.SuppliersPnl;
 
 import utils.CurrentUser;
 import model.User;
@@ -139,10 +140,7 @@ public class MainFrame extends javax.swing.JFrame {
         contentPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMaximumSize(new java.awt.Dimension(1200, 700));
         setMinimumSize(new java.awt.Dimension(1200, 700));
-        setPreferredSize(new java.awt.Dimension(1200, 700));
-        getContentPane().setLayout(new java.awt.BorderLayout());
 
         sidebarPanel.setPreferredSize(new java.awt.Dimension(200, 700));
         sidebarPanel.setLayout(new java.awt.BorderLayout());

@@ -1,8 +1,8 @@
-package ui.popDiaglogs;
+package view.popUpDialogs;
 
 import controller.SupplierController;
 import model.Supplier;
-import ui.utils.AlertUtils;
+import utils.AlertUtils;
 
 /**
  *

@@ -1,7 +1,7 @@
-package ui.panels;
+package view.panels;
 
-import ui.popDiaglogs.AddMaterialDialog;
-import ui.MainFrame;
+import view.popUpDialogs.AddMaterialDialog;
+import view.MainFrame;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -308,13 +308,16 @@ public class MaterialsPnl extends javax.swing.JPanel {
         searchPnl.setMinimumSize(new java.awt.Dimension(1000, 70));
         searchPnl.setPreferredSize(new java.awt.Dimension(1000, 70));
 
-        txtSearch.setText("Search materials ...");
-        txtSearch.setToolTipText("Search materials ...");
+        txtSearch.setToolTipText("");
         txtSearch.addActionListener(this::txtSearchActionPerformed);
 
+        btnSearch.setBackground(new java.awt.Color(59, 91, 219));
+        btnSearch.setForeground(new java.awt.Color(255, 255, 255));
         btnSearch.setText("Search");
         btnSearch.addActionListener(this::btnSearchActionPerformed);
 
+        cmbCategories.setBackground(new java.awt.Color(59, 91, 219));
+        cmbCategories.setForeground(new java.awt.Color(255, 255, 255));
         cmbCategories.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All Categories", "Cleaners", "Disinfectants", "Tools", "Safety", "Consumables", "Hygiene" }));
 
         btnAdd.setBackground(new java.awt.Color(59, 91, 219));

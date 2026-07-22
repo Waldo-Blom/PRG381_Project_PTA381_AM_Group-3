@@ -1,11 +1,11 @@
-package ui.panels;
+package view.panels;
 
 import controller.SupplierController;
 import model.Supplier;
-import ui.popDiaglogs.AddSuppliersDialog;
-import ui.popDiaglogs.EditSuppliersDialog;
-import ui.MainFrame;
-import ui.utils.AlertUtils;
+import view.popUpDialogs.AddSuppliersDialog;
+import view.popUpDialogs.EditSuppliersDialog;
+import view.MainFrame;
+import utils.AlertUtils;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -229,11 +229,15 @@ public class SuppliersPnl extends javax.swing.JPanel {
         searchPnl.setMinimumSize(new java.awt.Dimension(1000, 70));
 
         jTextField1.setText("Search suppliers by name, contact, or email ...");
-        jTextField1.setToolTipText("Search suppliers by name, contact, or email ...");
+        jTextField1.setToolTipText("");
         jTextField1.addActionListener(this::jTextField1ActionPerformed);
 
+        jButton1.setBackground(new java.awt.Color(59, 91, 219));
+        jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Search");
 
+        btnAddSupplier.setBackground(new java.awt.Color(59, 91, 219));
+        btnAddSupplier.setForeground(new java.awt.Color(255, 255, 255));
         btnAddSupplier.setText("Add new supplier");
         btnAddSupplier.addActionListener(this::btnAddSupplierActionPerformed);
 
@@ -245,10 +249,10 @@ public class SuppliersPnl extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 641, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
-                .addGap(38, 38, 38)
-                .addComponent(btnAddSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(50, Short.MAX_VALUE))
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(26, 26, 26)
+                .addComponent(btnAddSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(84, Short.MAX_VALUE))
         );
         searchPnlLayout.setVerticalGroup(
             searchPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -307,7 +311,7 @@ public class SuppliersPnl extends javax.swing.JPanel {
         jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel4.setText("With Contact Person");
+        jLabel4.setText("Active");
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel7.setText("3");
@@ -386,7 +390,7 @@ public class SuppliersPnl extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Supplier", "Email", "Phone number", "Contact Person", "Materials", "Status", "Edit", "Delete"
+                "Supplier", "Email", "Phone number", "Address", "Materials", "Status", "Edit", "Delete"
             }
         ));
         jScrollPane1.setViewportView(jTable1);

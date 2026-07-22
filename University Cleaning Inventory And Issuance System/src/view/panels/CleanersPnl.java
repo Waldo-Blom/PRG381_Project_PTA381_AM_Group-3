@@ -1,11 +1,11 @@
-package ui.panels;
+package view.panels;
 
 import controller.CleanerController;
 import model.Cleaner;
-import ui.MainFrame;
-import ui.popDiaglogs.AddCleanersDialog;
-import ui.popDiaglogs.EditCleanersDialog;
-import ui.utils.AlertUtils;
+import view.MainFrame;
+import view.popUpDialogs.AddCleanersDialog;
+import view.popUpDialogs.EditCleanersDialog;
+import utils.AlertUtils;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -281,13 +281,15 @@ public class CleanersPnl extends javax.swing.JPanel {
         searchPnl.setMinimumSize(new java.awt.Dimension(1000, 70));
 
         jTextField1.setText("Search cleaners by name, ID, or email ...");
-        jTextField1.setToolTipText("Search materials ...");
+        jTextField1.setToolTipText("");
         jTextField1.addActionListener(this::jTextField1ActionPerformed);
 
         jButton1.setBackground(new java.awt.Color(59, 91, 219));
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Search");
 
+        jComboBox1.setBackground(new java.awt.Color(59, 91, 219));
+        jComboBox1.setForeground(new java.awt.Color(255, 255, 255));
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All Departments", "Item 2", "Item 3", "Item 4" }));
 
         btnAddCleaner.setBackground(new java.awt.Color(59, 91, 219));
@@ -295,6 +297,8 @@ public class CleanersPnl extends javax.swing.JPanel {
         btnAddCleaner.setText("Add new Cleaner");
         btnAddCleaner.addActionListener(this::btnAddCleanerActionPerformed);
 
+        jComboBox2.setBackground(new java.awt.Color(59, 91, 219));
+        jComboBox2.setForeground(new java.awt.Color(255, 255, 255));
         jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All Status", "Item 2", "Item 3", "Item 4" }));
 
         javax.swing.GroupLayout searchPnlLayout = new javax.swing.GroupLayout(searchPnl);
@@ -307,12 +311,12 @@ public class CleanersPnl extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnAddCleaner, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(36, Short.MAX_VALUE))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
         searchPnlLayout.setVerticalGroup(
             searchPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -477,6 +481,8 @@ public class CleanersPnl extends javax.swing.JPanel {
 
         contentPnl.add(summaryPnl);
 
+        jPanel2.setBackground(new java.awt.Color(245, 246, 250));
+
         jScrollPane1.setBackground(new java.awt.Color(245, 246, 250));
 
         jTable1.setBackground(new java.awt.Color(245, 246, 250));
@@ -488,7 +494,7 @@ public class CleanersPnl extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Cleaner", "Email", "Phone number", "Department", "Employee ID", "Hire Date", "Status", "Edit", "Delete"
+                "Cleaner", "Email", "Phone number", "Department", "Issuances", "Hire Date", "Status", "Edit", "Delete"
             }
         ));
         jTable1.setRowHeight(45);
@@ -498,15 +504,14 @@ public class CleanersPnl extends javax.swing.JPanel {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 994, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1000, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(0, 10, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(21, 21, 21)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         contentPnl.add(jPanel2);

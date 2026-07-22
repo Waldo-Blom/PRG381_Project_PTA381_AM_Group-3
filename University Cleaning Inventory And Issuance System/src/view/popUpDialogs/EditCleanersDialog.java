@@ -1,8 +1,8 @@
-package ui.popDiaglogs;
+package view.popUpDialogs;
 
 import controller.CleanerController;
 import model.Cleaner;
-import ui.utils.AlertUtils;
+import utils.AlertUtils;
 
 /**
  *

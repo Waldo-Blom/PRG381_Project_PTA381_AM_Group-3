@@ -1,10 +1,11 @@
-package ui;
+package view;
  
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
  
+import view.LoginFrame;
 import controller.AuthController;
 import javax.swing.JOptionPane;
  
@@ -59,9 +60,7 @@ public class RegisterFrame extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMaximumSize(new java.awt.Dimension(650, 720));
         setMinimumSize(new java.awt.Dimension(650, 720));
-        setPreferredSize(new java.awt.Dimension(650, 720));
 
         jPanel1.setBackground(new java.awt.Color(45, 84, 226));
         jPanel1.setMaximumSize(new java.awt.Dimension(650, 700));

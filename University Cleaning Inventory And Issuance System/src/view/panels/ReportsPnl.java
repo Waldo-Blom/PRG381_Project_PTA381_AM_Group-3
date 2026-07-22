@@ -1,4 +1,4 @@
-package ui.panels;
+package view.panels;
 
 import  utils.uiUtilities;
 import dao.ReportsDAO;

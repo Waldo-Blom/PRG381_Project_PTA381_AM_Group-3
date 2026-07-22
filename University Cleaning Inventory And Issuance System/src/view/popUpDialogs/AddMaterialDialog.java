@@ -1,4 +1,4 @@
-package ui.popDiaglogs;
+package view.popUpDialogs;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

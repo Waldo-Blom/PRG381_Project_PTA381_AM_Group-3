@@ -1,4 +1,4 @@
-package ui.panels;
+package view.panels;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -314,7 +314,6 @@ public class DashboardPnl extends javax.swing.JPanel {
         jLabel7.setText("Total Materials");
 
         pnlTotalMaterials.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        pnlTotalMaterials.setForeground(new java.awt.Color(13, 110, 253));
         pnlTotalMaterials.setText("8");
 
         jLabel16.setText("of 190 units total");
@@ -355,7 +354,6 @@ public class DashboardPnl extends javax.swing.JPanel {
         jLabel8.setText("Low Stock Items");
 
         lblLowStockItems.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        lblLowStockItems.setForeground(new java.awt.Color(220, 53, 69));
         lblLowStockItems.setText("4");
 
         jLabel17.setText("Needs attention");
@@ -396,7 +394,6 @@ public class DashboardPnl extends javax.swing.JPanel {
         jLabel9.setText("Active Cleaners");
 
         lblActiveCleaners.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        lblActiveCleaners.setForeground(new java.awt.Color(25, 135, 84));
         lblActiveCleaners.setText("5");
 
         jLabel19.setText("1 inactive");
@@ -437,7 +434,6 @@ public class DashboardPnl extends javax.swing.JPanel {
         jLabel10.setText("Recent Issuances");
 
         lblRecentIssuances.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        lblRecentIssuances.setForeground(new java.awt.Color(108, 117, 125));
         lblRecentIssuances.setText("0");
 
         jLabel20.setText("in the Last 7 days");

@@ -1,4 +1,4 @@
-package ui;
+package view;
  
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -54,7 +54,6 @@ public class LoginFrame extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMaximumSize(new java.awt.Dimension(250, 250));
         setMinimumSize(new java.awt.Dimension(250, 250));
 
         jPanel1.setBackground(new java.awt.Color(45, 84, 226));
