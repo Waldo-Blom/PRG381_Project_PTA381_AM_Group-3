@@ -638,7 +638,7 @@ The seeded login passwords shown elsewhere in this README (e.g. `Password@1234`)
 
 1. Make sure PostgreSQL is running and the database/tables/seed data are set up (see Database Setup above).
 2. In NetBeans, right-click the project and select **Run**.
-3. The `LoginFrame` should appear as the entry point, log in with one of the seeded accounts below (or register a new staff account) to continue:
+3. The `LoginFrame` should appear as the entry point, log in with one of the seeded accounts below (or register a new account) to continue:
 
    | Role | Email | Password |
    |---|---|---|
@@ -646,15 +646,13 @@ The seeded login passwords shown elsewhere in this README (e.g. `Password@1234`)
    | Storekeeper | `storekeeper@example.com` | `Password@1234` |
    | Cleaner | `cleaner@example.com` | `Password@1234` |
 
-Here is the consolidated section merged under **Resolving Errors**, cleanly organized into logical subsections:
-
 ---
 
 ## Resolving Errors
 
 ### 1. Adding the PostgreSQL JDBC Driver (By default it should be there)
 
-The project needs the PostgreSQL JDBC driver (`postgresql-<version>.jar`) on its classpath to connect to the database. This should already be added and should not be needed but if the problem does occur here is what to do 
+The project needs the PostgreSQL JDBC driver (`postgresql-<version>.jar`) on its classpath to connect to the database. This should already be added and should not be needed but if the problem does occur here is what to do:
 
 1. Download the driver `.jar` from [jdbc.postgresql.org](https://jdbc.postgresql.org/download/) if you don't already have it.
 2. In NetBeans, expand the project and right-click on **Libraries**.
@@ -723,10 +721,7 @@ If something isn't working, check the reference screenshots below against what y
 
 ---
 
-## Team, Group 3
-Here is the updated contributors list with the corresponding `.java` files assigned to each person's functional contributions based on the project structure:
-
----
+## PRG381_Project_PTA381_AM_Group-3
 
 ### Contributors & Code Attribution
 
