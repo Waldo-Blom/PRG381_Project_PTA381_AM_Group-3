@@ -66,6 +66,8 @@ public class MainFrame extends javax.swing.JFrame {
     public MainFrame() {
         initComponents();
         
+        setTitle("Sparkling Clean");
+        
         setResizable(false);
         setSize(1200, 700);           // fixed window size
         setLocationRelativeTo(null);  // centers it on screen

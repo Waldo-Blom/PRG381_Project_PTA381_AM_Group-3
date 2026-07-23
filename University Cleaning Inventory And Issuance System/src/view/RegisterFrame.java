@@ -27,6 +27,8 @@ public class RegisterFrame extends javax.swing.JFrame {
         setResizable(false);
         setSize(650, 740);           // fixed window size
         setLocationRelativeTo(null);  // centers it on screen
+        
+        setTitle("Sparkling Clean");
     }
 
     /**
