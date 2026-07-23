@@ -559,7 +559,7 @@ The seeded login passwords shown elsewhere in this README (e.g. `Password@1234`)
 2. Open pgAdmin and connect to your local PostgreSQL server.
 3. In the left-hand tree, right-click on **Databases**, then select **Create → Database...**
 4. In the dialog that opens, set the Database name to `sparkling_clean` (matching the name expected in `DBConnection.java`, see step 6 below), then click **Save**.
-5. Run the project's SQL script against the new database to create the tables and load the mock/seed data. (Replace `db/sparkling_clean.sql` below with the actual filename/path of the script included in the project.)
+5. Run the project's SQL script against the new database to create the tables and load the mock/seed data. (Can be found at : PRG381_Project_PTA381_AM_Group-3\University Cleaning Inventory And Issuance System\database\schema_with_mockdata.sql)
 
    - In pgAdmin: right-click the `sparkling_clean` database → **Query Tool**, then open the `.sql` file (**File → Open...** within the Query Tool) and click **Execute/Run**.
    - Alternatively, from a terminal:
@@ -654,7 +654,7 @@ Here is the consolidated section merged under **Resolving Errors**, cleanly orga
 
 ### 1. Adding the PostgreSQL JDBC Driver (By default it should be there)
 
-The project needs the PostgreSQL JDBC driver (`postgresql-<version>.jar`) on its classpath to connect to the database. This should allready be added and should not be needed but if the problem does occur here is what to do 
+The project needs the PostgreSQL JDBC driver (`postgresql-<version>.jar`) on its classpath to connect to the database. This should already be added and should not be needed but if the problem does occur here is what to do 
 
 1. Download the driver `.jar` from [jdbc.postgresql.org](https://jdbc.postgresql.org/download/) if you don't already have it.
 2. In NetBeans, expand the project and right-click on **Libraries**.
