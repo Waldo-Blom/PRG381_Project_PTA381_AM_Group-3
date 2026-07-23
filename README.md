@@ -714,11 +714,11 @@ If something isn't working, check the reference screenshots below against what y
 
 * **Invalid Password or Email Pop up**
 *The error prompt displayed when attempting to log in with an unrecognized email or incorrect password.*
-![Invalid Password error](images/errors/Incorrect login/Incorrect Password or email.png)
+![Invalid Password error](images/errors/Incorrect%20login/Incorrect%20Password%20or%20email.png)
 
 * **Failed Login Console Output**
 *The console output when the login fails but doesn't throw an unhandled exception, confirming active DB connection.*
-![Console output error](images/errors/Incorrect login/Output-shows-no-errors.png)
+![Console output error](images/errors/Incorrect%20login/Output-shows-no-errors.png)
 
 
 ---
