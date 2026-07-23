@@ -19,9 +19,9 @@ It's a Java Swing desktop app that lets university staff manage cleaning materia
   - [Owner](#owner)
   - [Storekeeper](#storekeeper)
   - [Cleaner](#cleaner)
+- [Login and Register Screenshots](#Login-And-Register-Screenshots)
 - [Database Schema (ERD)](#database-schema-erd)
 - [Security](#security)
-- [Screenshots](#screenshots)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
@@ -276,66 +276,66 @@ The Owner's sidebar shows all modules. Dashboard and Reports are identical to wh
 **Dashboard**
 
 ![Owner Dashboard](images/role-based-access-control/owner/dashboard.png)
-*Identical to the Storekeeper's dashboard, no restrictions apply here, both roles see full stats.*
+
 
 **Materials (View Only)**
 
 ![Owner Materials](images/role-based-access-control/owner/materials.png)
-*No "Add Material" button, and the Edit/Delete columns are removed from the table. Owner can only browse stock levels.*
+
 
 **Suppliers (Full CRUD)**
 
 ![Owner Suppliers](images/role-based-access-control/owner/suppliers.png)
-*Full access, this is the one module where the Owner (not the Storekeeper) can add, edit, and delete.*
+
 
 #### Supplier Pop-ups
 
-**Add Supplier**
+**Add Supplier (Create)**
 
 ![Add Supplier](images/role-based-access-control/owner/popups/supplier-create.png)
-*Pop-up window for adding a new supplier.*
 
-**Edit Supplier**
+
+**Edit Supplier (Update)**
 
 ![Edit Supplier](images/role-based-access-control/owner/popups/suppliers-update.png)
-*Pop-up window for editing an existing supplier's details.*
 
-**Delete Supplier**
+
+**Delete Supplier (Delete)**
 
 ![Delete Supplier](images/role-based-access-control/owner/popups/suppliers-delete.png)
-*Confirmation dialog for deleting a supplier.*
+
 
 **Cleaners (View Only)**
 
 ![Owner Cleaners](images/role-based-access-control/owner/cleaners.png)
-*Same restriction as Materials, no "Add Cleaner" button, no Edit/Delete columns.*
+
 
 **Stock Issuance (View Only)**
 
 ![Owner Stock Issuance](images/role-based-access-control/owner/stock-issuance.png)
-*Owner can see the full issuance history but can't issue stock or modify records, those actions are hidden.*
+
 
 **Reports (Full Access)**
 
 #### Inventory Report
 
 ![Owner Inventory Report](images/role-based-access-control/owner/reports-inventory.png)
-*Report displaying detailed stock levels and material inventory status.*
 
-#### Issuance Report
-
-![Owner Issuance Report](images/role-based-access-control/owner/reports-issuance.png)
-*Report showing stock issuance activity and material distribution history.*
 
 #### Low Stock Report
 
 ![Owner Low Stock Report](images/role-based-access-control/owner/reports-low-stock.png)
-*Report highlighting cleaning materials that fall below minimum threshold levels.*
+
+
+#### Issuance Report
+
+![Owner Issuance Report](images/role-based-access-control/owner/reports-issuance.png)
+
 
 #### Material Report
 
 ![Owner Material Report](images/role-based-access-control/owner/reports-material.png)
-*Report providing comprehensive analytics and material usage metrics.*
+
 
 ### Storekeeper
 
@@ -355,100 +355,100 @@ The Storekeeper has the widest day-to-day operational access. Dashboard and Repo
 **Dashboard**
 
 ![Storekeeper Dashboard](images/role-based-access-control/storekeeper/dashboard.png)
-*Identical to the Owner's dashboard, no restrictions apply here.*
+
 
 **Materials (Full CRUD)**
 
 ![Storekeeper Materials](images/role-based-access-control/storekeeper/materials.png)
-*Full access, this is the one module where the Storekeeper (not the Owner) can add, edit, and delete.*
+
 
 #### Material Pop-ups
 
-**Add Material**
+**Add Material (Create)**
 
 ![Add Material](images/role-based-access-control/storekeeper/popups/materials-create.png)
-*Pop-up window for creating a new material record.*
 
-**Edit Material**
+
+**Edit Material (Update)**
 
 ![Edit Material](images/role-based-access-control/storekeeper/popups/materials-update.png)
-*Pop-up window for editing an existing material's information.*
 
-**Delete Material**
+
+**Delete Material (Delete)**
 
 ![Delete Material](images/role-based-access-control/storekeeper/popups/materials-delete.png)
-*Confirmation dialog for removing a material from the database.*
+
 
 **Suppliers (View Only)**
 
 ![Storekeeper Suppliers](images/role-based-access-control/storekeeper/suppliers.png)
-*No "Add Supplier" button, and the Edit/Delete columns are removed. Storekeeper can only view supplier details.*
+
 
 **Cleaners (Full CRUD)**
 
 ![Storekeeper Cleaners](images/role-based-access-control/storekeeper/cleaners.png)
-*Full access, the "Add Cleaner" button and Edit/Delete columns are all present, unlike the Owner's view of this page.*
+
 
 #### Cleaner Pop-ups
 
-**Add Cleaner**
+**Add Cleaner (Create)**
 
 ![Add Cleaner](images/role-based-access-control/storekeeper/popups/cleaners-create.png)
-*Pop-up dialog for registering a new cleaner in the system.*
 
-**Edit Cleaner**
+
+**Edit Cleaner (Update)**
 
 ![Edit Cleaner](images/role-based-access-control/storekeeper/popups/cleaners-update.png)
-*Pop-up dialog for updating cleaner details.*
 
-**Delete Cleaner**
+
+**Delete Cleaner (Delete)**
 
 ![Delete Cleaner](images/role-based-access-control/storekeeper/popups/cleaners-delete.png)
-*Confirmation window for removing a cleaner profile.*
+
 
 **Stock Issuance (Full CRUD)**
 
 ![Storekeeper Stock Issuance](images/role-based-access-control/storekeeper/stock-issuance.png)
-*Full access to every issuance record, can issue new stock and edit/delete any entry, not just their own.*
+
 
 #### Stock Issuance Pop-up
 
-**Issue Stock**
+**Issue Stock (Create)**
 
 ![Issue Stock](images/role-based-access-control/storekeeper/popups/stock-issuance-create.png)
-*Pop-up dialog for recording a new material issuance to a cleaner.*
 
-**Edit Stock issuance**
+
+**Edit Stock issuance (Update)**
 
 ![Edit Stock Issuance](images/role-based-access-control/storekeeper/popups/stock-issuance-update.png)
-*Pop-up dialog for updating a stock issuance record.*
 
-**Delete stock issuance**
+
+**Delete stock issuance (Delete)**
 
 ![Delete Stock Issuance](images/role-based-access-control/storekeeper/popups/stock-issuance-delete.png)
-*Confirmation window for removing a stock issuance record.*
+
 
 **Reports (Full Access)**
 
 #### Inventory Report
 
 ![Storekeeper Inventory Report](images/role-based-access-control/storekeeper/reports-inventory.png)
-*Report displaying current material inventory and stock metrics.*
 
-#### Issuance Report
-
-![Storekeeper Issuance Report](images/role-based-access-control/storekeeper/reports-issuance.png)
-*Report illustrating complete stock issuance logs and material disbursement.*
 
 #### Low Stock Report
 
 ![Storekeeper Low Stock Report](images/role-based-access-control/storekeeper/reports-low-stock.png)
-*Report indicating stock levels that require replenishment.*
+
+
+#### Issuance Report
+
+![Storekeeper Issuance Report](images/role-based-access-control/storekeeper/reports-issuance.png)
+
 
 #### Material Report
 
 ![Storekeeper Material Report](images/role-based-access-control/storekeeper/reports-material.png)
-*Report offering full operational views on material performance and trends.*
+
 
 ### Cleaner
 
@@ -464,35 +464,46 @@ The Cleaner's sidebar is limited to just Materials and Stock Issuance. The Dashb
 **Materials (View Only)**
 
 ![Cleaner Materials](images/role-based-access-control/cleaner/materials.png)
-*Same view-only restriction as the Owner sees on this page, no "Add Material" button, no Edit/Delete columns.*
+
 
 **Stock Issuance (CRUD, Own Entries Only)**
 
 ![Cleaner Stock Issuance](images/role-based-access-control/cleaner/stock-issue.png)
-*Unlike the Storekeeper's view of this page, the table only lists issuance records created by this Cleaner, other cleaners' entries are filtered out entirely.*
+
 
 #### Stock Issuance Pop-up
 
-**Issue Stock**
+**Issue Stock (Create)**
 
 ![Issue Stock](images/role-based-access-control/cleaner/popups/stock-issuance-create.png)
-*Pop-up dialog for recording a new material issuance.*
 
-**Edit Stock issuance**
+
+**Update Stock issuance (Update)**
 
 ![Edit Stock Issuance](images/role-based-access-control/cleaner/popups/stock-issuance-update.png)
-*Pop-up dialog for updating a stock issuance record.*
 
-**Delete stock issuance**
+
+**Delete stock issuance (Delete)**
 
 ![Delete Stock Issuance](images/role-based-access-control/cleaner/popups/stock-issuance-delete.png)
-*Confirmation window for removing a stock issuance record.*
+
+## Login And Register Screenshots
+
+**Login Screen**
+
+![Login Screen](images/screenshots/login.png)
+
+**Register Screen**
+
+![Register Screen](images/screenshots/register.png)
+
+> Role-specific page screenshots (Dashboard, Materials, Suppliers, Cleaners, Stock Issuance, Reports) are shown under each role in the [Role-Based Access Control](#role-based-access-control) section above, since each role sees a different starting screen and a different level of access on shared pages.
 
 ---
 
 ## Database Schema (ERD)
 
-The diagram below shows how the core tables (`staff`, `materials`, `suppliers`, `cleaners`, `stock_issuance`) relate to one another.
+The diagram below shows how the core tables (users, suppliers, materials, cleaners, stock_issuances) relate to one another.
 
 ![Entity Relationship Diagram](images/database-schema/ERD.jpeg)
 
@@ -520,20 +531,6 @@ public static boolean verify(String password, String storedHash) throws Exceptio
 > Note: this implementation hashes without a salt, so it's a simpler approach that is easier to implement.
 
 The seeded login passwords shown elsewhere in this README (e.g. `Password@1234`) are the plaintext passwords you type into the login screen, the database only ever stores their SHA-256 hash.
-
----
-
-## Screenshots
-
-**Login Screen**
-
-![Login Screen](images/screenshots/login.png)
-
-**Register Screen**
-
-![Register Screen](images/screenshots/register.png)
-
-> Role-specific page screenshots (Dashboard, Materials, Suppliers, Cleaners, Stock Issuance, Reports) are shown under each role in the [Role-Based Access Control](#role-based-access-control) section above, since each role sees a different starting screen and a different level of access on shared pages.
 
 ---
 
