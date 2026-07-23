@@ -567,7 +567,7 @@ The seeded login passwords shown elsewhere in this README (e.g. `Password@1234`)
      psql -U postgres -d sparkling_clean -f db/sparkling_clean.sql
      ```
 
-   This single script creates all required tables (`staff`, `materials`, `suppliers`, `cleaners`, `stock_issuance`, etc.) and inserts the mock data used for testing (sample materials, suppliers, cleaners, and a default login for each role).
+   This single script creates all required tables (users, suppliers, materials, cleaners, stock_issuances) and inserts the mock data used for testing (sample materials, suppliers, cleaners, and a default login for each role).
 
    Once the script has run, you can log in with one of these seeded accounts to explore each role:
 
@@ -624,7 +624,7 @@ The seeded login passwords shown elsewhere in this README (e.g. `Password@1234`)
    | `USER` | The PostgreSQL username you connect with (default install often uses `postgres`) |
    | `PASSWORD` | The password you set for that PostgreSQL user during installation |
 
-   > Without this step, the app will fail to connect and you'll see errors like `FATAL: password authentication failed` or `database "sparkling_clean" does not exist` when you try to log in.
+   > Without this step, the app will fail to connect and you'll see errors.
 
 ### Opening the Project in NetBeans
 
