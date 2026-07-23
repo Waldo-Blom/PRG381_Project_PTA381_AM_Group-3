@@ -718,7 +718,7 @@ If something isn't working, check the reference screenshots below against what y
 
 * **Failed Login Console Output**
 *The console output when the login fails but doesn't throw an unhandled exception, confirming active DB connection.*
-![Consle output error](images/errors/Incorrect login/Output-shows-no-errors.png)
+![Console output error](images/errors/Incorrect login/Output-shows-no-errors.png)
 
 
 ---
