@@ -16,7 +16,7 @@ import model.Material;
  *
  * @author BC-STUDENT
  */
-public class MaterialDatabaseDAO implements MaterialDAO{
+public class MaterialController implements MaterialDAOInterface{
     
     @Override
     public void addMaterial(Material material) {

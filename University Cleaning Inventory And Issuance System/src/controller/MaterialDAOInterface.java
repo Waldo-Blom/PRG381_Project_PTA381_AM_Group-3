@@ -7,7 +7,7 @@ package controller;
 import model.Material;
 import java.util.List;
 
-public interface MaterialDAO {
+public interface MaterialDAOInterface {
     void addMaterial(Material material);
     void updateMaterial(Material material);
     void deleteMaterial(int materialId);

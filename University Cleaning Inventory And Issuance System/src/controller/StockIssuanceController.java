@@ -6,8 +6,11 @@ package controller;
 
 
 import dao.StockIssuanceDAO;
+import java.util.ArrayList;
 import java.util.List;
 import model.StockIssuance;
+import model.User;
+import utils.CurrentUser;
 
 public class StockIssuanceController {
 
@@ -52,7 +55,30 @@ public class StockIssuanceController {
         return issuanceDAO.issueMaterial(issuance);
     }
 
+    /**
+     * Loads the issuance history. 
+     * 
+     * Storekeepers and Owners see everyting;
+     * 
+     * a logged-in Cleaner only sees issuances that were issued
+     * to them, matched via their account email against the cleaners
+     * table's email.
+     */
     public List<StockIssuance> loadAllIssuances() {
+
+        if (CurrentUser.isCleaner()) {
+
+            User currentUser = CurrentUser.get();
+
+            if (currentUser == null || currentUser.getEmail() == null) {
+                return new ArrayList<>();
+            }
+
+            return issuanceDAO.getIssuancesByCleanerEmail(
+                    currentUser.getEmail()
+            );
+        }
+
         return issuanceDAO.getAllIssuances();
     }
 
@@ -96,9 +122,29 @@ public class StockIssuanceController {
         );
     }
 
+    int issuedByUserId = getCurrentLoggedInUserId();
+
     return issuanceDAO.updateIssuanceQuantity(
             issuanceId,
-            newQuantity
+            newQuantity,
+            issuedByUserId
     );
 }
+
+    /**
+     * get user_id of whoever is currently logged in, so an edit
+     * to an issuance can record who most recently made the change.
+     */
+    private int getCurrentLoggedInUserId() {
+
+        User currentUser = CurrentUser.get();
+
+        if (currentUser == null || currentUser.getId() == null) {
+            throw new IllegalStateException(
+                    "No user is currently logged in."
+            );
+        }
+
+        return Integer.parseInt(currentUser.getId());
+    }
 }

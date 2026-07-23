@@ -18,33 +18,61 @@ public class StockIssuanceDAO {
 
     public boolean issueMaterial(StockIssuance issuance) {
 
-        String sql =
-                "INSERT INTO stock_issuances "
-                + "(issuance_date, material_id, cleaner_id, "
-                + "quantity_issued, issued_by_user_id, notes) "
-                + "VALUES (?, ?, ?, ?, ?, ?)";
+    String stockSql =
+            "SELECT quantity FROM materials WHERE material_id = ?";
 
-        try (
-                Connection conn = DBConnection.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql)
-        ) {
+    String insertSql =
+            "INSERT INTO stock_issuances "
+            + "(issuance_date, material_id, cleaner_id, "
+            + "quantity_issued, issued_by_user_id, notes) "
+            + "VALUES (?, ?, ?, ?, ?, ?)";
 
+    String updateStockSql =
+            "UPDATE materials SET quantity = quantity - ? WHERE material_id = ?";
+
+    try (Connection conn = DBConnection.getConnection()) {
+
+        int availableStock;
+
+        try (PreparedStatement ps = conn.prepareStatement(stockSql)) {
+            ps.setInt(1, issuance.getMaterialId());
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) {
+                    throw new IllegalArgumentException("The selected material no longer exists.");
+                }
+                availableStock = rs.getInt("quantity");
+            }
+        }
+
+        if (issuance.getQuantityIssued() > availableStock) {
+            throw new IllegalArgumentException(
+                    "Insufficient stock. Only " + availableStock + " item(s) are available.");
+        }
+
+        try (PreparedStatement ps = conn.prepareStatement(insertSql)) {
             ps.setTimestamp(1, issuance.getIssuanceDate());
             ps.setInt(2, issuance.getMaterialId());
             ps.setInt(3, issuance.getCleanerId());
             ps.setInt(4, issuance.getQuantityIssued());
             ps.setInt(5, issuance.getIssuedByUserId());
             ps.setString(6, issuance.getNotes());
-
-            int rowsAffected = ps.executeUpdate();
-
-            return rowsAffected > 0;
-
-        } catch (SQLException | ClassNotFoundException ex) {
-            ex.printStackTrace();
-            return false;
+            ps.executeUpdate();
         }
+
+        try (PreparedStatement ps = conn.prepareStatement(updateStockSql)) {
+            ps.setInt(1, issuance.getQuantityIssued());
+            ps.setInt(2, issuance.getMaterialId());
+            ps.executeUpdate();
+        }
+
+        return true;
+
+    } catch (SQLException | ClassNotFoundException ex) {
+        ex.printStackTrace();
+        return false;
     }
+}
 
 public List<StockIssuance> getAllIssuances() {
 
@@ -112,6 +140,90 @@ public List<StockIssuance> getAllIssuances() {
                     rs.getString("notes"));
 
             issuances.add(issuance);
+        }
+
+    } catch (SQLException | ClassNotFoundException ex) {
+        ex.printStackTrace();
+    }
+
+    return issuances;
+}
+
+/**
+ * Same as {getAllIssuances()}, but restricted to one cleaner,
+ * matched by email since that's the shared link to the "cleaners" table.
+ */
+public List<StockIssuance> getIssuancesByCleanerEmail(String cleanerEmail) {
+
+    List<StockIssuance> issuances = new ArrayList<>();
+
+    String sql =
+            "SELECT "
+            + "si.issuance_id, "
+            + "si.issuance_date, "
+            + "si.material_id, "
+            + "m.material_name, "
+            + "si.cleaner_id, "
+            + "c.full_name AS cleaner_name, "
+            + "si.quantity_issued, "
+            + "si.issued_by_user_id, "
+            + "u.username AS issued_by_username, "
+            + "si.notes "
+            + "FROM stock_issuances si "
+            + "JOIN materials m "
+            + "ON si.material_id = m.material_id "
+            + "JOIN cleaners c "
+            + "ON si.cleaner_id = c.cleaner_id "
+            + "LEFT JOIN users u "
+            + "ON si.issued_by_user_id = u.user_id "
+            + "WHERE LOWER(c.email) = LOWER(?) "
+            + "ORDER BY si.issuance_date DESC";
+
+    try (
+            Connection conn = DBConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)
+    ) {
+
+        ps.setString(1, cleanerEmail);
+
+        try (ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+
+                StockIssuance issuance = new StockIssuance();
+
+                issuance.setIssuanceId(
+                        rs.getInt("issuance_id"));
+
+                issuance.setIssuanceDate(
+                        rs.getTimestamp("issuance_date"));
+
+                issuance.setMaterialId(
+                        rs.getInt("material_id"));
+
+                issuance.setMaterialName(
+                        rs.getString("material_name"));
+
+                issuance.setCleanerId(
+                        rs.getInt("cleaner_id"));
+
+                issuance.setCleanerName(
+                        rs.getString("cleaner_name"));
+
+                issuance.setQuantityIssued(
+                        rs.getInt("quantity_issued"));
+
+                issuance.setIssuedByUserId(
+                        rs.getInt("issued_by_user_id"));
+
+                issuance.setIssuedByUsername(
+                        rs.getString("issued_by_username"));
+
+                issuance.setNotes(
+                        rs.getString("notes"));
+
+                issuances.add(issuance);
+            }
         }
 
     } catch (SQLException | ClassNotFoundException ex) {
@@ -278,7 +390,8 @@ public List<StockIssuance> getAllIssuances() {
     
     public boolean updateIssuanceQuantity(
         int issuanceId,
-        int newQuantity) {
+        int newQuantity,
+        int issuedByUserId) {
 
     if (newQuantity <= 0) {
         throw new IllegalArgumentException(
@@ -300,7 +413,7 @@ public List<StockIssuance> getAllIssuances() {
 
     String updateIssuanceSql =
             "UPDATE stock_issuances "
-            + "SET quantity_issued = ? "
+            + "SET quantity_issued = ?, issued_by_user_id = ? "
             + "WHERE issuance_id = ?";
 
     String updateStockSql =
@@ -418,6 +531,11 @@ public List<StockIssuance> getAllIssuances() {
 
             issuanceUpdate.setInt(
                     2,
+                    issuedByUserId
+            );
+
+            issuanceUpdate.setInt(
+                    3,
                     issuanceId
             );
 

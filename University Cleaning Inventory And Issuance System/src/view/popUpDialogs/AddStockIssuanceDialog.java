@@ -15,8 +15,7 @@ import dao.CleanerDAO;
 import utils.CurrentUser;
 import model.User;
 import javax.swing.JOptionPane;
-import controller.MaterialDAO;
-import controller.MaterialDatabaseDAO;
+import controller.MaterialController;
 import utils.DBConnection;
 import java.time.format.ResolverStyle;
 import java.time.format.DateTimeParseException;
@@ -34,6 +33,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
+import controller.MaterialDAOInterface;
 
 
 
@@ -44,7 +44,7 @@ import java.time.format.ResolverStyle;
 public class AddStockIssuanceDialog extends javax.swing.JDialog {
     
 private final StockIssuanceController issuanceController;
-private final MaterialDAO materialDAO;
+private final MaterialDAOInterface materialDAO;
 private  CleanerDAO cleanerDAO;
 private final List<Material> loadedMaterials = new ArrayList<>();
 private final List<Cleaner> loadedCleaners = new ArrayList<>();
@@ -56,7 +56,7 @@ private final List<Cleaner> loadedCleaners = new ArrayList<>();
         super(parent, modal);
         initComponents();
          issuanceController = new StockIssuanceController();
-          materialDAO = new MaterialDatabaseDAO();
+          materialDAO = new MaterialController();
          
       try {
         cleanerDAO = new CleanerDAO(
@@ -137,6 +137,14 @@ private void loadCleaners() {
             "Choose a cleaner to issue to"
     );
 
+    /*
+     * A logged-in Cleaner may only ever issue stock to themselves, so the
+     * combo is restricted to their own profile. 
+     */
+    User currentUser = CurrentUser.get();
+    boolean restrictToOwnCleaner =
+            CurrentUser.isCleaner() && currentUser != null;
+
     try {
 
         List<Cleaner> cleaners =
@@ -148,14 +156,46 @@ private void loadCleaners() {
              * Only show active cleaners.
              * Remove this condition if CleanerDAO already filters them.
              */
-            if (cleaner.getStatus() == null
+            boolean isActive =
+                    cleaner.getStatus() == null
                     || cleaner.getStatus()
-                            .equalsIgnoreCase("active")) {
+                            .equalsIgnoreCase("active");
 
-                loadedCleaners.add(cleaner);
+            if (!isActive) {
+                continue;
+            }
 
-                cmbCleaner.addItem(
-                        cleaner.getName()
+            if (restrictToOwnCleaner
+                    && !isCurrentUsersCleanerProfile(cleaner, currentUser)) {
+                continue;
+            }
+
+            loadedCleaners.add(cleaner);
+
+            cmbCleaner.addItem(
+                    cleaner.getName()
+            );
+        }
+
+        if (restrictToOwnCleaner) {
+
+            if (!loadedCleaners.isEmpty()) {
+
+                // Pre-select and lock the combo to the cleaner's own name.
+                cmbCleaner.setSelectedIndex(1);
+                cmbCleaner.setEnabled(false);
+
+            } else {
+
+                cmbCleaner.setEnabled(false);
+                jButton3.setEnabled(false);
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "No cleaner profile matching your account email "
+                        + "could be found, so stock cannot be issued.",
+                        "Cleaner Profile Not Found",
+                        JOptionPane.WARNING_MESSAGE
                 );
             }
         }
@@ -177,6 +217,20 @@ private void loadCleaners() {
 
         ex.printStackTrace();
     }
+}
+
+/**
+ * A logged-in Cleaner-role user has no direct foreign key to the
+ * cleaners table, so the two are linked by matching email addresses.
+ */
+private boolean isCurrentUsersCleanerProfile(
+        Cleaner cleaner,
+        User currentUser) {
+
+    return currentUser.getEmail() != null
+            && cleaner.getEmail() != null
+            && currentUser.getEmail()
+                    .equalsIgnoreCase(cleaner.getEmail());
 }
 
 private int getSelectedMaterialId() {
