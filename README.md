@@ -1,7 +1,7 @@
 # Sparkling Clean
 
 **University Cleaning Inventory & Issuance System**
-Belgium Campus iTversity, PRG381 (Programming 3(7)(8)1) Group Project, Group 3
+PRG381 Group Project, Group 3
 
 Sparkling Clean is our Track B submission for the PRG381 Project. 
 
