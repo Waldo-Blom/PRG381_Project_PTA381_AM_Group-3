@@ -494,7 +494,7 @@ public class CleanersPnl extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Cleaner", "Email", "Phone number", "Department", "Issuances", "Hire Date", "Status", "Edit", "Delete"
+                "Cleaner", "Email", "Phone number", "Department", "Employee ID", "Hire Date", "Status", "Edit", "Delete"
             }
         ));
         jTable1.setRowHeight(45);

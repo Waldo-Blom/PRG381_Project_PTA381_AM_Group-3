@@ -381,7 +381,7 @@
                         <Column editable="true" title="Supplier" type="java.lang.Object"/>
                         <Column editable="true" title="Email" type="java.lang.Object"/>
                         <Column editable="true" title="Phone number" type="java.lang.Object"/>
-                        <Column editable="true" title="Address" type="java.lang.Object"/>
+                        <Column editable="true" title="Contact Person" type="java.lang.Object"/>
                         <Column editable="true" title="Materials" type="java.lang.Object"/>
                         <Column editable="true" title="Status" type="java.lang.Object"/>
                         <Column editable="true" title="Edit" type="java.lang.Object"/>

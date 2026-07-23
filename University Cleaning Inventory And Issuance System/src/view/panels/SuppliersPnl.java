@@ -390,7 +390,7 @@ public class SuppliersPnl extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Supplier", "Email", "Phone number", "Address", "Materials", "Status", "Edit", "Delete"
+                "Supplier", "Email", "Phone number", "Contact Person", "Materials", "Status", "Edit", "Delete"
             }
         ));
         jScrollPane1.setViewportView(jTable1);
